@@ -150,6 +150,7 @@ module Prelude (
 --     -- ** Exception handling in the I\/O monad
 --     IOError, ioError, userError,
 -- 
+    g2Entry
   ) where
 -- 
 -- import Control.Monad
@@ -170,3 +171,7 @@ import GHC.Base hiding ( foldr, mapM, sequence )
 -- import GHC.Real
 -- import GHC.Float
 -- import GHC.Show
+
+g2Entry :: a
+g2Entry = let x = x in x
+
