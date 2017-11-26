@@ -1,7 +1,7 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash, ImplicitParams #-}
--- {-# LANGUAGE RankNTypes, TypeInType #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash, ImplicitParams #-}
+{-# LANGUAGE RankNTypes, TypeInType #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -22,19 +22,20 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Err( absentErr, error, errorWithoutStackTrace, undefined ) where
--- import GHC.CString ()
--- import GHC.Types (Char, RuntimeRep)
--- import GHC.Stack.Types
--- import GHC.Prim
--- import GHC.Integer ()   -- Make sure Integer is compiled first
+module GHC.Err( absentErr, error, errorWithoutStackTrace, undefined ) where
+import GHC.CString ()
+import GHC.Types (Char, RuntimeRep)
+import GHC.Stack.Types
+import GHC.Prim
+import GHC.Integer ()   -- Make sure Integer is compiled first
 --                         -- because GHC depends on it in a wired-in way
 --                         -- so the build system doesn't see the dependency
 -- import {-# SOURCE #-} GHC.Exception( errorCallWithCallStackException )
 -- 
 -- -- | 'error' stops execution and displays an error message.
--- error :: forall (r :: RuntimeRep). forall (a :: TYPE r).
---          HasCallStack => [Char] -> a
+error :: forall (r :: RuntimeRep). forall (a :: TYPE r).
+         HasCallStack => [Char] -> a
+error = let x = x in x
 -- error s = raise# (errorCallWithCallStackException s ?callStack)
 --           -- Bleh, we should be using 'GHC.Stack.callStack' instead of
 --           -- '?callStack' here, but 'GHC.Stack.callStack' depends on
@@ -44,8 +45,9 @@
 -- -- | A variant of 'error' that does not produce a stack trace.
 -- --
 -- -- @since 4.9.0.0
--- errorWithoutStackTrace :: forall (r :: RuntimeRep). forall (a :: TYPE r).
---                           [Char] -> a
+errorWithoutStackTrace :: forall (r :: RuntimeRep). forall (a :: TYPE r).
+                          [Char] -> a
+errorWithoutStackTrace = let x = x in x
 -- errorWithoutStackTrace s =
 --   -- we don't have withFrozenCallStack yet, so we just inline the definition
 --   let ?callStack = freezeCallStack emptyCallStack
@@ -74,11 +76,11 @@
 -- -- It is expected that compilers will recognize this and insert error
 -- -- messages which are more appropriate to the context in which 'undefined'
 -- -- appears.
--- undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r).
---              HasCallStack => a
--- undefined =  error "Prelude.undefined"
+undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r).
+             HasCallStack => a
+undefined =  error "Prelude.undefined"
 -- 
 -- -- | Used for compiler-generated error message;
 -- -- encoding saves bytes of string junk.
--- absentErr :: a
--- absentErr = errorWithoutStackTrace "Oops! The program has entered an `absent' argument!\n"
+absentErr :: a
+absentErr = errorWithoutStackTrace "Oops! The program has entered an `absent' argument!\n"

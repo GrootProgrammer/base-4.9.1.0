@@ -1,9 +1,9 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
--- {-# LANGUAGE DeriveGeneric #-}
--- {-# LANGUAGE GeneralizedNewtypeDeriving #-}
--- {-# LANGUAGE PolyKinds #-}
--- {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -21,15 +21,15 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.Monoid (
+module Data.Monoid (
 --         -- * 'Monoid' typeclass
---         Monoid(..),
---         (<>),
---         Dual(..),
---         Endo(..),
+        Monoid(..),
+        (<>),
+        Dual(..),
+        Endo(..),
 --         -- * 'Bool' wrappers
---         All(..),
---         Any(..),
+        All(..),
+        Any(..),
 --         -- * 'Num' wrappers
 --         Sum(..),
 --         Product(..),
@@ -39,10 +39,10 @@
 --         Last(..),
 --         -- * 'Alternative' wrapper
 --         Alt (..)
---   ) where
+  ) where
 -- 
 -- -- Push down the module in the dependency hierarchy.
--- import GHC.Base hiding (Any)
+import GHC.Base hiding (Any)
 -- import GHC.Enum
 -- import GHC.Num
 -- import GHC.Read
@@ -55,24 +55,24 @@
 -- import Test.QuickCheck
 -- -- -}
 -- 
--- infixr 6 <>
+infixr 6 <>
 -- 
 -- -- | An infix synonym for 'mappend'.
 -- --
 -- -- @since 4.5.0.0
--- (<>) :: Monoid m => m -> m -> m
--- (<>) = mappend
--- {-# INLINE (<>) #-}
+(<>) :: Monoid m => m -> m -> m
+(<>) = mappend
+{-# INLINE (<>) #-}
 -- 
 -- -- Monoid instances.
 -- 
 -- -- | The dual of a 'Monoid', obtained by swapping the arguments of 'mappend'.
--- newtype Dual a = Dual { getDual :: a }
+newtype Dual a = Dual { getDual :: a }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic, Generic1)
 -- 
--- instance Monoid a => Monoid (Dual a) where
---         mempty = Dual mempty
---         Dual x `mappend` Dual y = Dual (y `mappend` x)
+instance Monoid a => Monoid (Dual a) where
+        mempty = Dual mempty
+        Dual x `mappend` Dual y = Dual (y `mappend` x)
 -- 
 -- instance Functor Dual where
 --     fmap     = coerce
@@ -85,28 +85,28 @@
 --     m >>= k  = k (getDual m)
 -- 
 -- -- | The monoid of endomorphisms under composition.
--- newtype Endo a = Endo { appEndo :: a -> a }
+newtype Endo a = Endo { appEndo :: a -> a }
 --                deriving (Generic)
 -- 
--- instance Monoid (Endo a) where
---         mempty = Endo id
---         Endo f `mappend` Endo g = Endo (f . g)
+instance Monoid (Endo a) where
+        mempty = Endo id
+        Endo f `mappend` Endo g = Endo (f . g)
 -- 
 -- -- | Boolean monoid under conjunction ('&&').
--- newtype All = All { getAll :: Bool }
+newtype All = All { getAll :: Bool }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic)
 -- 
--- instance Monoid All where
---         mempty = All True
---         All x `mappend` All y = All (x && y)
+instance Monoid All where
+        mempty = All True
+        All x `mappend` All y = All (x && y)
 -- 
 -- -- | Boolean monoid under disjunction ('||').
--- newtype Any = Any { getAny :: Bool }
+newtype Any = Any { getAny :: Bool }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic)
 -- 
--- instance Monoid Any where
---         mempty = Any False
---         Any x `mappend` Any y = Any (x || y)
+instance Monoid Any where
+        mempty = Any False
+        Any x `mappend` Any y = Any (x || y)
 -- 
 -- -- | Monoid under addition.
 -- newtype Sum a = Sum { getSum :: a }

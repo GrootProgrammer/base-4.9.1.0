@@ -74,20 +74,20 @@
 -- Other Prelude modules are much easier with fewer complex dependencies.
 -- -}
 -- 
--- {-# LANGUAGE Unsafe #-}
--- {-# LANGUAGE CPP
---            , NoImplicitPrelude
---            , BangPatterns
---            , ExplicitForAll
---            , MagicHash
---            , UnboxedTuples
---            , ExistentialQuantification
---            , RankNTypes
---   #-}
+{-# LANGUAGE Unsafe #-}
+{-# LANGUAGE CPP
+           , NoImplicitPrelude
+           , BangPatterns
+           , ExplicitForAll
+           , MagicHash
+           , UnboxedTuples
+           , ExistentialQuantification
+           , RankNTypes
+  #-}
 -- -- -Wno-orphans is needed for things like:
 -- -- Orphan rule: "x# -# x#" ALWAYS forall x# :: Int# -# x# x# = 0
--- {-# OPTIONS_GHC -Wno-orphans #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -105,40 +105,40 @@
 -- 
 -- #include "MachDeps.h"
 -- 
--- module GHC.Base
---         (
---         module GHC.Base,
---         module GHC.Classes,
---         module GHC.CString,
---         module GHC.Magic,
---         module GHC.Types,
---         module GHC.Prim,        -- Re-export GHC.Prim and [boot] GHC.Err,
+module GHC.Base
+        (
+        module GHC.Base,
+        module GHC.Classes,
+        module GHC.CString,
+        module GHC.Magic,
+        module GHC.Types,
+        module GHC.Prim,        -- Re-export GHC.Prim and [boot] GHC.Err,
 --                                 -- to avoid lots of people having to
---         module GHC.Err          -- import it explicitly
---   )
---         where
+        module GHC.Err          -- import it explicitly
+  )
+        where
 -- 
--- import GHC.Types
--- import GHC.Classes
--- import GHC.CString
--- import GHC.Magic
--- import GHC.Prim
--- import GHC.Err
+import GHC.Types
+import GHC.Classes
+import GHC.CString
+import GHC.Magic
+import GHC.Prim
+import GHC.Err
 -- import {-# SOURCE #-} GHC.IO (failIO,mplusIO)
 -- 
--- import GHC.Tuple ()     -- Note [Depend on GHC.Tuple]
--- import GHC.Integer ()   -- Note [Depend on GHC.Integer]
+import GHC.Tuple ()     -- Note [Depend on GHC.Tuple]
+import GHC.Integer ()   -- Note [Depend on GHC.Integer]
 -- 
--- infixr 9  .
--- infixr 5  ++
--- infixl 4  <$
--- infixl 1  >>, >>=
--- infixr 1  =<<
--- infixr 0  $, $!
+infixr 9  .
+infixr 5  ++
+infixl 4  <$
+infixl 1  >>, >>=
+infixr 1  =<<
+infixr 0  $, $!
 -- 
--- infixl 4 <*>, <*, *>, <**>
+infixl 4 <*>, <*, *>, <**>
 -- 
--- default ()              -- Double isn't available yet
+default ()              -- Double isn't available yet
 -- 
 -- {-
 -- Note [Depend on GHC.Integer]
@@ -201,8 +201,8 @@
 -- -- monad, where all errors are represented by 'Nothing'.  A richer
 -- -- error monad can be built using the 'Data.Either.Either' type.
 -- --
--- data  Maybe a  =  Nothing | Just a
---   deriving (Eq, Ord)
+data  Maybe a  =  Nothing | Just a
+  deriving (Eq, Ord)
 -- 
 -- -- | The class of monoids (types with an associative binary operation that
 -- -- has an identity).  Instances should satisfy the following laws:
@@ -223,27 +223,27 @@
 -- -- In such cases we often define @newtype@s and make those instances
 -- -- of 'Monoid', e.g. 'Sum' and 'Product'.
 -- 
--- class Monoid a where
---         mempty  :: a
+class Monoid a where
+        mempty  :: a
 --         -- ^ Identity of 'mappend'
---         mappend :: a -> a -> a
+        mappend :: a -> a -> a
 --         -- ^ An associative operation
---         mconcat :: [a] -> a
+        mconcat :: [a] -> a
 -- 
 --         -- ^ Fold a list using the monoid.
 --         -- For most types, the default definition for 'mconcat' will be
 --         -- used, but the function is included in the class definition so
 --         -- that an optimized version can be provided for specific types.
 -- 
---         mconcat = foldr mappend mempty
+        mconcat = foldr mappend mempty
 -- 
--- instance Monoid [a] where
---         {-# INLINE mempty #-}
---         mempty  = []
---         {-# INLINE mappend #-}
---         mappend = (++)
---         {-# INLINE mconcat #-}
---         mconcat xss = [x | xs <- xss, x <- xs]
+instance Monoid [a] where
+        {-# INLINE mempty #-}
+        mempty  = []
+        {-# INLINE mappend #-}
+        mappend = (++)
+        {-# INLINE mconcat #-}
+        mconcat xss = [x | xs <- xss, x <- xs]
 -- -- See Note: [List comprehensions and inlining]
 -- 
 -- {-
@@ -338,14 +338,14 @@
 -- satisfy these laws.
 -- -}
 -- 
--- class  Functor f  where
---     fmap        :: (a -> b) -> f a -> f b
+class  Functor f  where
+    fmap        :: (a -> b) -> f a -> f b
 -- 
 --     -- | Replace all locations in the input with the same value.
 --     -- The default definition is @'fmap' . 'const'@, but this may be
 --     -- overridden with a more efficient version.
---     (<$)        :: a -> f b -> f a
---     (<$)        =  fmap . const
+    (<$)        :: a -> f b -> f a
+    (<$)        =  fmap . const
 -- 
 -- -- | A functor with application, providing operations to
 -- --
@@ -391,53 +391,53 @@
 -- --
 -- -- (which implies that 'pure' and '<*>' satisfy the applicative functor laws).
 -- 
--- class Functor f => Applicative f where
+class Functor f => Applicative f where
 --     -- | Lift a value.
---     pure :: a -> f a
+    pure :: a -> f a
 -- 
 --     -- | Sequential application.
---     (<*>) :: f (a -> b) -> f a -> f b
+    (<*>) :: f (a -> b) -> f a -> f b
 -- 
 --     -- | Sequence actions, discarding the value of the first argument.
---     (*>) :: f a -> f b -> f b
---     a1 *> a2 = (id <$ a1) <*> a2
+    (*>) :: f a -> f b -> f b
+    a1 *> a2 = (id <$ a1) <*> a2
 --     -- This is essentially the same as liftA2 (const id), but if the
 --     -- Functor instance has an optimized (<$), we want to use that instead.
 -- 
 --     -- | Sequence actions, discarding the value of the second argument.
---     (<*) :: f a -> f b -> f a
---     (<*) = liftA2 const
+    (<*) :: f a -> f b -> f a
+    (<*) = liftA2 const
 -- 
 -- -- | A variant of '<*>' with the arguments reversed.
--- (<**>) :: Applicative f => f a -> f (a -> b) -> f b
--- (<**>) = liftA2 (flip ($))
+(<**>) :: Applicative f => f a -> f (a -> b) -> f b
+(<**>) = liftA2 (flip ($))
 -- 
 -- -- | Lift a function to actions.
 -- -- This function may be used as a value for `fmap` in a `Functor` instance.
--- liftA :: Applicative f => (a -> b) -> f a -> f b
--- liftA f a = pure f <*> a
+liftA :: Applicative f => (a -> b) -> f a -> f b
+liftA f a = pure f <*> a
 -- -- Caution: since this may be used for `fmap`, we can't use the obvious
 -- -- definition of liftA = fmap.
 -- 
 -- -- | Lift a binary function to actions.
--- liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
--- liftA2 f a b = fmap f a <*> b
+liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+liftA2 f a b = fmap f a <*> b
 -- 
 -- -- | Lift a ternary function to actions.
--- liftA3 :: Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
--- liftA3 f a b c = fmap f a <*> b <*> c
+liftA3 :: Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+liftA3 f a b c = fmap f a <*> b <*> c
 -- 
 -- 
--- {-# INLINEABLE liftA #-}
+{-# INLINEABLE liftA #-}
 -- {-# SPECIALISE liftA :: (a1->r) -> IO a1 -> IO r #-}
--- {-# SPECIALISE liftA :: (a1->r) -> Maybe a1 -> Maybe r #-}
--- {-# INLINEABLE liftA2 #-}
+{-# SPECIALISE liftA :: (a1->r) -> Maybe a1 -> Maybe r #-}
+{-# INLINEABLE liftA2 #-}
 -- {-# SPECIALISE liftA2 :: (a1->a2->r) -> IO a1 -> IO a2 -> IO r #-}
--- {-# SPECIALISE liftA2 :: (a1->a2->r) -> Maybe a1 -> Maybe a2 -> Maybe r #-}
--- {-# INLINEABLE liftA3 #-}
+{-# SPECIALISE liftA2 :: (a1->a2->r) -> Maybe a1 -> Maybe a2 -> Maybe r #-}
+{-# INLINEABLE liftA3 #-}
 -- {-# SPECIALISE liftA3 :: (a1->a2->a3->r) -> IO a1 -> IO a2 -> IO a3 -> IO r #-}
--- {-# SPECIALISE liftA3 :: (a1->a2->a3->r) ->
---                                 Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r #-}
+{-# SPECIALISE liftA3 :: (a1->a2->a3->r) ->
+                                Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r #-}
 -- 
 -- -- | The 'join' function is the conventional monad join operator. It
 -- -- is used to remove one level of monadic structure, projecting its
@@ -473,21 +473,21 @@
 -- The instances of 'Monad' for lists, 'Data.Maybe.Maybe' and 'System.IO.IO'
 -- defined in the "Prelude" satisfy these laws.
 -- -}
--- class Applicative m => Monad m where
+class Applicative m => Monad m where
 --     -- | Sequentially compose two actions, passing any value produced
 --     -- by the first as an argument to the second.
---     (>>=)       :: forall a b. m a -> (a -> m b) -> m b
+    (>>=)       :: forall a b. m a -> (a -> m b) -> m b
 -- 
 --     -- | Sequentially compose two actions, discarding any value produced
 --     -- by the first, like sequencing operators (such as the semicolon)
 --     -- in imperative languages.
---     (>>)        :: forall a b. m a -> m b -> m b
---     m >> k = m >>= \_ -> k -- See Note [Recursive bindings for Applicative/Monad]
---     {-# INLINE (>>) #-}
+    (>>)        :: forall a b. m a -> m b -> m b
+    m >> k = m >>= \_ -> k -- See Note [Recursive bindings for Applicative/Monad]
+    {-# INLINE (>>) #-}
 -- 
 --     -- | Inject a value into the monadic type.
---     return      :: a -> m a
---     return      = pure
+    return      :: a -> m a
+    return      = pure
 -- 
 --     -- | Fail with a message.  This operation is not part of the
 --     -- mathematical definition of a monad, but is invoked on pattern-match
@@ -497,8 +497,8 @@
 --     -- to its own class 'MonadFail' (see "Control.Monad.Fail" for more
 --     -- details). The definition here will be removed in a future
 --     -- release.
---     fail        :: String -> m a
---     fail s      = errorWithoutStackTrace s
+    fail        :: String -> m a
+    fail s      = errorWithoutStackTrace s
 -- 
 -- {- Note [Recursive bindings for Applicative/Monad]
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -523,9 +523,9 @@
 -- -}
 -- 
 -- -- | Same as '>>=', but with the arguments interchanged.
--- {-# SPECIALISE (=<<) :: (a -> [b]) -> [a] -> [b] #-}
--- (=<<)           :: Monad m => (a -> m b) -> m a -> m b
--- f =<< x         = x >>= f
+{-# SPECIALISE (=<<) :: (a -> [b]) -> [a] -> [b] #-}
+(=<<)           :: Monad m => (a -> m b) -> m a -> m b
+f =<< x         = x >>= f
 -- 
 -- -- | Conditional execution of 'Applicative' expressions. For example,
 -- --
@@ -635,45 +635,45 @@
 -- 
 -- -- instances for Prelude types
 -- 
--- instance Functor ((->) r) where
---     fmap = (.)
+instance Functor ((->) r) where
+    fmap = (.)
 -- 
--- instance Applicative ((->) a) where
---     pure = const
---     (<*>) f g x = f x (g x)
+instance Applicative ((->) a) where
+    pure = const
+    (<*>) f g x = f x (g x)
 -- 
--- instance Monad ((->) r) where
---     f >>= k = \ r -> k (f r) r
+instance Monad ((->) r) where
+    f >>= k = \ r -> k (f r) r
 -- 
--- instance Functor ((,) a) where
---     fmap f (x,y) = (x, f y)
+instance Functor ((,) a) where
+    fmap f (x,y) = (x, f y)
 -- 
 -- 
--- instance  Functor Maybe  where
---     fmap _ Nothing       = Nothing
---     fmap f (Just a)      = Just (f a)
+instance  Functor Maybe  where
+    fmap _ Nothing       = Nothing
+    fmap f (Just a)      = Just (f a)
 -- 
--- instance Applicative Maybe where
---     pure = Just
+instance Applicative Maybe where
+    pure = Just
 -- 
---     Just f  <*> m       = fmap f m
---     Nothing <*> _m      = Nothing
+    Just f  <*> m       = fmap f m
+    Nothing <*> _m      = Nothing
 -- 
---     Just _m1 *> m2      = m2
---     Nothing  *> _m2     = Nothing
+    Just _m1 *> m2      = m2
+    Nothing  *> _m2     = Nothing
 -- 
--- instance  Monad Maybe  where
---     (Just x) >>= k      = k x
---     Nothing  >>= _      = Nothing
+instance  Monad Maybe  where
+    (Just x) >>= k      = k x
+    Nothing  >>= _      = Nothing
 -- 
---     (>>) = (*>)
+    (>>) = (*>)
 -- 
---     fail _              = Nothing
+    fail _              = Nothing
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- The Alternative class definition
 -- 
--- infixl 3 <|>
+infixl 3 <|>
 -- 
 -- -- | A monoid on applicative functors.
 -- --
@@ -683,31 +683,31 @@
 -- -- * @some v = (:) '<$>' v '<*>' many v@
 -- --
 -- -- * @many v = some v '<|>' 'pure' []@
--- class Applicative f => Alternative f where
+class Applicative f => Alternative f where
 --     -- | The identity of '<|>'
---     empty :: f a
+    empty :: f a
 --     -- | An associative binary operation
---     (<|>) :: f a -> f a -> f a
+    (<|>) :: f a -> f a -> f a
 -- 
 --     -- | One or more.
---     some :: f a -> f [a]
---     some v = some_v
---       where
---         many_v = some_v <|> pure []
---         some_v = (fmap (:) v) <*> many_v
+    some :: f a -> f [a]
+    some v = some_v
+      where
+        many_v = some_v <|> pure []
+        some_v = (fmap (:) v) <*> many_v
 -- 
 --     -- | Zero or more.
---     many :: f a -> f [a]
---     many v = many_v
---       where
---         many_v = some_v <|> pure []
---         some_v = (fmap (:) v) <*> many_v
+    many :: f a -> f [a]
+    many v = many_v
+      where
+        many_v = some_v <|> pure []
+        some_v = (fmap (:) v) <*> many_v
 -- 
 -- 
--- instance Alternative Maybe where
---     empty = Nothing
---     Nothing <|> r = r
---     l       <|> _ = l
+instance Alternative Maybe where
+    empty = Nothing
+    Nothing <|> r = r
+    l       <|> _ = l
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- The MonadPlus class definition
@@ -731,31 +731,31 @@
 -- ----------------------------------------------
 -- -- The list type
 -- 
--- instance Functor [] where
---     {-# INLINE fmap #-}
---     fmap = map
+instance Functor [] where
+    {-# INLINE fmap #-}
+    fmap = map
 -- 
 -- -- See Note: [List comprehensions and inlining]
--- instance Applicative [] where
---     {-# INLINE pure #-}
---     pure x    = [x]
---     {-# INLINE (<*>) #-}
---     fs <*> xs = [f x | f <- fs, x <- xs]
---     {-# INLINE (*>) #-}
---     xs *> ys  = [y | _ <- xs, y <- ys]
+instance Applicative [] where
+    {-# INLINE pure #-}
+    pure x    = [x]
+    {-# INLINE (<*>) #-}
+    fs <*> xs = [f x | f <- fs, x <- xs]
+    {-# INLINE (*>) #-}
+    xs *> ys  = [y | _ <- xs, y <- ys]
 -- 
 -- -- See Note: [List comprehensions and inlining]
--- instance Monad []  where
---     {-# INLINE (>>=) #-}
---     xs >>= f             = [y | x <- xs, y <- f x]
---     {-# INLINE (>>) #-}
---     (>>) = (*>)
---     {-# INLINE fail #-}
---     fail _              = []
+instance Monad []  where
+    {-# INLINE (>>=) #-}
+    xs >>= f             = [y | x <- xs, y <- f x]
+    {-# INLINE (>>) #-}
+    (>>) = (*>)
+    {-# INLINE fail #-}
+    fail _              = []
 -- 
--- instance Alternative [] where
---     empty = []
---     (<|>) = (++)
+instance Alternative [] where
+    empty = []
+    (<|>) = (++)
 -- 
 -- instance MonadPlus []
 -- 
@@ -774,17 +774,17 @@
 -- --
 -- -- > foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)
 -- 
--- foldr            :: (a -> b -> b) -> b -> [a] -> b
+foldr            :: (a -> b -> b) -> b -> [a] -> b
 -- -- foldr _ z []     =  z
 -- -- foldr f z (x:xs) =  f x (foldr f z xs)
--- {-# INLINE [0] foldr #-}
+{-# INLINE [0] foldr #-}
 -- -- Inline only in the final stage, after the foldr/cons rule has had a chance
 -- -- Also note that we inline it when it has *two* parameters, which are the
 -- -- ones we are keen about specialising!
--- foldr k z = go
---           where
---             go []     = z
---             go (y:ys) = y `k` go ys
+foldr k z = go
+          where
+            go []     = z
+            go (y:ys) = y `k` go ys
 -- 
 -- -- | A list producer that can be fused with 'foldr'.
 -- -- This function is merely
@@ -795,8 +795,8 @@
 -- -- @'foldr' k z ('build' g)@, which may arise after inlining, to @g k z@,
 -- -- which avoids producing an intermediate list.
 -- 
--- build   :: forall a. (forall b. (a -> b -> b) -> b -> b) -> [a]
--- {-# INLINE [1] build #-}
+build   :: forall a. (forall b. (a -> b -> b) -> b -> b) -> [a]
+{-# INLINE [1] build #-}
 --         -- The INLINE is important, even though build is tiny,
 --         -- because it prevents [] getting inlined in the version that
 --         -- appears in the interface file.  If [] *is* inlined, it
@@ -804,7 +804,7 @@
 --         --
 --         -- The "1" says to inline in phase 1
 -- 
--- build g = g (:) []
+build g = g (:) []
 -- 
 -- -- | A list producer that can be fused with 'foldr'.
 -- -- This function is merely
@@ -815,9 +815,9 @@
 -- -- @'foldr' k z ('augment' g xs)@, which may arise after inlining, to
 -- -- @g k ('foldr' k z xs)@, which avoids producing an intermediate list.
 -- 
--- augment :: forall a. (forall b. (a->b->b) -> b -> b) -> [a] -> [a]
--- {-# INLINE [1] augment #-}
--- augment g xs = g (:) xs
+augment :: forall a. (forall b. (a->b->b) -> b -> b) -> [a] -> [a]
+{-# INLINE [1] augment #-}
+augment g xs = g (:) xs
 -- 
 -- {-# RULES
 -- "fold/build"    forall k z (g::forall b. (a->b->b) -> b -> b) .
@@ -865,13 +865,13 @@
 -- -- > map f [x1, x2, ..., xn] == [f x1, f x2, ..., f xn]
 -- -- > map f [x1, x2, ...] == [f x1, f x2, ...]
 -- 
--- map :: (a -> b) -> [a] -> [b]
--- {-# NOINLINE [0] map #-}
+map :: (a -> b) -> [a] -> [b]
+{-# NOINLINE [0] map #-}
 --   -- We want the RULEs "map" and "map/coerce" to fire first.
 --   -- map is recursive, so won't inline anyway,
 --   -- but saying so is more explicit, and silences warnings
--- map _ []     = []
--- map f (x:xs) = f x : map f xs
+map _ []     = []
+map f (x:xs) = f x : map f xs
 -- 
 -- -- Note eta expanded
 -- mapFB ::  (elt -> lst -> lst) -> (a -> elt) -> a -> lst -> lst
@@ -920,16 +920,16 @@
 -- --
 -- -- If the first list is not finite, the result is the first list.
 -- 
--- (++) :: [a] -> [a] -> [a]
--- {-# NOINLINE [1] (++) #-}    -- We want the RULE to fire first.
+(++) :: [a] -> [a] -> [a]
+{-# NOINLINE [1] (++) #-}    -- We want the RULE to fire first.
 --                              -- It's recursive, so won't inline anyway,
 --                              -- but saying so is more explicit
--- (++) []     ys = ys
--- (++) (x:xs) ys = x : xs ++ ys
+(++) []     ys = ys
+(++) (x:xs) ys = x : xs ++ ys
 -- 
--- {-# RULES
--- "++"    [~1] forall xs ys. xs ++ ys = augment (\c n -> foldr c n xs) ys
---   #-}
+{-# RULES
+"++"    [~1] forall xs ys. xs ++ ys = augment (\c n -> foldr c n xs) ys
+  #-}
 -- 
 -- 
 -- -- |'otherwise' is defined as the value 'True'.  It helps to make
@@ -947,7 +947,7 @@
 -- -- | A 'String' is a list of characters.  String constants in Haskell are values
 -- -- of type 'String'.
 -- --
--- type String = [Char]
+type String = [Char]
 -- 
 -- unsafeChr :: Int -> Char
 -- unsafeChr (I# i#) = C# (chr# i#)
@@ -991,8 +991,8 @@
 -- ----------------------------------------------
 -- 
 -- -- | Identity function.
--- id                      :: a -> a
--- id x                    =  x
+id                      :: a -> a
+id x                    =  x
 -- 
 -- -- Assertion function.  This simply ignores its boolean argument.
 -- -- The compiler may rewrite it to @('assertError' line)@.
@@ -1029,19 +1029,19 @@
 -- --
 -- -- >>> map (const 42) [0..3]
 -- -- [42,42,42,42]
--- const                   :: a -> b -> a
--- const x _               =  x
+const                   :: a -> b -> a
+const x _               =  x
 -- 
 -- -- | Function composition.
--- {-# INLINE (.) #-}
+{-# INLINE (.) #-}
 -- -- Make sure it has TWO args only on the left, so that it inlines
 -- -- when applied to two functions, even if there is no final argument
--- (.)    :: (b -> c) -> (a -> b) -> a -> c
--- (.) f g = \x -> f (g x)
+(.)    :: (b -> c) -> (a -> b) -> a -> c
+(.) f g = \x -> f (g x)
 -- 
 -- -- | @'flip' f@ takes its (first) two arguments in the reverse order of @f@.
--- flip                    :: (a -> b -> c) -> b -> a -> c
--- flip f x y              =  f y x
+flip                    :: (a -> b -> c) -> b -> a -> c
+flip f x y              =  f y x
 -- 
 -- -- | Application operator.  This operator is redundant, since ordinary
 -- -- application @(f x)@ means the same as @(f '$' x)@. However, '$' has
@@ -1052,16 +1052,16 @@
 -- --
 -- -- It is also useful in higher-order situations, such as @'map' ('$' 0) xs@,
 -- -- or @'Data.List.zipWith' ('$') fs xs@.
--- {-# INLINE ($) #-}
--- ($)                     :: (a -> b) -> a -> b
--- f $ x                   =  f x
+{-# INLINE ($) #-}
+($)                     :: (a -> b) -> a -> b
+f $ x                   =  f x
 -- 
 -- -- | Strict (call-by-value) application operator. It takes a function and an
 -- -- argument, evaluates the argument to weak head normal form (WHNF), then calls
 -- -- the function with that value.
 -- 
--- ($!)                    :: (a -> b) -> a -> b
--- f $! x                  = let !vx = x in f vx  -- see #2273
+($!)                    :: (a -> b) -> a -> b
+f $! x                  = let !vx = x in f vx  -- see #2273
 -- 
 -- -- | @'until' p f@ yields the result of applying @f@ until @p@ holds.
 -- until                   :: (a -> Bool) -> (a -> a) -> a -> a

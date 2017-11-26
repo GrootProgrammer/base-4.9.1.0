@@ -1,12 +1,12 @@
--- {-# LANGUAGE NoImplicitPrelude #-}
--- {-# LANGUAGE ConstraintKinds   #-}
--- {-# LANGUAGE ImplicitParams    #-}
--- {-# LANGUAGE KindSignatures    #-}
--- {-# LANGUAGE PolyKinds         #-}
--- {-# LANGUAGE RankNTypes        #-}
--- {-# LANGUAGE Trustworthy       #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE ConstraintKinds   #-}
+{-# LANGUAGE ImplicitParams    #-}
+{-# LANGUAGE KindSignatures    #-}
+{-# LANGUAGE PolyKinds         #-}
+{-# LANGUAGE RankNTypes        #-}
+{-# LANGUAGE Trustworthy       #-}
 -- 
--- {-# OPTIONS_HADDOCK hide #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- -- we hide this module from haddock to enforce GHC.Stack as the main
 -- -- access point.
 -- 
@@ -26,15 +26,15 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Stack.Types (
+module GHC.Stack.Types (
 --     -- * Implicit call stacks
---     CallStack(..), HasCallStack,
+    CallStack(..), HasCallStack,
 --     emptyCallStack, freezeCallStack, fromCallSiteList,
 --     getCallStack, pushCallStack,
 -- 
 --     -- * Source locations
 --     SrcLoc(..)
---   ) where
+  ) where
 -- 
 -- {-
 -- Ideally these would live in GHC.Stack but sadly they can't due to this
@@ -49,8 +49,8 @@
 --     which imports ‘Data.Maybe’ (libraries/base/Data/Maybe.hs)
 -- -}
 -- 
--- import GHC.Classes (Eq)
--- import GHC.Types (Char, Int)
+import GHC.Classes (Eq)
+import GHC.Types (Char, Int)
 -- 
 -- -- Make implicit dependency known to build system
 -- import GHC.Tuple ()
@@ -68,7 +68,7 @@
 -- -- future.
 -- --
 -- -- @since 4.9.0.0
--- type HasCallStack = (?callStack :: CallStack)
+type HasCallStack = (?callStack :: CallStack)
 -- 
 -- -- | 'CallStack's are a lightweight method of obtaining a
 -- -- partial call-stack at any point in the program.
@@ -130,10 +130,10 @@
 -- -- future.
 -- --
 -- -- @since 4.8.1.0
--- data CallStack
---   = EmptyCallStack
---   | PushCallStack [Char] SrcLoc CallStack
---   | FreezeCallStack CallStack
+data CallStack
+  = EmptyCallStack
+  | PushCallStack [Char] SrcLoc CallStack
+  | FreezeCallStack CallStack
 --     -- ^ Freeze the stack at the given @CallStack@, preventing any further
 --     -- call-sites from being pushed onto it.
 -- 
@@ -206,12 +206,12 @@
 -- -- | A single location in the source code.
 -- --
 -- -- @since 4.8.1.0
--- data SrcLoc = SrcLoc
---   { srcLocPackage   :: [Char]
---   , srcLocModule    :: [Char]
---   , srcLocFile      :: [Char]
---   , srcLocStartLine :: Int
---   , srcLocStartCol  :: Int
---   , srcLocEndLine   :: Int
---   , srcLocEndCol    :: Int
---   } deriving Eq
+data SrcLoc = SrcLoc
+  { srcLocPackage   :: [Char]
+  , srcLocModule    :: [Char]
+  , srcLocFile      :: [Char]
+  , srcLocStartLine :: Int
+  , srcLocStartCol  :: Int
+  , srcLocEndLine   :: Int
+  , srcLocEndCol    :: Int
+  } deriving Eq

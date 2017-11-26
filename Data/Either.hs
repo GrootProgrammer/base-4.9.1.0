@@ -1,7 +1,7 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
--- {-# LANGUAGE StandaloneDeriving #-}
--- {-# LANGUAGE PolyKinds, DataKinds, TypeFamilies, TypeOperators, UndecidableInstances #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE PolyKinds, DataKinds, TypeFamilies, TypeOperators, UndecidableInstances #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -17,7 +17,7 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.Either (
+module Data.Either (
 --    Either(..),
 --    either,
 --    lefts,
@@ -25,7 +25,7 @@
 --    isLeft,
 --    isRight,
 --    partitionEithers,
---  ) where
+ ) where
 -- 
 -- import GHC.Base
 -- import GHC.Show

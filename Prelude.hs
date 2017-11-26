@@ -1,5 +1,5 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -17,22 +17,22 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Prelude (
+module Prelude (
 -- 
 --     -- * Standard types, classes and related functions
 -- 
 --     -- ** Basic data types
---     Bool(False, True),
---     (&&), (||), not, otherwise,
+    Bool(False, True),
+    (&&), (||), not, otherwise,
 -- 
---     Maybe(Nothing, Just),
---     maybe,
+    Maybe(Nothing, Just),
+    maybe,
 -- 
---     Either(Left, Right),
---     either,
+    Either(Left, Right),
+    either,
 -- 
---     Ordering(LT, EQ, GT),
---     Char, String,
+    Ordering(LT, EQ, GT),
+    Char, String,
 -- 
 --     -- *** Tuples
 --     fst, snd, curry, uncurry,
@@ -94,30 +94,30 @@
 --     Traversable(traverse, sequenceA, mapM, sequence),
 -- 
 --     -- ** Miscellaneous functions
---     id, const, (.), flip, ($), until,
---     asTypeOf, error, errorWithoutStackTrace, undefined,
---     seq, ($!),
+    id, const, (.), flip, ($), until,
+    asTypeOf, error, errorWithoutStackTrace, undefined,
+    seq, ($!),
 -- 
 --     -- * List operations
---     map, (++), filter,
---     head, last, tail, init, null, length, (!!),
---     reverse,
+    map, (++), filter,
+    head, last, tail, init, null, length, (!!),
+    reverse,
 --     -- *** Special folds
---     and, or, any, all,
---     concat, concatMap,
+    and, or, any, all,
+    concat, concatMap,
 --     -- ** Building lists
 --     -- *** Scans
---     scanl, scanl1, scanr, scanr1,
+    scanl, scanl1, scanr, scanr1,
 --     -- *** Infinite lists
---     iterate, repeat, replicate, cycle,
+    iterate, repeat, replicate, cycle,
 --     -- ** Sublists
---     take, drop, splitAt, takeWhile, dropWhile, span, break,
+    take, drop, splitAt, takeWhile, dropWhile, span, break,
 --     -- ** Searching lists
---     notElem, lookup,
+    notElem, lookup,
 --     -- ** Zipping and unzipping lists
---     zip, zip3, zipWith, zipWith3, unzip, unzip3,
+    zip, zip3, zipWith, zipWith3, unzip, unzip3,
 --     -- ** Functions on strings
---     lines, words, unlines, unwords,
+    lines, words, unlines, unwords,
 -- 
 --     -- * Converting to and from @String@
 --     -- ** Converting to @String@
@@ -150,20 +150,20 @@
 --     -- ** Exception handling in the I\/O monad
 --     IOError, ioError, userError,
 -- 
---   ) where
+  ) where
 -- 
 -- import Control.Monad
 -- import System.IO
 -- import System.IO.Error
--- import Data.List
--- import Data.Either
--- import Data.Foldable    ( Foldable(..) )
--- import Data.Functor     ( (<$>) )
--- import Data.Maybe
--- import Data.Traversable ( Traversable(..) )
+import Data.List
+import Data.Either
+import Data.Foldable    ( Foldable(..) )
+import Data.Functor     ( (<$>) )
+import Data.Maybe
+import Data.Traversable ( Traversable(..) )
 -- import Data.Tuple
 -- 
--- import GHC.Base hiding ( foldr, mapM, sequence )
+import GHC.Base hiding ( foldr, mapM, sequence )
 -- import Text.Read
 -- import GHC.Enum
 -- import GHC.Num

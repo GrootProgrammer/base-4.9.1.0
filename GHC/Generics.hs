@@ -696,7 +696,7 @@
 --   , Meta(..)
 -- 
 --   -- * Generic type classes
---   , Generic(..), Generic1(..)
+--     Generic(..), Generic1(..)
 -- 
 --   ) where
 -- 

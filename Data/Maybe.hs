@@ -1,5 +1,5 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -15,23 +15,23 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.Maybe
---    (
---      Maybe(Nothing,Just)
+module Data.Maybe
+   (
+     Maybe(Nothing,Just)
 -- 
---    , maybe
+   , maybe
 -- 
---    , isJust
---    , isNothing
---    , fromJust
---    , fromMaybe
---    , listToMaybe
---    , maybeToList
---    , catMaybes
---    , mapMaybe
---    ) where
+   , isJust
+   , isNothing
+   , fromJust
+   , fromMaybe
+   , listToMaybe
+   , maybeToList
+   , catMaybes
+   , mapMaybe
+   ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- 
 -- -- $setup
 -- -- Allow the use of some Prelude functions in doctests.
@@ -74,9 +74,9 @@
 -- -- >>> maybe "" show Nothing
 -- -- ""
 -- --
--- maybe :: b -> (a -> b) -> Maybe a -> b
--- maybe n _ Nothing  = n
--- maybe _ f (Just x) = f x
+maybe :: b -> (a -> b) -> Maybe a -> b
+maybe n _ Nothing  = n
+maybe _ f (Just x) = f x
 -- 
 -- -- | The 'isJust' function returns 'True' iff its argument is of the
 -- -- form @Just _@.
@@ -99,9 +99,9 @@
 -- -- >>> isJust (Just Nothing)
 -- -- True
 -- --
--- isJust         :: Maybe a -> Bool
--- isJust Nothing = False
--- isJust _       = True
+isJust         :: Maybe a -> Bool
+isJust Nothing = False
+isJust _       = True
 -- 
 -- -- | The 'isNothing' function returns 'True' iff its argument is 'Nothing'.
 -- --
@@ -123,9 +123,9 @@
 -- -- >>> isNothing (Just Nothing)
 -- -- False
 -- --
--- isNothing         :: Maybe a -> Bool
--- isNothing Nothing = True
--- isNothing _       = False
+isNothing         :: Maybe a -> Bool
+isNothing Nothing = True
+isNothing _       = False
 -- 
 -- -- | The 'fromJust' function extracts the element out of a 'Just' and
 -- -- throws an error if its argument is 'Nothing'.
@@ -143,9 +143,9 @@
 -- -- >>> 2 * (fromJust Nothing)
 -- -- *** Exception: Maybe.fromJust: Nothing
 -- --
--- fromJust          :: Maybe a -> a
--- fromJust Nothing  = errorWithoutStackTrace "Maybe.fromJust: Nothing" -- yuck
--- fromJust (Just x) = x
+fromJust          :: Maybe a -> a
+fromJust Nothing  = errorWithoutStackTrace "Maybe.fromJust: Nothing" -- yuck
+fromJust (Just x) = x
 -- 
 -- -- | The 'fromMaybe' function takes a default value and and 'Maybe'
 -- -- value.  If the 'Maybe' is 'Nothing', it returns the default values;
@@ -170,8 +170,8 @@
 -- -- >>> fromMaybe 0 (readMaybe "")
 -- -- 0
 -- --
--- fromMaybe     :: a -> Maybe a -> a
--- fromMaybe d x = case x of {Nothing -> d;Just v  -> v}
+fromMaybe     :: a -> Maybe a -> a
+fromMaybe d x = case x of {Nothing -> d;Just v  -> v}
 -- 
 -- -- | The 'maybeToList' function returns an empty list when given
 -- -- 'Nothing' or a singleton list when not given 'Nothing'.
@@ -195,9 +195,9 @@
 -- -- >>> sum $ maybeToList (readMaybe "")
 -- -- 0
 -- --
--- maybeToList            :: Maybe a -> [a]
--- maybeToList  Nothing   = []
--- maybeToList  (Just x)  = [x]
+maybeToList            :: Maybe a -> [a]
+maybeToList  Nothing   = []
+maybeToList  (Just x)  = [x]
 -- 
 -- -- | The 'listToMaybe' function returns 'Nothing' on an empty list
 -- -- or @'Just' a@ where @a@ is the first element of the list.
@@ -228,9 +228,9 @@
 -- -- >>> maybeToList $ listToMaybe [1,2,3]
 -- -- [1]
 -- --
--- listToMaybe           :: [a] -> Maybe a
--- listToMaybe []        =  Nothing
--- listToMaybe (a:_)     =  Just a
+listToMaybe           :: [a] -> Maybe a
+listToMaybe []        =  Nothing
+listToMaybe (a:_)     =  Just a
 -- 
 -- -- | The 'catMaybes' function takes a list of 'Maybe's and returns
 -- -- a list of all the 'Just' values.
@@ -252,8 +252,8 @@
 -- -- >>> catMaybes $ [readMaybe x :: Maybe Int | x <- ["1", "Foo", "3"] ]
 -- -- [1,3]
 -- --
--- catMaybes              :: [Maybe a] -> [a]
--- catMaybes ls = [x | Just x <- ls]
+catMaybes              :: [Maybe a] -> [a]
+catMaybes ls = [x | Just x <- ls]
 -- 
 -- -- | The 'mapMaybe' function is a version of 'map' which can throw
 -- -- out elements.  In particular, the functional argument returns
@@ -278,23 +278,23 @@
 -- -- >>> mapMaybe Just [1,2,3]
 -- -- [1,2,3]
 -- --
--- mapMaybe          :: (a -> Maybe b) -> [a] -> [b]
--- mapMaybe _ []     = []
--- mapMaybe f (x:xs) =
---  let rs = mapMaybe f xs in
---  case f x of
---   Nothing -> rs
---   Just r  -> r:rs
--- {-# NOINLINE [1] mapMaybe #-}
+mapMaybe          :: (a -> Maybe b) -> [a] -> [b]
+mapMaybe _ []     = []
+mapMaybe f (x:xs) =
+ let rs = mapMaybe f xs in
+ case f x of
+  Nothing -> rs
+  Just r  -> r:rs
+{-# NOINLINE [1] mapMaybe #-}
 -- 
--- {-# RULES
--- "mapMaybe"     [~1] forall f xs. mapMaybe f xs
---                     = build (\c n -> foldr (mapMaybeFB c f) n xs)
--- "mapMaybeList" [1]  forall f. foldr (mapMaybeFB (:) f) [] = mapMaybe f
---   #-}
+{-# RULES
+"mapMaybe"     [~1] forall f xs. mapMaybe f xs
+                    = build (\c n -> foldr (mapMaybeFB c f) n xs)
+"mapMaybeList" [1]  forall f. foldr (mapMaybeFB (:) f) [] = mapMaybe f
+  #-}
 -- 
--- {-# NOINLINE [0] mapMaybeFB #-}
--- mapMaybeFB :: (b -> r -> r) -> (a -> Maybe b) -> a -> r -> r
--- mapMaybeFB cons f x next = case f x of
---   Nothing -> next
---   Just r -> cons r next
+{-# NOINLINE [0] mapMaybeFB #-}
+mapMaybeFB :: (b -> r -> r) -> (a -> Maybe b) -> a -> r -> r
+mapMaybeFB cons f x next = case f x of
+  Nothing -> next
+  Just r -> cons r next

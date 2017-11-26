@@ -1,5 +1,5 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -14,22 +14,22 @@
 -- -- Functors: uniform action over a parameterized type, generalizing the
 -- -- 'Data.List.map' function on lists.
 -- 
--- module Data.Functor
---     (
---       Functor(fmap),
---       (<$),
---       ($>),
---       (<$>),
+module Data.Functor
+    (
+      Functor(fmap),
+      (<$),
+      ($>),
+      (<$>),
 --       void,
---     ) where
+    ) where
 -- 
--- import GHC.Base ( Functor(..), flip )
+import GHC.Base ( Functor(..), flip )
 -- 
 -- -- $setup
 -- -- Allow the use of Prelude in doctests.
 -- -- >>> import Prelude
 -- 
--- infixl 4 <$>
+infixl 4 <$>
 -- 
 -- -- | An infix synonym for 'fmap'.
 -- --
@@ -69,10 +69,10 @@
 -- -- >>> even <$> (2,2)
 -- -- (2,True)
 -- --
--- (<$>) :: Functor f => (a -> b) -> f a -> f b
--- (<$>) = fmap
+(<$>) :: Functor f => (a -> b) -> f a -> f b
+(<$>) = fmap
 -- 
--- infixl 4 $>
+infixl 4 $>
 -- 
 -- -- | Flipped version of '<$'.
 -- --
@@ -105,8 +105,8 @@
 -- -- >>> (1,2) $> "foo"
 -- -- (1,"foo")
 -- --
--- ($>) :: Functor f => f a -> b -> f b
--- ($>) = flip (<$)
+($>) :: Functor f => f a -> b -> f b
+($>) = flip (<$)
 -- 
 -- -- | @'void' value@ discards or ignores the result of evaluation, such
 -- -- as the return value of an 'System.IO.IO' action.

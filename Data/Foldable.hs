@@ -1,10 +1,10 @@
--- {-# LANGUAGE DeriveFoldable #-}
--- {-# LANGUAGE FlexibleInstances #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
--- {-# LANGUAGE ScopedTypeVariables #-}
--- {-# LANGUAGE StandaloneDeriving #-}
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE TypeOperators #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -20,9 +20,9 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.Foldable (
+module Data.Foldable (
 --     -- * Folds
---     Foldable(..),
+    Foldable(..),
 --     -- ** Special biased folds
 --     foldrM,
 --     foldlM,
@@ -47,16 +47,16 @@
 --     maximumBy,
 --     minimumBy,
 --     -- ** Searches
---     notElem,
+    notElem,
 --     find
---     ) where
+    ) where
 -- 
 -- import Data.Bool
 -- import Data.Either
 -- import Data.Eq
 -- import qualified GHC.List as List
--- import Data.Maybe
--- import Data.Monoid
+import Data.Maybe
+import Data.Monoid
 -- import Data.Ord
 -- import Data.Proxy
 -- 
@@ -64,11 +64,11 @@
 --                   foldlElems, foldrElems,
 --                   foldlElems', foldrElems',
 --                   foldl1Elems, foldr1Elems)
--- import GHC.Base hiding ( foldr )
+import GHC.Base hiding ( foldr )
 -- import GHC.Generics
 -- import GHC.Num  ( Num(..) )
 -- 
--- infix  4 `elem`, `notElem`
+infix  4 `elem`, `notElem`
 -- 
 -- -- | Data structures that can be folded.
 -- --
@@ -114,19 +114,19 @@
 -- --
 -- -- > foldMap f . fmap g = foldMap (f . g)
 -- 
--- class Foldable t where
---     {-# MINIMAL foldMap | foldr #-}
+class Foldable t where
+    {-# MINIMAL foldMap | foldr #-}
 -- 
 --     -- | Combine the elements of a structure using a monoid.
---     fold :: Monoid m => t m -> m
---     fold = foldMap id
+    fold :: Monoid m => t m -> m
+    fold = foldMap id
 -- 
 --     -- | Map each element of the structure to a monoid,
 --     -- and combine the results.
---     foldMap :: Monoid m => (a -> m) -> t a -> m
---     {-# INLINE foldMap #-}
+    foldMap :: Monoid m => (a -> m) -> t a -> m
+    {-# INLINE foldMap #-}
 --     -- This INLINE allows more list functions to fuse. See Trac #9848.
---     foldMap f = foldr (mappend . f) mempty
+    foldMap f = foldr (mappend . f) mempty
 -- 
 --     -- | Right-associative fold of a structure.
 --     --
@@ -145,15 +145,15 @@
 --     --
 --     -- @foldr f z = 'List.foldr' f z . 'toList'@
 --     --
---     foldr :: (a -> b -> b) -> b -> t a -> b
---     foldr f z t = appEndo (foldMap (Endo #. f) t) z
+    foldr :: (a -> b -> b) -> b -> t a -> b
+    foldr f z t = appEndo (foldMap (Endo #. f) t) z
 -- 
 --     -- | Right-associative fold of a structure, but with strict application of
 --     -- the operator.
 --     --
---     foldr' :: (a -> b -> b) -> b -> t a -> b
---     foldr' f z0 xs = foldl f' id xs z0
---       where f' k x z = k $! f x z
+    foldr' :: (a -> b -> b) -> b -> t a -> b
+    foldr' f z0 xs = foldl f' id xs z0
+      where f' k x z = k $! f x z
 -- 
 --     -- | Left-associative fold of a structure.
 --     --
@@ -180,8 +180,8 @@
 --     --
 --     -- @foldl f z = 'List.foldl' f z . 'toList'@
 --     --
---     foldl :: (b -> a -> b) -> b -> t a -> b
---     foldl f z t = appEndo (getDual (foldMap (Dual . Endo . flip f) t)) z
+    foldl :: (b -> a -> b) -> b -> t a -> b
+    foldl f z t = appEndo (getDual (foldMap (Dual . Endo . flip f) t)) z
 --     -- There's no point mucking around with coercions here,
 --     -- because flip forces us to build a new function anyway.
 -- 
@@ -198,38 +198,38 @@
 --     --
 --     -- @foldl f z = 'List.foldl'' f z . 'toList'@
 --     --
---     foldl' :: (b -> a -> b) -> b -> t a -> b
---     foldl' f z0 xs = foldr f' id xs z0
---       where f' x k z = k $! f z x
+    foldl' :: (b -> a -> b) -> b -> t a -> b
+    foldl' f z0 xs = foldr f' id xs z0
+      where f' x k z = k $! f z x
 -- 
 --     -- | A variant of 'foldr' that has no base case,
 --     -- and thus may only be applied to non-empty structures.
 --     --
 --     -- @'foldr1' f = 'List.foldr1' f . 'toList'@
---     foldr1 :: (a -> a -> a) -> t a -> a
---     foldr1 f xs = fromMaybe (errorWithoutStackTrace "foldr1: empty structure")
---                     (foldr mf Nothing xs)
---       where
---         mf x m = Just (case m of
---                          Nothing -> x
---                          Just y  -> f x y)
+    foldr1 :: (a -> a -> a) -> t a -> a
+    foldr1 f xs = fromMaybe (errorWithoutStackTrace "foldr1: empty structure")
+                    (foldr mf Nothing xs)
+      where
+        mf x m = Just (case m of
+                         Nothing -> x
+                         Just y  -> f x y)
 -- 
 --     -- | A variant of 'foldl' that has no base case,
 --     -- and thus may only be applied to non-empty structures.
 --     --
 --     -- @'foldl1' f = 'List.foldl1' f . 'toList'@
---     foldl1 :: (a -> a -> a) -> t a -> a
---     foldl1 f xs = fromMaybe (errorWithoutStackTrace "foldl1: empty structure")
---                     (foldl mf Nothing xs)
---       where
---         mf m y = Just (case m of
---                          Nothing -> y
---                          Just x  -> f x y)
+    foldl1 :: (a -> a -> a) -> t a -> a
+    foldl1 f xs = fromMaybe (errorWithoutStackTrace "foldl1: empty structure")
+                    (foldl mf Nothing xs)
+      where
+        mf m y = Just (case m of
+                         Nothing -> y
+                         Just x  -> f x y)
 -- 
 --     -- | List of elements of a structure, from left to right.
---     toList :: t a -> [a]
---     {-# INLINE toList #-}
---     toList t = build (\ c n -> foldr c n t)
+    toList :: t a -> [a]
+    {-# INLINE toList #-}
+    toList t = build (\ c n -> foldr c n t)
 -- 
 --     -- | Test whether the structure is empty. The default implementation is
 --     -- optimized for structures that are similar to cons-lists, because there
@@ -244,8 +244,8 @@
 --     length = foldl' (\c _ -> c+1) 0
 -- 
 --     -- | Does the element occur in the structure?
---     elem :: Eq a => a -> t a -> Bool
---     elem = any . (==)
+    elem :: Eq a => a -> t a -> Bool
+    elem = any . (==)
 -- 
 --     -- | The largest element of a non-empty structure.
 --     maximum :: forall a . Ord a => t a -> a
@@ -557,8 +557,8 @@
 -- or = getAny #. foldMap Any
 -- 
 -- -- | Determines whether any element of the structure satisfies the predicate.
--- any :: Foldable t => (a -> Bool) -> t a -> Bool
--- any p = getAny #. foldMap (Any #. p)
+any :: Foldable t => (a -> Bool) -> t a -> Bool
+any p = getAny #. foldMap (Any #. p)
 -- 
 -- -- | Determines whether all elements of the structure satisfy the predicate.
 -- all :: Foldable t => (a -> Bool) -> t a -> Bool
@@ -581,8 +581,8 @@
 --                         _  -> x
 -- 
 -- -- | 'notElem' is the negation of 'elem'.
--- notElem :: (Foldable t, Eq a) => a -> t a -> Bool
--- notElem x = not . elem x
+notElem :: (Foldable t, Eq a) => a -> t a -> Bool
+notElem x = not . elem x
 -- 
 -- -- | The 'find' function takes a predicate and a structure and returns
 -- -- the leftmost element of the structure matching the predicate, or
@@ -591,9 +591,9 @@
 -- find p = getFirst . foldMap (\ x -> First (if p x then Just x else Nothing))
 -- 
 -- -- See Note [Function coercion]
--- (#.) :: Coercible b c => (b -> c) -> (a -> b) -> (a -> c)
--- (#.) _f = coerce
--- {-# INLINE (#.) #-}
+(#.) :: Coercible b c => (b -> c) -> (a -> b) -> (a -> c)
+(#.) _f = coerce
+{-# INLINE (#.) #-}
 -- 
 -- {-
 -- Note [Function coercion]

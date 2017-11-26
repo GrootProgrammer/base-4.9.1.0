@@ -1,5 +1,5 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -15,8 +15,8 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.List
---    (
+module Data.List
+   (
 --    -- * Basic functions
 -- 
 --      (++)
@@ -207,7 +207,7 @@
 --    , genericIndex
 --    , genericReplicate
 -- 
---    ) where
+   ) where
 -- 
 -- import Data.Foldable
 -- import Data.Traversable

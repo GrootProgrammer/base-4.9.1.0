@@ -1,9 +1,9 @@
--- {-# LANGUAGE DeriveTraversable #-}
--- {-# LANGUAGE FlexibleInstances #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
--- {-# LANGUAGE StandaloneDeriving #-}
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE TypeOperators #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -37,9 +37,9 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.Traversable (
+module Data.Traversable (
 --     -- * The 'Traversable' class
---     Traversable(..),
+    Traversable(..),
 --     -- * Utility functions
 --     for,
 --     forM,
@@ -48,20 +48,20 @@
 --     -- * General definitions for superclass methods
 --     fmapDefault,
 --     foldMapDefault,
---     ) where
+    ) where
 -- 
 -- -- It is convenient to use 'Const' here but this means we must
 -- -- define a few instances here which really belong in Control.Applicative
 -- import Control.Applicative ( Const(..), ZipList(..) )
 -- import Data.Either ( Either(..) )
--- import Data.Foldable ( Foldable )
--- import Data.Functor
+import Data.Foldable ( Foldable )
+import Data.Functor
 -- import Data.Monoid ( Dual(..), Sum(..), Product(..), First(..), Last(..) )
 -- import Data.Proxy ( Proxy(..) )
 -- 
 -- import GHC.Arr
--- import GHC.Base ( Applicative(..), Monad(..), Monoid, Maybe(..),
---                   ($), (.), id, flip )
+import GHC.Base ( Applicative(..), Monad(..), Monoid, Maybe(..),
+                  ($), (.), id, flip )
 -- import GHC.Generics
 -- import qualified GHC.List as List ( foldr )
 -- 
@@ -148,32 +148,32 @@
 -- --    equivalent to traversal with a constant applicative functor
 -- --    ('foldMapDefault').
 -- --
--- class (Functor t, Foldable t) => Traversable t where
---     {-# MINIMAL traverse | sequenceA #-}
+class (Functor t, Foldable t) => Traversable t where
+    {-# MINIMAL traverse | sequenceA #-}
 -- 
 --     -- | Map each element of a structure to an action, evaluate these actions
 --     -- from left to right, and collect the results. For a version that ignores
 --     -- the results see 'Data.Foldable.traverse_'.
---     traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
---     traverse f = sequenceA . fmap f
+    traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
+    traverse f = sequenceA . fmap f
 -- 
 --     -- | Evaluate each action in the structure from left to right, and
 --     -- and collect the results. For a version that ignores the results
 --     -- see 'Data.Foldable.sequenceA_'.
---     sequenceA :: Applicative f => t (f a) -> f (t a)
---     sequenceA = traverse id
+    sequenceA :: Applicative f => t (f a) -> f (t a)
+    sequenceA = traverse id
 -- 
 --     -- | Map each element of a structure to a monadic action, evaluate
 --     -- these actions from left to right, and collect the results. For
 --     -- a version that ignores the results see 'Data.Foldable.mapM_'.
---     mapM :: Monad m => (a -> m b) -> t a -> m (t b)
---     mapM = traverse
+    mapM :: Monad m => (a -> m b) -> t a -> m (t b)
+    mapM = traverse
 -- 
 --     -- | Evaluate each monadic action in the structure from left to
 --     -- right, and collect the results. For a version that ignores the
 --     -- results see 'Data.Foldable.sequence_'.
---     sequence :: Monad m => t (m a) -> m (t a)
---     sequence = sequenceA
+    sequence :: Monad m => t (m a) -> m (t a)
+    sequence = sequenceA
 -- 
 -- -- instances for Prelude types
 -- 
