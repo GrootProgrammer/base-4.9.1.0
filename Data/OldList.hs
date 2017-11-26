@@ -1,5 +1,5 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, ScopedTypeVariables, MagicHash #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, ScopedTypeVariables, MagicHash #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -15,22 +15,22 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.OldList
---    (
+module Data.OldList
+   (
 --    -- * Basic functions
 -- 
---      (++)
---    , head
---    , last
---    , tail
---    , init
---    , uncons
---    , null
---    , length
+     (++)
+   , head
+   , last
+   , tail
+   , init
+   , uncons
+   , null
+   , length
 -- 
 --    -- * List transformations
---    , map
---    , reverse
+   , map
+   , reverse
 -- 
 --    , intersperse
 --    , intercalate
@@ -41,25 +41,25 @@
 -- 
 --    -- * Reducing lists (folds)
 -- 
---    , foldl
---    , foldl'
---    , foldl1
---    , foldl1'
---    , foldr
---    , foldr1
+   , foldl
+   , foldl'
+   , foldl1
+   , foldl1'
+   , foldr
+   , foldr1
 -- 
 --    -- ** Special folds
 -- 
---    , concat
---    , concatMap
---    , and
---    , or
---    , any
---    , all
---    , sum
---    , product
---    , maximum
---    , minimum
+   , concat
+   , concatMap
+   , and
+   , or
+   , any
+   , all
+   , sum
+   , product
+   , maximum
+   , minimum
 -- 
 --    -- * Building lists
 -- 
@@ -206,7 +206,7 @@
 --    , genericIndex
 --    , genericReplicate
 -- 
---    ) where
+   ) where
 -- 
 -- import Data.Maybe
 -- import Data.Bits        ( (.&.) )
@@ -216,8 +216,8 @@
 -- 
 -- import GHC.Num
 -- import GHC.Real
--- import GHC.List
--- import GHC.Base
+import GHC.List
+import GHC.Base
 -- 
 -- infix 5 \\ -- comment to fool cpp: https://www.haskell.org/ghc/docs/latest/html/users_guide/options-phases.html#cpp-string-gaps
 -- 

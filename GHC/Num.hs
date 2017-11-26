@@ -1,6 +1,6 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -16,26 +16,26 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Num (module GHC.Num, module GHC.Integer) where
+module GHC.Num (module GHC.Num, module GHC.Integer) where
 -- 
--- import GHC.Base
--- import GHC.Integer
+import GHC.Base
+import GHC.Integer
 -- 
--- infixl 7  *
--- infixl 6  +, -
+infixl 7  *
+infixl 6  +, -
 -- 
--- default ()              -- Double isn't available yet,
+default ()              -- Double isn't available yet,
 --                         -- and we shouldn't be using defaults anyway
 -- 
 -- -- | Basic numeric class.
--- class  Num a  where
---     {-# MINIMAL (+), (*), abs, signum, fromInteger, (negate | (-)) #-}
+class  Num a  where
+    {-# MINIMAL (+), (*), abs, signum, fromInteger, (negate | (-)) #-}
 -- 
---     (+), (-), (*)       :: a -> a -> a
+    (+), (-), (*)       :: a -> a -> a
 --     -- | Unary negation.
---     negate              :: a -> a
+    negate              :: a -> a
 --     -- | Absolute value.
---     abs                 :: a -> a
+    abs                 :: a -> a
 --     -- | Sign of a number.
 --     -- The functions 'abs' and 'signum' should satisfy the law:
 --     --
@@ -43,40 +43,40 @@
 --     --
 --     -- For real numbers, the 'signum' is either @-1@ (negative), @0@ (zero)
 --     -- or @1@ (positive).
---     signum              :: a -> a
+    signum              :: a -> a
 --     -- | Conversion from an 'Integer'.
 --     -- An integer literal represents the application of the function
 --     -- 'fromInteger' to the appropriate value of type 'Integer',
 --     -- so such literals have type @('Num' a) => a@.
---     fromInteger         :: Integer -> a
+    fromInteger         :: Integer -> a
 -- 
---     {-# INLINE (-) #-}
---     {-# INLINE negate #-}
---     x - y               = x + negate y
---     negate x            = 0 - x
+    {-# INLINE (-) #-}
+    {-# INLINE negate #-}
+    x - y               = x + negate y
+    negate x            = (fromInteger 0) - x
 -- 
 -- -- | the same as @'flip' ('-')@.
 -- --
 -- -- Because @-@ is treated specially in the Haskell grammar,
 -- -- @(-@ /e/@)@ is not a section, but an application of prefix negation.
 -- -- However, @('subtract'@ /exp/@)@ is equivalent to the disallowed section.
--- {-# INLINE subtract #-}
--- subtract :: (Num a) => a -> a -> a
--- subtract x y = y - x
+{-# INLINE subtract #-}
+subtract :: (Num a) => a -> a -> a
+subtract x y = y - x
 -- 
--- instance  Num Int  where
---     I# x + I# y = I# (x +# y)
---     I# x - I# y = I# (x -# y)
---     negate (I# x) = I# (negateInt# x)
---     I# x * I# y = I# (x *# y)
---     abs n  = if n `geInt` 0 then n else negate n
+instance  Num Int  where
+    I# x + I# y = I# (x +# y)
+    I# x - I# y = I# (x -# y)
+    negate (I# x) = I# (negateInt# x)
+    I# x * I# y = I# (x *# y)
+    abs n  = if n `geInt` 0 then n else negate n
 -- 
---     signum n | n `ltInt` 0 = negate 1
---              | n `eqInt` 0 = 0
---              | otherwise   = 1
+    signum n | n `ltInt` 0 = negate 1
+             | n `eqInt` 0 = 0
+             | otherwise   = 1
 -- 
---     {-# INLINE fromInteger #-}   -- Just to be sure!
---     fromInteger i = I# (integerToInt i)
+    {-# INLINE fromInteger #-}   -- Just to be sure!
+    fromInteger i = I# (integerToInt i)
 -- 
 -- instance Num Word where
 --     (W# x#) + (W# y#)      = W# (x# `plusWord#` y#)

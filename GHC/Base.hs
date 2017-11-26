@@ -937,8 +937,8 @@ map f (x:xs) = f x : map f xs
 -- --
 -- -- >  f x | x < 0     = ...
 -- -- >      | otherwise = ...
--- otherwise               :: Bool
--- otherwise               =  True
+otherwise               :: Bool
+otherwise               =  True
 -- 
 -- ----------------------------------------------
 -- -- Type Char and String

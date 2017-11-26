@@ -19,18 +19,18 @@ module Data.List
    (
 --    -- * Basic functions
 -- 
---      (++)
---    , head
---    , last
---    , tail
---    , init
---    , uncons
---    , null
---    , length
+     (++)
+   , head
+   , last
+   , tail
+   , init
+   , uncons
+   , null
+   , length
 -- 
 --    -- * List transformations
---    , map
---    , reverse
+   , map
+   , reverse
 -- 
 --    , intersperse
 --    , intercalate
@@ -41,25 +41,25 @@ module Data.List
 -- 
 --    -- * Reducing lists (folds)
 -- 
---    , foldl
---    , foldl'
---    , foldl1
---    , foldl1'
---    , foldr
---    , foldr1
+   , foldl
+   , foldl'
+   , foldl1
+   , foldl1'
+   , foldr
+   , foldr1
 -- 
 --    -- ** Special folds
 -- 
---    , concat
---    , concatMap
---    , and
---    , or
---    , any
---    , all
---    , sum
---    , product
---    , maximum
---    , minimum
+   , concat
+   , concatMap
+   , and
+   , or
+   , any
+   , all
+   , sum
+   , product
+   , maximum
+   , minimum
 -- 
 --    -- * Building lists
 -- 
@@ -209,15 +209,15 @@ module Data.List
 -- 
    ) where
 -- 
--- import Data.Foldable
--- import Data.Traversable
+import Data.Foldable
+import Data.Traversable
 -- 
--- import Data.OldList hiding ( all, and, any, concat, concatMap, elem, find,
---                              foldl, foldl1, foldl', foldr, foldr1, mapAccumL,
---                              mapAccumR, maximum, maximumBy, minimum, minimumBy,
---                              length, notElem, null, or, product, sum )
+import Data.OldList hiding ( all, and, any, concat, concatMap, elem, find,
+                             foldl, foldl1, foldl', foldr, foldr1, mapAccumL,
+                             mapAccumR, maximum, maximumBy, minimum, minimumBy,
+                             length, notElem, null, or, product, sum )
 -- 
--- import GHC.Base ( Bool(..), Eq((==)), otherwise )
+import GHC.Base ( Bool(..), Eq((==)), otherwise )
 -- 
 -- -- | The 'isSubsequenceOf' function takes two lists and returns 'True' if all
 -- -- the elements of the first list occur, in order, in the second. The
