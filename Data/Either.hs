@@ -18,16 +18,16 @@
 -- -----------------------------------------------------------------------------
 -- 
 module Data.Either (
---    Either(..),
---    either,
---    lefts,
---    rights,
---    isLeft,
---    isRight,
---    partitionEithers,
+   Either(..),
+   either,
+   lefts,
+   rights,
+   isLeft,
+   isRight,
+   -- partitionEithers,
  ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.Show
 -- import GHC.Read
 -- 
@@ -121,21 +121,21 @@ module Data.Either (
 -- Left "parse error"
 -- 
 -- -}
--- data  Either a b  =  Left a | Right b
+data  Either a b  =  Left a | Right b
 --   deriving (Eq, Ord, Read, Show)
 -- 
--- instance Functor (Either a) where
---     fmap _ (Left x) = Left x
---     fmap f (Right y) = Right (f y)
+instance Functor (Either a) where
+    fmap _ (Left x) = Left x
+    fmap f (Right y) = Right (f y)
 -- 
--- instance Applicative (Either e) where
---     pure          = Right
---     Left  e <*> _ = Left e
---     Right f <*> r = fmap f r
+instance Applicative (Either e) where
+    pure          = Right
+    Left  e <*> _ = Left e
+    Right f <*> r = fmap f r
 -- 
--- instance Monad (Either e) where
---     Left  l >>= _ = Left l
---     Right r >>= k = k r
+instance Monad (Either e) where
+    Left  l >>= _ = Left l
+    Right r >>= k = k r
 -- 
 -- -- | Case analysis for the 'Either' type.
 -- -- If the value is @'Left' a@, apply the first function to @a@;
@@ -155,9 +155,9 @@ module Data.Either (
 -- -- >>> either length (*2) n
 -- -- 6
 -- --
--- either                  :: (a -> c) -> (b -> c) -> Either a b -> c
--- either f _ (Left x)     =  f x
--- either _ g (Right y)    =  g y
+either                  :: (a -> c) -> (b -> c) -> Either a b -> c
+either f _ (Left x)     =  f x
+either _ g (Right y)    =  g y
 -- 
 -- 
 -- -- | Extracts from a list of 'Either' all the 'Left' elements.
@@ -171,8 +171,8 @@ module Data.Either (
 -- -- >>> lefts list
 -- -- ["foo","bar","baz"]
 -- --
--- lefts   :: [Either a b] -> [a]
--- lefts x = [a | Left a <- x]
+lefts   :: [Either a b] -> [a]
+lefts x = [a | Left a <- x]
 -- 
 -- -- | Extracts from a list of 'Either' all the 'Right' elements.
 -- -- All the 'Right' elements are extracted in order.
@@ -185,8 +185,8 @@ module Data.Either (
 -- -- >>> rights list
 -- -- [3,7]
 -- --
--- rights   :: [Either a b] -> [b]
--- rights x = [a | Right a <- x]
+rights   :: [Either a b] -> [b]
+rights x = [a | Right a <- x]
 -- 
 -- -- | Partitions a list of 'Either' into two lists.
 -- -- All the 'Left' elements are extracted, in order, to the first
@@ -242,9 +242,9 @@ module Data.Either (
 -- -- >>> report (Left "parse error")
 -- -- ERROR
 -- --
--- isLeft :: Either a b -> Bool
--- isLeft (Left  _) = True
--- isLeft (Right _) = False
+isLeft :: Either a b -> Bool
+isLeft (Left  _) = True
+isLeft (Right _) = False
 -- 
 -- -- | Return `True` if the given value is a `Right`-value, `False` otherwise.
 -- --
@@ -273,9 +273,9 @@ module Data.Either (
 -- -- >>> report (Right 1)
 -- -- SUCCESS
 -- --
--- isRight :: Either a b -> Bool
--- isRight (Left  _) = False
--- isRight (Right _) = True
+isRight :: Either a b -> Bool
+isRight (Left  _) = False
+isRight (Right _) = True
 -- 
 -- -- instance for the == Boolean type-level equality operator
 -- type family EqEither a b where

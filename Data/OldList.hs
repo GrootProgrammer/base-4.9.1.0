@@ -64,37 +64,37 @@ module Data.OldList
 --    -- * Building lists
 -- 
 --    -- ** Scans
---    , scanl
---    , scanl'
---    , scanl1
---    , scanr
---    , scanr1
+   , scanl
+   , scanl'
+   , scanl1
+   , scanr
+   , scanr1
 -- 
 --    -- ** Accumulating maps
---    , mapAccumL
---    , mapAccumR
+   , mapAccumL
+   , mapAccumR
 -- 
 --    -- ** Infinite lists
---    , iterate
---    , repeat
---    , replicate
---    , cycle
+   , iterate
+   , repeat
+   , replicate
+   , cycle
 -- 
 --    -- ** Unfolding
---    , unfoldr
+   , unfoldr
 -- 
 --    -- * Sublists
 -- 
 --    -- ** Extracting sublists
---    , take
---    , drop
---    , splitAt
+   , take
+   , drop
+   , splitAt
 -- 
---    , takeWhile
---    , dropWhile
---    , dropWhileEnd
---    , span
---    , break
+   , takeWhile
+   , dropWhile
+   , dropWhileEnd
+   , span
+   , break
 -- 
 --    , stripPrefix
 -- 
@@ -111,20 +111,20 @@ module Data.OldList
 --    -- * Searching lists
 -- 
 --    -- ** Searching by equality
---    , elem
---    , notElem
---    , lookup
+   , elem
+   , notElem
+   , lookup
 -- 
 --    -- ** Searching with a predicate
---    , find
---    , filter
---    , partition
+   , find
+   , filter
+   , partition
 -- 
 --    -- * Indexing lists
 --    -- | These functions treat a list @xs@ as a indexed collection,
 --    -- with indices ranging from 0 to @'length' xs - 1@.
 -- 
---    , (!!)
+   , (!!)
 -- 
 --    , elemIndex
 --    , elemIndices
@@ -134,25 +134,25 @@ module Data.OldList
 -- 
 --    -- * Zipping and unzipping lists
 -- 
---    , zip
---    , zip3
+   , zip
+   , zip3
 --    , zip4, zip5, zip6, zip7
 -- 
---    , zipWith
---    , zipWith3
+   , zipWith
+   , zipWith3
 --    , zipWith4, zipWith5, zipWith6, zipWith7
 -- 
---    , unzip
---    , unzip3
+   , unzip
+   , unzip3
 --    , unzip4, unzip5, unzip6, unzip7
 -- 
 --    -- * Special lists
 -- 
 --    -- ** Functions on strings
---    , lines
---    , words
---    , unlines
---    , unwords
+   , lines
+   , words
+   , unlines
+   , unwords
 -- 
 --    -- ** \"Set\" operations
 -- 
@@ -208,9 +208,9 @@ module Data.OldList
 -- 
    ) where
 -- 
--- import Data.Maybe
+import Data.Maybe
 -- import Data.Bits        ( (.&.) )
--- import Data.Char        ( isSpace )
+import Data.Char        ( isSpace )
 -- import Data.Ord         ( comparing )
 -- import Data.Tuple       ( fst, snd )
 -- 
@@ -232,8 +232,8 @@ import GHC.Base
 -- -- > dropWhileEnd isSpace ("foo\n" ++ undefined) == "foo" ++ undefined
 -- --
 -- -- @since 4.5.0.0
--- dropWhileEnd :: (a -> Bool) -> [a] -> [a]
--- dropWhileEnd p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
+dropWhileEnd :: (a -> Bool) -> [a] -> [a]
+dropWhileEnd p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 -- 
 -- -- | The 'stripPrefix' function drops the given prefix from a list.
 -- -- It returns 'Nothing' if the list did not start with the prefix
@@ -263,8 +263,8 @@ import GHC.Base
 -- -- | The 'find' function takes a predicate and a list and returns the
 -- -- first element in the list matching the predicate, or 'Nothing' if
 -- -- there is no such element.
--- find            :: (a -> Bool) -> [a] -> Maybe a
--- find p          = listToMaybe . filter p
+find            :: (a -> Bool) -> [a] -> Maybe a
+find p          = listToMaybe . filter p
 -- 
 -- -- | The 'findIndex' function takes a predicate and a list and returns
 -- -- the index of the first element in the list satisfying the predicate,
@@ -485,45 +485,45 @@ import GHC.Base
 -- --
 -- -- > partition p xs == (filter p xs, filter (not . p) xs)
 -- 
--- partition               :: (a -> Bool) -> [a] -> ([a],[a])
--- {-# INLINE partition #-}
--- partition p xs = foldr (select p) ([],[]) xs
+partition               :: (a -> Bool) -> [a] -> ([a],[a])
+{-# INLINE partition #-}
+partition p xs = foldr (select p) ([],[]) xs
 -- 
--- select :: (a -> Bool) -> a -> ([a], [a]) -> ([a], [a])
--- select p x ~(ts,fs) | p x       = (x:ts,fs)
---                     | otherwise = (ts, x:fs)
+select :: (a -> Bool) -> a -> ([a], [a]) -> ([a], [a])
+select p x ~(ts,fs) | p x       = (x:ts,fs)
+                    | otherwise = (ts, x:fs)
 -- 
 -- -- | The 'mapAccumL' function behaves like a combination of 'map' and
 -- -- 'foldl'; it applies a function to each element of a list, passing
 -- -- an accumulating parameter from left to right, and returning a final
 -- -- value of this accumulator together with the new list.
--- mapAccumL :: (acc -> x -> (acc, y)) -- Function of elt of input list
+mapAccumL :: (acc -> x -> (acc, y)) -- Function of elt of input list
 --                                     -- and accumulator, returning new
 --                                     -- accumulator and elt of result list
---           -> acc            -- Initial accumulator
---           -> [x]            -- Input list
---           -> (acc, [y])     -- Final accumulator and result list
--- {-# NOINLINE [1] mapAccumL #-}
--- mapAccumL _ s []        =  (s, [])
--- mapAccumL f s (x:xs)    =  (s'',y:ys)
---                            where (s', y ) = f s x
---                                  (s'',ys) = mapAccumL f s' xs
+          -> acc            -- Initial accumulator
+          -> [x]            -- Input list
+          -> (acc, [y])     -- Final accumulator and result list
+{-# NOINLINE [1] mapAccumL #-}
+mapAccumL _ s []        =  (s, [])
+mapAccumL f s (x:xs)    =  (s'',y:ys)
+                           where (s', y ) = f s x
+                                 (s'',ys) = mapAccumL f s' xs
 -- 
--- {-# RULES
--- "mapAccumL" [~1] forall f s xs . mapAccumL f s xs = foldr (mapAccumLF f) pairWithNil xs s
--- "mapAccumLList" [1] forall f s xs . foldr (mapAccumLF f) pairWithNil xs s = mapAccumL f s xs
---  #-}
+{-# RULES
+"mapAccumL" [~1] forall f s xs . mapAccumL f s xs = foldr (mapAccumLF f) pairWithNil xs s
+"mapAccumLList" [1] forall f s xs . foldr (mapAccumLF f) pairWithNil xs s = mapAccumL f s xs
+ #-}
 -- 
--- pairWithNil :: acc -> (acc, [y])
--- {-# INLINE [0] pairWithNil #-}
--- pairWithNil x = (x, [])
+pairWithNil :: acc -> (acc, [y])
+{-# INLINE [0] pairWithNil #-}
+pairWithNil x = (x, [])
 -- 
--- mapAccumLF :: (acc -> x -> (acc, y)) -> x -> (acc -> (acc, [y])) -> acc -> (acc, [y])
--- {-# INLINE [0] mapAccumLF #-}
--- mapAccumLF f = \x r -> oneShot (\s ->
---                          let (s', y)   = f s x
---                              (s'', ys) = r s'
---                          in (s'', y:ys))
+mapAccumLF :: (acc -> x -> (acc, y)) -> x -> (acc -> (acc, [y])) -> acc -> (acc, [y])
+{-# INLINE [0] mapAccumLF #-}
+mapAccumLF f = \x r -> oneShot (\s ->
+                         let (s', y)   = f s x
+                             (s'', ys) = r s'
+                         in (s'', y:ys))
 --   -- See Note [Left folds via right fold]
 -- 
 -- 
@@ -531,16 +531,16 @@ import GHC.Base
 -- -- 'foldr'; it applies a function to each element of a list, passing
 -- -- an accumulating parameter from right to left, and returning a final
 -- -- value of this accumulator together with the new list.
--- mapAccumR :: (acc -> x -> (acc, y))     -- Function of elt of input list
+mapAccumR :: (acc -> x -> (acc, y))     -- Function of elt of input list
 --                                         -- and accumulator, returning new
 --                                         -- accumulator and elt of result list
---             -> acc              -- Initial accumulator
---             -> [x]              -- Input list
---             -> (acc, [y])               -- Final accumulator and result list
--- mapAccumR _ s []        =  (s, [])
--- mapAccumR f s (x:xs)    =  (s'', y:ys)
---                            where (s'',y ) = f s' x
---                                  (s', ys) = mapAccumR f s xs
+            -> acc              -- Initial accumulator
+            -> [x]              -- Input list
+            -> (acc, [y])               -- Final accumulator and result list
+mapAccumR _ s []        =  (s, [])
+mapAccumR f s (x:xs)    =  (s'', y:ys)
+                           where (s'',y ) = f s' x
+                                 (s', ys) = mapAccumR f s xs
 -- 
 -- -- | The 'insert' function takes an element and a list and inserts the
 -- -- element into the list at the first position where it is less
@@ -1030,14 +1030,14 @@ import GHC.Base
 -- -- Doing a back-and-forth dance doesn't seem to accomplish anything if the
 -- -- final form has to be inlined in any case.
 -- 
--- unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
+unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
 -- 
--- {-# INLINE unfoldr #-} -- See Note [INLINE unfoldr]
--- unfoldr f b0 = build (\c n ->
---   let go b = case f b of
---                Just (a, new_b) -> a `c` go new_b
---                Nothing         -> n
---   in go b0)
+{-# INLINE unfoldr #-} -- See Note [INLINE unfoldr]
+unfoldr f b0 = build (\c n ->
+  let go b = case f b of
+               Just (a, new_b) -> a `c` go new_b
+               Nothing         -> n
+  in go b0)
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- Functions on strings
@@ -1058,24 +1058,24 @@ import GHC.Base
 -- -- > lines "one\ntwo\n" == ["one","two"]
 -- --
 -- -- Thus @'lines' s@ contains at least as many elements as newlines in @s@.
--- lines                   :: String -> [String]
--- lines ""                =  []
+lines                   :: String -> [String]
+lines ""                =  []
 -- -- Somehow GHC doesn't detect the selector thunks in the below code,
 -- -- so s' keeps a reference to the first line via the pair and we have
 -- -- a space leak (cf. #4334).
 -- -- So we need to make GHC see the selector thunks with a trick.
--- lines s                 =  cons (case break (== '\n') s of
---                                     (l, s') -> (l, case s' of
---                                                     []      -> []
---                                                     _:s''   -> lines s''))
---   where
---     cons ~(h, t)        =  h : t
+lines s                 =  cons (case break (== '\n') s of
+                                    (l, s') -> (l, case s' of
+                                                    []      -> []
+                                                    _:s''   -> lines s''))
+  where
+    cons ~(h, t)        =  h : t
 -- 
 -- -- | 'unlines' is an inverse operation to 'lines'.
 -- -- It joins lines, after appending a terminating newline to each.
--- unlines                 :: [String] -> String
+unlines                 :: [String] -> String
 -- #ifdef USE_REPORT_PRELUDE
--- unlines                 =  concatMap (++ "\n")
+unlines                 =  concatMap (++ "\n")
 -- #else
 -- -- HBC version (stolen)
 -- -- here's a more efficient version
@@ -1085,33 +1085,33 @@ import GHC.Base
 -- 
 -- -- | 'words' breaks a string up into a list of words, which were delimited
 -- -- by white space.
--- words                   :: String -> [String]
--- {-# NOINLINE [1] words #-}
--- words s                 =  case dropWhile {-partain:Char.-}isSpace s of
---                                 "" -> []
---                                 s' -> w : words s''
---                                       where (w, s'') =
---                                              break {-partain:Char.-}isSpace s'
+words                   :: String -> [String]
+{-# NOINLINE [1] words #-}
+words s                 =  case dropWhile {-partain:Char.-}isSpace s of
+                                "" -> []
+                                s' -> w : words s''
+                                      where (w, s'') =
+                                             break {-partain:Char.-}isSpace s'
 -- 
--- {-# RULES
--- "words" [~1] forall s . words s = build (\c n -> wordsFB c n s)
--- "wordsList" [1] wordsFB (:) [] = words
---  #-}
--- wordsFB :: ([Char] -> b -> b) -> b -> String -> b
--- {-# NOINLINE [0] wordsFB #-}
--- wordsFB c n = go
---   where
---     go s = case dropWhile isSpace s of
---              "" -> n
---              s' -> w `c` go s''
---                    where (w, s'') = break isSpace s'
+{-# RULES
+"words" [~1] forall s . words s = build (\c n -> wordsFB c n s)
+"wordsList" [1] wordsFB (:) [] = words
+ #-}
+wordsFB :: ([Char] -> b -> b) -> b -> String -> b
+{-# NOINLINE [0] wordsFB #-}
+wordsFB c n = go
+  where
+    go s = case dropWhile isSpace s of
+             "" -> n
+             s' -> w `c` go s''
+                   where (w, s'') = break isSpace s'
 -- 
 -- -- | 'unwords' is an inverse operation to 'words'.
 -- -- It joins words with separating spaces.
--- unwords                 :: [String] -> String
+unwords                 :: [String] -> String
 -- #ifdef USE_REPORT_PRELUDE
--- unwords []              =  ""
--- unwords ws              =  foldr1 (\w s -> w ++ ' ':s) ws
+unwords []              =  ""
+unwords ws              =  foldr1 (\w s -> w ++ ' ':s) ws
 -- #else
 -- -- Here's a lazier version that can get the last element of a
 -- -- _|_-terminated list.

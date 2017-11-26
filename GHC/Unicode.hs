@@ -1,6 +1,6 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, StandaloneDeriving #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, StandaloneDeriving #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -18,20 +18,20 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Unicode (
---         GeneralCategory (..), generalCategory,
---         isAscii, isLatin1, isControl,
---         isAsciiUpper, isAsciiLower,
---         isPrint, isSpace,  isUpper,
---         isLower, isAlpha,  isDigit,
---         isOctDigit, isHexDigit, isAlphaNum,
---         isPunctuation, isSymbol,
---         toUpper, toLower, toTitle,
+module GHC.Unicode (
+        GeneralCategory (..), generalCategory,
+        isAscii, isLatin1, isControl,
+        isAsciiUpper, isAsciiLower,
+        isPrint, isSpace,  isUpper,
+        isLower, isAlpha,  isDigit,
+        isOctDigit, isHexDigit, isAlphaNum,
+        isPunctuation, isSymbol,
+        toUpper, toLower, toTitle,
 --         wgencat
---     ) where
+    ) where
 -- 
--- import GHC.Base
--- import GHC.Char        (chr)
+import GHC.Base
+import GHC.Char        (chr)
 -- import GHC.Real
 -- import GHC.Enum ( Enum (..), Bounded (..) )
 -- import GHC.Arr ( Ix (..) )
@@ -98,37 +98,37 @@
 -- --  >>> index (OtherLetter,Control) Format
 -- --  *** Exception: Error in array index
 -- --
--- data GeneralCategory
---         = UppercaseLetter       -- ^ Lu: Letter, Uppercase
---         | LowercaseLetter       -- ^ Ll: Letter, Lowercase
---         | TitlecaseLetter       -- ^ Lt: Letter, Titlecase
---         | ModifierLetter        -- ^ Lm: Letter, Modifier
---         | OtherLetter           -- ^ Lo: Letter, Other
---         | NonSpacingMark        -- ^ Mn: Mark, Non-Spacing
---         | SpacingCombiningMark  -- ^ Mc: Mark, Spacing Combining
---         | EnclosingMark         -- ^ Me: Mark, Enclosing
---         | DecimalNumber         -- ^ Nd: Number, Decimal
---         | LetterNumber          -- ^ Nl: Number, Letter
---         | OtherNumber           -- ^ No: Number, Other
---         | ConnectorPunctuation  -- ^ Pc: Punctuation, Connector
---         | DashPunctuation       -- ^ Pd: Punctuation, Dash
---         | OpenPunctuation       -- ^ Ps: Punctuation, Open
---         | ClosePunctuation      -- ^ Pe: Punctuation, Close
---         | InitialQuote          -- ^ Pi: Punctuation, Initial quote
---         | FinalQuote            -- ^ Pf: Punctuation, Final quote
---         | OtherPunctuation      -- ^ Po: Punctuation, Other
---         | MathSymbol            -- ^ Sm: Symbol, Math
---         | CurrencySymbol        -- ^ Sc: Symbol, Currency
---         | ModifierSymbol        -- ^ Sk: Symbol, Modifier
---         | OtherSymbol           -- ^ So: Symbol, Other
---         | Space                 -- ^ Zs: Separator, Space
---         | LineSeparator         -- ^ Zl: Separator, Line
---         | ParagraphSeparator    -- ^ Zp: Separator, Paragraph
---         | Control               -- ^ Cc: Other, Control
---         | Format                -- ^ Cf: Other, Format
---         | Surrogate             -- ^ Cs: Other, Surrogate
---         | PrivateUse            -- ^ Co: Other, Private Use
---         | NotAssigned           -- ^ Cn: Other, Not Assigned
+data GeneralCategory
+        = UppercaseLetter       -- ^ Lu: Letter, Uppercase
+        | LowercaseLetter       -- ^ Ll: Letter, Lowercase
+        | TitlecaseLetter       -- ^ Lt: Letter, Titlecase
+        | ModifierLetter        -- ^ Lm: Letter, Modifier
+        | OtherLetter           -- ^ Lo: Letter, Other
+        | NonSpacingMark        -- ^ Mn: Mark, Non-Spacing
+        | SpacingCombiningMark  -- ^ Mc: Mark, Spacing Combining
+        | EnclosingMark         -- ^ Me: Mark, Enclosing
+        | DecimalNumber         -- ^ Nd: Number, Decimal
+        | LetterNumber          -- ^ Nl: Number, Letter
+        | OtherNumber           -- ^ No: Number, Other
+        | ConnectorPunctuation  -- ^ Pc: Punctuation, Connector
+        | DashPunctuation       -- ^ Pd: Punctuation, Dash
+        | OpenPunctuation       -- ^ Ps: Punctuation, Open
+        | ClosePunctuation      -- ^ Pe: Punctuation, Close
+        | InitialQuote          -- ^ Pi: Punctuation, Initial quote
+        | FinalQuote            -- ^ Pf: Punctuation, Final quote
+        | OtherPunctuation      -- ^ Po: Punctuation, Other
+        | MathSymbol            -- ^ Sm: Symbol, Math
+        | CurrencySymbol        -- ^ Sc: Symbol, Currency
+        | ModifierSymbol        -- ^ Sk: Symbol, Modifier
+        | OtherSymbol           -- ^ So: Symbol, Other
+        | Space                 -- ^ Zs: Separator, Space
+        | LineSeparator         -- ^ Zl: Separator, Line
+        | ParagraphSeparator    -- ^ Zp: Separator, Paragraph
+        | Control               -- ^ Cc: Other, Control
+        | Format                -- ^ Cf: Other, Format
+        | Surrogate             -- ^ Cs: Other, Surrogate
+        | PrivateUse            -- ^ Co: Other, Private Use
+        | NotAssigned           -- ^ Cn: Other, Not Assigned
 --         deriving (Show, Eq, Ord, Enum, Bounded, Ix)
 -- 
 -- -- | The Unicode general category of the character. This relies on the
@@ -155,40 +155,46 @@
 -- -- >>> generalCategory ' '
 -- -- Space
 -- --
--- generalCategory :: Char -> GeneralCategory
+generalCategory :: Char -> GeneralCategory
+generalCategory = let x = x in x
 -- generalCategory c = toEnum $ fromIntegral $ wgencat $ fromIntegral $ ord c
 -- 
 -- -- | Selects the first 128 characters of the Unicode character set,
 -- -- corresponding to the ASCII character set.
--- isAscii                 :: Char -> Bool
+isAscii                 :: Char -> Bool
+isAscii = let x = x in x
 -- isAscii c               =  c <  '\x80'
 -- 
 -- -- | Selects the first 256 characters of the Unicode character set,
 -- -- corresponding to the ISO 8859-1 (Latin-1) character set.
--- isLatin1                :: Char -> Bool
+isLatin1                :: Char -> Bool
+isLatin1 = let x = x in x
 -- isLatin1 c              =  c <= '\xff'
 -- 
 -- -- | Selects ASCII lower-case letters,
 -- -- i.e. characters satisfying both 'isAscii' and 'isLower'.
--- isAsciiLower :: Char -> Bool
+isAsciiLower :: Char -> Bool
+isAsciiLower = let x = x in x
 -- isAsciiLower c          =  c >= 'a' && c <= 'z'
 -- 
 -- -- | Selects ASCII upper-case letters,
 -- -- i.e. characters satisfying both 'isAscii' and 'isUpper'.
--- isAsciiUpper :: Char -> Bool
+isAsciiUpper :: Char -> Bool
+isAsciiUpper = let x = x in x
 -- isAsciiUpper c          =  c >= 'A' && c <= 'Z'
 -- 
 -- -- | Selects control characters, which are the non-printing characters of
 -- -- the Latin-1 subset of Unicode.
--- isControl               :: Char -> Bool
+isControl               :: Char -> Bool
 -- 
 -- -- | Selects printable Unicode characters
 -- -- (letters, numbers, marks, punctuation, symbols and spaces).
--- isPrint                 :: Char -> Bool
+isPrint                 :: Char -> Bool
 -- 
 -- -- | Returns 'True' for any Unicode space character, and the control
 -- -- characters @\\t@, @\\n@, @\\r@, @\\f@, @\\v@.
--- isSpace                 :: Char -> Bool
+isSpace                 :: Char -> Bool
+isSpace = let x = x in x
 -- -- isSpace includes non-breaking space
 -- -- The magic 0x377 isn't really that magical. As of 2014, all the codepoints
 -- -- at or below 0x377 have been assigned, so we shouldn't have to worry about
@@ -204,25 +210,26 @@
 -- -- | Selects upper-case or title-case alphabetic Unicode characters (letters).
 -- -- Title case is used by a small number of letter ligatures like the
 -- -- single-character form of /Lj/.
--- isUpper                 :: Char -> Bool
+isUpper                 :: Char -> Bool
 -- 
 -- -- | Selects lower-case alphabetic Unicode characters (letters).
--- isLower                 :: Char -> Bool
+isLower                 :: Char -> Bool
 -- 
 -- -- | Selects alphabetic Unicode characters (lower-case, upper-case and
 -- -- title-case letters, plus letters of caseless scripts and modifiers letters).
 -- -- This function is equivalent to 'Data.Char.isLetter'.
--- isAlpha                 :: Char -> Bool
+isAlpha                 :: Char -> Bool
 -- 
 -- -- | Selects alphabetic or numeric digit Unicode characters.
 -- --
 -- -- Note that numeric digits outside the ASCII range are selected by this
 -- -- function but not by 'isDigit'.  Such digits may be part of identifiers
 -- -- but are not used by the printer and reader to represent numbers.
--- isAlphaNum              :: Char -> Bool
+isAlphaNum              :: Char -> Bool
 -- 
 -- -- | Selects ASCII digits, i.e. @\'0\'@..@\'9\'@.
--- isDigit                 :: Char -> Bool
+isDigit                 :: Char -> Bool
+isDigit = let x = x in x
 -- isDigit c               =  (fromIntegral (ord c - ord '0') :: Word) <= 9
 -- 
 -- -- We use an addition and an unsigned comparison instead of two signed
@@ -231,12 +238,14 @@
 -- -- that follow up with an actual conversion.
 -- 
 -- -- | Selects ASCII octal digits, i.e. @\'0\'@..@\'7\'@.
--- isOctDigit              :: Char -> Bool
+isOctDigit              :: Char -> Bool
+isOctDigit = let x = x in x
 -- isOctDigit c            =  (fromIntegral (ord c - ord '0') :: Word) <= 7
 -- 
 -- -- | Selects ASCII hexadecimal digits,
 -- -- i.e. @\'0\'@..@\'9\'@, @\'a\'@..@\'f\'@, @\'A\'@..@\'F\'@.
--- isHexDigit              :: Char -> Bool
+isHexDigit              :: Char -> Bool
+isHexDigit = let x = x in x
 -- isHexDigit c            =  isDigit c ||
 --                            (fromIntegral (ord c - ord 'A')::Word) <= 5 ||
 --                            (fromIntegral (ord c - ord 'a')::Word) <= 5
@@ -277,7 +286,8 @@
 -- -- >>> isPunctuation '—'
 -- -- True
 -- --
--- isPunctuation :: Char -> Bool
+isPunctuation :: Char -> Bool
+isPunctuation = let x = x in x
 -- isPunctuation c = case generalCategory c of
 --         ConnectorPunctuation    -> True
 --         DashPunctuation         -> True
@@ -323,7 +333,8 @@
 -- -- >>> isSymbol '-'
 -- -- False
 -- --
--- isSymbol :: Char -> Bool
+isSymbol :: Char -> Bool
+isSymbol = let x = x in x
 -- isSymbol c = case generalCategory c of
 --         MathSymbol              -> True
 --         CurrencySymbol          -> True
@@ -333,17 +344,17 @@
 -- 
 -- -- | Convert a letter to the corresponding upper-case letter, if any.
 -- -- Any other character is returned unchanged.
--- toUpper                 :: Char -> Char
+toUpper                 :: Char -> Char
 -- 
 -- -- | Convert a letter to the corresponding lower-case letter, if any.
 -- -- Any other character is returned unchanged.
--- toLower                 :: Char -> Char
+toLower                 :: Char -> Char
 -- 
 -- -- | Convert a letter to the corresponding title-case or upper-case
 -- -- letter, if any.  (Title case differs from upper case only for a small
 -- -- number of ligature letters.)
 -- -- Any other character is returned unchanged.
--- toTitle                 :: Char -> Char
+toTitle                 :: Char -> Char
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- Implementation with the supplied auto-generated Unicode character properties
@@ -351,47 +362,58 @@
 -- 
 -- -- Regardless of the O/S and Library, use the functions contained in WCsubst.c
 -- 
--- isAlpha    c = iswalpha (ord c) /= 0
--- isAlphaNum c = iswalnum (ord c) /= 0
--- isControl  c = iswcntrl (ord c) /= 0
--- isPrint    c = iswprint (ord c) /= 0
--- isUpper    c = iswupper (ord c) /= 0
--- isLower    c = iswlower (ord c) /= 0
+isAlpha    c = iswalpha (ord c) /= 0
+isAlphaNum c = iswalnum (ord c) /= 0
+isControl  c = iswcntrl (ord c) /= 0
+isPrint    c = iswprint (ord c) /= 0
+isUpper    c = iswupper (ord c) /= 0
+isLower    c = iswlower (ord c) /= 0
 -- 
--- toLower c = chr (towlower (ord c))
--- toUpper c = chr (towupper (ord c))
--- toTitle c = chr (towtitle (ord c))
+toLower c = chr (towlower (ord c))
+toUpper c = chr (towupper (ord c))
+toTitle c = chr (towtitle (ord c))
 -- 
 -- foreign import ccall unsafe "u_iswalpha"
---   iswalpha :: Int -> Int
+iswalpha :: Int -> Int
+iswalpha = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_iswalnum"
---   iswalnum :: Int -> Int
+iswalnum :: Int -> Int
+iswalnum = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_iswcntrl"
---   iswcntrl :: Int -> Int
+iswcntrl :: Int -> Int
+iswcntrl = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_iswspace"
---   iswspace :: Int -> Int
+iswspace :: Int -> Int
+iswspace = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_iswprint"
---   iswprint :: Int -> Int
+iswprint :: Int -> Int
+iswprint = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_iswlower"
---   iswlower :: Int -> Int
+iswlower :: Int -> Int
+iswlower = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_iswupper"
---   iswupper :: Int -> Int
+iswupper :: Int -> Int
+iswupper = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_towlower"
---   towlower :: Int -> Int
+towlower :: Int -> Int
+towlower = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_towupper"
---   towupper :: Int -> Int
+towupper :: Int -> Int
+towupper = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_towtitle"
---   towtitle :: Int -> Int
+towtitle :: Int -> Int
+towtitle = let x = x in x
 -- 
 -- foreign import ccall unsafe "u_gencat"
---   wgencat :: Int -> Int
+wgencat :: Int -> Int
+wgencat = let x = x in x
 -- 

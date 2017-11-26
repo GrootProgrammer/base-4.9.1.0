@@ -874,9 +874,9 @@ map _ []     = []
 map f (x:xs) = f x : map f xs
 -- 
 -- -- Note eta expanded
--- mapFB ::  (elt -> lst -> lst) -> (a -> elt) -> a -> lst -> lst
--- {-# INLINE [0] mapFB #-}
--- mapFB c f = \x ys -> c (f x) ys
+mapFB ::  (elt -> lst -> lst) -> (a -> elt) -> a -> lst -> lst
+{-# INLINE [0] mapFB #-}
+mapFB c f = \x ys -> c (f x) ys
 -- 
 -- -- The rules for map work like this.
 -- --
@@ -896,11 +896,11 @@ map f (x:xs) = f x : map f xs
 -- -- This same pattern is followed by many other functions:
 -- -- e.g. append, filter, iterate, repeat, etc.
 -- 
--- {-# RULES
--- "map"       [~1] forall f xs.   map f xs                = build (\c n -> foldr (mapFB c f) n xs)
--- "mapList"   [1]  forall f.      foldr (mapFB (:) f) []  = map f
--- "mapFB"     forall c f g.       mapFB (mapFB c f) g     = mapFB c (f.g)
---   #-}
+{-# RULES
+"map"       [~1] forall f xs.   map f xs                = build (\c n -> foldr (mapFB c f) n xs)
+"mapList"   [1]  forall f.      foldr (mapFB (:) f) []  = map f
+"mapFB"     forall c f g.       mapFB (mapFB c f) g     = mapFB c (f.g)
+  #-}
 -- 
 -- -- See Breitner, Eisenberg, Peyton Jones, and Weirich, "Safe Zero-cost
 -- -- Coercions for Haskell", section 6.5:
@@ -953,8 +953,8 @@ type String = [Char]
 -- unsafeChr (I# i#) = C# (chr# i#)
 -- 
 -- -- | The 'Prelude.fromEnum' method restricted to the type 'Data.Char.Char'.
--- ord :: Char -> Int
--- ord (C# c#) = I# (ord# c#)
+ord :: Char -> Int
+ord (C# c#) = I# (ord# c#)
 -- 
 -- -- | This 'String' equality predicate is used when desugaring
 -- -- pattern-matches against strings.
@@ -1064,17 +1064,17 @@ f $ x                   =  f x
 f $! x                  = let !vx = x in f vx  -- see #2273
 -- 
 -- -- | @'until' p f@ yields the result of applying @f@ until @p@ holds.
--- until                   :: (a -> Bool) -> (a -> a) -> a -> a
--- until p f = go
---   where
---     go x | p x          = x
---          | otherwise    = go (f x)
+until                   :: (a -> Bool) -> (a -> a) -> a -> a
+until p f = go
+  where
+    go x | p x          = x
+         | otherwise    = go (f x)
 -- 
 -- -- | 'asTypeOf' is a type-restricted version of 'const'.  It is usually
 -- -- used as an infix operator, and its typing forces its first argument
 -- -- (which is usually overloaded) to have the same type as the second.
--- asTypeOf                :: a -> a -> a
--- asTypeOf                =  const
+asTypeOf                :: a -> a -> a
+asTypeOf                =  const
 -- 
 -- ----------------------------------------------
 -- -- Functor/Applicative/Monad instances for IO

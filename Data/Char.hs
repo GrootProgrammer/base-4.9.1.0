@@ -1,5 +1,5 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -15,15 +15,15 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Data.Char
---     (
---       Char
+module Data.Char
+    (
+      Char
 -- 
 --     -- * Character classification
 --     -- | Unicode characters are divided into letters, numbers, marks,
 --     -- punctuation, symbols, separators (including spaces) and others
 --     -- (including control characters).
---     , isControl, isSpace
+    , isControl, isSpace
 --     , isLower, isUpper, isAlpha, isAlphaNum, isPrint
 --     , isDigit, isOctDigit, isHexDigit
 --     , isLetter, isMark, isNumber, isPunctuation, isSymbol, isSeparator
@@ -50,14 +50,14 @@
 --     , showLitChar
 --     , lexLitChar
 --     , readLitChar
---     ) where
+    ) where
 -- 
--- import GHC.Base
--- import GHC.Char
+import GHC.Base
+import GHC.Char
 -- import GHC.Real (fromIntegral)
 -- import GHC.Show
 -- import GHC.Read (readLitChar, lexLitChar)
--- import GHC.Unicode
+import GHC.Unicode
 -- import GHC.Num
 -- 
 -- -- $setup

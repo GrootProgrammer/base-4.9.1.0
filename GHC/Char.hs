@@ -1,20 +1,21 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash #-}
 -- 
--- module GHC.Char
---     ( -- * Utilities
---       chr
+module GHC.Char
+    ( -- * Utilities
+      chr
 -- 
 --       -- * Monomorphic equality operators
 --       -- | See GHC.Classes#matching_overloaded_methods_in_rules
---     , eqChar, neChar
---     ) where
+    , eqChar, neChar
+    ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.Show
 -- 
 -- -- | The 'Prelude.toEnum' method restricted to the type 'Data.Char.Char'.
--- chr :: Int -> Char
+chr :: Int -> Char
+chr = let x = x in x
 -- chr i@(I# i#)
 --  | isTrue# (int2Word# i# `leWord#` 0x10FFFF##) = C# (chr# i#)
 --  | otherwise

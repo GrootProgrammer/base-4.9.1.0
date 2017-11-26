@@ -64,37 +64,37 @@ module Data.List
 --    -- * Building lists
 -- 
 --    -- ** Scans
---    , scanl
---    , scanl'
---    , scanl1
---    , scanr
---    , scanr1
+   , scanl
+   , scanl'
+   , scanl1
+   , scanr
+   , scanr1
 -- 
 --    -- ** Accumulating maps
---    , mapAccumL
---    , mapAccumR
+   , mapAccumL
+   , mapAccumR
 -- 
 --    -- ** Infinite lists
---    , iterate
---    , repeat
---    , replicate
---    , cycle
+   , iterate
+   , repeat
+   , replicate
+   , cycle
 -- 
 --    -- ** Unfolding
---    , unfoldr
+   , unfoldr
 -- 
 --    -- * Sublists
 -- 
 --    -- ** Extracting sublists
---    , take
---    , drop
---    , splitAt
+   , take
+   , drop
+   , splitAt
 -- 
---    , takeWhile
---    , dropWhile
---    , dropWhileEnd
---    , span
---    , break
+   , takeWhile
+   , dropWhile
+   , dropWhileEnd
+   , span
+   , break
 -- 
 --    , stripPrefix
 -- 
@@ -112,20 +112,20 @@ module Data.List
 --    -- * Searching lists
 -- 
 --    -- ** Searching by equality
---    , elem
---    , notElem
---    , lookup
+   , elem
+   , notElem
+   , lookup
 -- 
 --    -- ** Searching with a predicate
 --    , find
---    , filter
+   , filter
 --    , partition
 -- 
 --    -- * Indexing lists
 --    -- | These functions treat a list @xs@ as a indexed collection,
 --    -- with indices ranging from 0 to @'length' xs - 1@.
 -- 
---    , (!!)
+   , (!!)
 -- 
 --    , elemIndex
 --    , elemIndices
@@ -135,25 +135,25 @@ module Data.List
 -- 
 --    -- * Zipping and unzipping lists
 -- 
---    , zip
---    , zip3
+   , zip
+   , zip3
 --    , zip4, zip5, zip6, zip7
 -- 
---    , zipWith
---    , zipWith3
+   , zipWith
+   , zipWith3
 --    , zipWith4, zipWith5, zipWith6, zipWith7
 -- 
---    , unzip
---    , unzip3
+   , unzip
+   , unzip3
 --    , unzip4, unzip5, unzip6, unzip7
 -- 
 --    -- * Special lists
 -- 
 --    -- ** Functions on strings
---    , lines
---    , words
---    , unlines
---    , unwords
+   , lines
+   , words
+   , unlines
+   , unwords
 -- 
 --    -- ** \"Set\" operations
 -- 
@@ -212,10 +212,32 @@ module Data.List
 import Data.Foldable
 import Data.Traversable
 -- 
-import Data.OldList hiding ( all, and, any, concat, concatMap, elem, find,
-                             foldl, foldl1, foldl', foldr, foldr1, mapAccumL,
-                             mapAccumR, maximum, maximumBy, minimum, minimumBy,
-                             length, notElem, null, or, product, sum )
+import Data.OldList hiding (
+--     all,
+--     and,
+--     any,
+--     concat,
+--     concatMap,
+    elem,
+    find,
+    foldl,
+    foldl1,
+    foldl',
+    foldr,
+    foldr1,
+--     mapAccumL,
+--     mapAccumR,
+--     maximum,
+--     maximumBy,
+--     minimum,
+--     minimumBy,
+--     length,
+    notElem,
+--     null,
+--     or,
+--     product,
+--     sum
+    )
 -- 
 import GHC.Base ( Bool(..), Eq((==)), otherwise )
 -- 
