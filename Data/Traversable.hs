@@ -63,7 +63,7 @@ import Data.Functor
 import GHC.Base ( Applicative(..), Monad(..), Monoid, Maybe(..),
                   ($), (.), id, flip )
 -- import GHC.Generics
--- import qualified GHC.List as List ( foldr )
+import qualified GHC.List as List ( foldr )
 -- 
 -- -- | Functors representing data structures that can be traversed from
 -- -- left to right.
@@ -181,10 +181,10 @@ class (Functor t, Foldable t) => Traversable t where
 --     traverse _ Nothing = pure Nothing
 --     traverse f (Just x) = Just <$> f x
 -- 
--- instance Traversable [] where
---     {-# INLINE traverse #-} -- so that traverse can fuse
---     traverse f = List.foldr cons_f (pure [])
---       where cons_f x ys = (:) <$> f x <*> ys
+instance Traversable [] where
+    {-# INLINE traverse #-} -- so that traverse can fuse
+    traverse f = List.foldr cons_f (pure [])
+      where cons_f x ys = (:) <$> f x <*> ys
 -- 
 -- instance Traversable (Either a) where
 --     traverse _ (Left x) = pure (Left x)

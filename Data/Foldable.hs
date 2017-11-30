@@ -54,7 +54,7 @@ module Data.Foldable (
 -- import Data.Bool
 -- import Data.Either
 -- import Data.Eq
--- import qualified GHC.List as List
+import qualified GHC.List as List
 import Data.Maybe
 import Data.Monoid
 -- import Data.Ord
@@ -66,7 +66,7 @@ import Data.Monoid
 --                   foldl1Elems, foldr1Elems)
 import GHC.Base hiding ( foldr )
 -- import GHC.Generics
--- import GHC.Num  ( Num(..) )
+import GHC.Num  ( Num(..) )
 -- 
 infix  4 `elem`, `notElem`
 -- 
@@ -234,37 +234,37 @@ class Foldable t where
 --     -- | Test whether the structure is empty. The default implementation is
 --     -- optimized for structures that are similar to cons-lists, because there
 --     -- is no general way to do better.
---     null :: t a -> Bool
---     null = foldr (\_ _ -> False) True
+    null :: t a -> Bool
+    null = foldr (\_ _ -> False) True
 -- 
 --     -- | Returns the size/length of a finite structure as an 'Int'.  The
 --     -- default implementation is optimized for structures that are similar to
 --     -- cons-lists, because there is no general way to do better.
---     length :: t a -> Int
---     length = foldl' (\c _ -> c+1) 0
+    length :: t a -> Int
+    length = foldl' (\c _ -> c+1) 0
 -- 
 --     -- | Does the element occur in the structure?
     elem :: Eq a => a -> t a -> Bool
     elem = any . (==)
 -- 
 --     -- | The largest element of a non-empty structure.
---     maximum :: forall a . Ord a => t a -> a
---     maximum = fromMaybe (errorWithoutStackTrace "maximum: empty structure") .
---        getMax . foldMap (Max #. (Just :: a -> Maybe a))
+    maximum :: forall a . Ord a => t a -> a
+    maximum = fromMaybe (errorWithoutStackTrace "maximum: empty structure") .
+       getMax . foldMap (Max #. (Just :: a -> Maybe a))
 -- 
 --     -- | The least element of a non-empty structure.
---     minimum :: forall a . Ord a => t a -> a
---     minimum = fromMaybe (errorWithoutStackTrace "minimum: empty structure") .
---        getMin . foldMap (Min #. (Just :: a -> Maybe a))
+    minimum :: forall a . Ord a => t a -> a
+    minimum = fromMaybe (errorWithoutStackTrace "minimum: empty structure") .
+       getMin . foldMap (Min #. (Just :: a -> Maybe a))
 -- 
 --     -- | The 'sum' function computes the sum of the numbers of a structure.
---     sum :: Num a => t a -> a
---     sum = getSum #. foldMap Sum
+    sum :: Num a => t a -> a
+    sum = getSum #. foldMap Sum
 -- 
 --     -- | The 'product' function computes the product of the numbers of a
 --     -- structure.
---     product :: Num a => t a -> a
---     product = getProduct #. foldMap Product
+    product :: Num a => t a -> a
+    product = getProduct #. foldMap Product
 -- 
 -- -- instances for Prelude types
 -- 
@@ -275,20 +275,20 @@ class Foldable t where
 --     foldl _ z Nothing = z
 --     foldl f z (Just x) = f z x
 -- 
--- instance Foldable [] where
---     elem    = List.elem
---     foldl   = List.foldl
---     foldl'  = List.foldl'
---     foldl1  = List.foldl1
---     foldr   = List.foldr
---     foldr1  = List.foldr1
---     length  = List.length
---     maximum = List.maximum
---     minimum = List.minimum
---     null    = List.null
---     product = List.product
---     sum     = List.sum
---     toList  = id
+instance Foldable [] where
+    elem    = List.elem
+    foldl   = List.foldl
+    foldl'  = List.foldl'
+    foldl1  = List.foldl1
+    foldr   = List.foldr
+    foldr1  = List.foldr1
+    length  = List.length
+    maximum = List.maximum
+    minimum = List.minimum
+    null    = List.null
+    product = List.product
+    sum     = List.sum
+    toList  = id
 -- 
 -- instance Foldable (Either a) where
 --     foldMap _ (Left _) = mempty
@@ -401,28 +401,28 @@ class Foldable t where
 -- -- instance. We may eventually want to add both versions, but we don't want to
 -- -- trample on anyone's toes by imposing Max = MaxMaybe.
 -- 
--- newtype Max a = Max {getMax :: Maybe a}
--- newtype Min a = Min {getMin :: Maybe a}
+newtype Max a = Max {getMax :: Maybe a}
+newtype Min a = Min {getMin :: Maybe a}
 -- 
--- instance Ord a => Monoid (Max a) where
---   mempty = Max Nothing
+instance Ord a => Monoid (Max a) where
+  mempty = Max Nothing
 -- 
---   {-# INLINE mappend #-}
---   m `mappend` Max Nothing = m
---   Max Nothing `mappend` n = n
---   (Max m@(Just x)) `mappend` (Max n@(Just y))
---     | x >= y    = Max m
---     | otherwise = Max n
+  {-# INLINE mappend #-}
+  m `mappend` Max Nothing = m
+  Max Nothing `mappend` n = n
+  (Max m@(Just x)) `mappend` (Max n@(Just y))
+    | x >= y    = Max m
+    | otherwise = Max n
 -- 
--- instance Ord a => Monoid (Min a) where
---   mempty = Min Nothing
+instance Ord a => Monoid (Min a) where
+  mempty = Min Nothing
 -- 
---   {-# INLINE mappend #-}
---   m `mappend` Min Nothing = m
---   Min Nothing `mappend` n = n
---   (Min m@(Just x)) `mappend` (Min n@(Just y))
---     | x <= y    = Min m
---     | otherwise = Min n
+  {-# INLINE mappend #-}
+  m `mappend` Min Nothing = m
+  Min Nothing `mappend` n = n
+  (Min m@(Just x)) `mappend` (Min n@(Just y))
+    | x <= y    = Min m
+    | otherwise = Min n
 -- 
 -- -- Instances for GHC.Generics
 -- instance Foldable U1 where

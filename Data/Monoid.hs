@@ -31,20 +31,20 @@ module Data.Monoid (
         All(..),
         Any(..),
 --         -- * 'Num' wrappers
---         Sum(..),
---         Product(..),
+        Sum(..),
+        Product(..),
 --         -- * 'Maybe' wrappers
 --         -- $MaybeExamples
---         First(..),
---         Last(..),
+        First(..),
+        Last(..),
 --         -- * 'Alternative' wrapper
---         Alt (..)
+        Alt (..)
   ) where
 -- 
 -- -- Push down the module in the dependency hierarchy.
 import GHC.Base hiding (Any)
 -- import GHC.Enum
--- import GHC.Num
+import GHC.Num
 -- import GHC.Read
 -- import GHC.Show
 -- import GHC.Generics
@@ -109,42 +109,42 @@ instance Monoid Any where
         Any x `mappend` Any y = Any (x || y)
 -- 
 -- -- | Monoid under addition.
--- newtype Sum a = Sum { getSum :: a }
+newtype Sum a = Sum { getSum :: a }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic, Generic1, Num)
 -- 
--- instance Num a => Monoid (Sum a) where
---         mempty = Sum 0
---         mappend = coerce ((+) :: a -> a -> a)
+instance Num a => Monoid (Sum a) where
+        mempty = Sum (fromInteger 0)
+        mappend = coerce ((+) :: a -> a -> a)
 -- --        Sum x `mappend` Sum y = Sum (x + y)
 -- 
--- instance Functor Sum where
---     fmap     = coerce
+instance Functor Sum where
+    fmap     = coerce
 -- 
--- instance Applicative Sum where
---     pure     = Sum
---     (<*>)    = coerce
+instance Applicative Sum where
+    pure     = Sum
+    (<*>)    = coerce
 -- 
--- instance Monad Sum where
---     m >>= k  = k (getSum m)
+instance Monad Sum where
+    m >>= k  = k (getSum m)
 -- 
 -- -- | Monoid under multiplication.
--- newtype Product a = Product { getProduct :: a }
+newtype Product a = Product { getProduct :: a }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic, Generic1, Num)
 -- 
--- instance Num a => Monoid (Product a) where
---         mempty = Product 1
---         mappend = coerce ((*) :: a -> a -> a)
+instance Num a => Monoid (Product a) where
+        mempty = Product (fromInteger 1)
+        mappend = coerce ((*) :: a -> a -> a)
 -- --        Product x `mappend` Product y = Product (x * y)
 -- 
--- instance Functor Product where
---     fmap     = coerce
+instance Functor Product where
+    fmap     = coerce
 -- 
--- instance Applicative Product where
---     pure     = Product
---     (<*>)    = coerce
+instance Applicative Product where
+    pure     = Product
+    (<*>)    = coerce
 -- 
--- instance Monad Product where
---     m >>= k  = k (getProduct m)
+instance Monad Product where
+    m >>= k  = k (getProduct m)
 -- 
 -- -- $MaybeExamples
 -- -- To implement @find@ or @findLast@ on any 'Foldable':
@@ -182,38 +182,38 @@ instance Monoid Any where
 -- --
 -- -- @'First' a@ is isomorphic to @'Alt' 'Maybe' a@, but precedes it
 -- -- historically.
--- newtype First a = First { getFirst :: Maybe a }
+newtype First a = First { getFirst :: Maybe a }
 --         deriving (Eq, Ord, Read, Show, Generic, Generic1,
 --                   Functor, Applicative, Monad)
 -- 
--- instance Monoid (First a) where
---         mempty = First Nothing
---         First Nothing `mappend` r = r
---         l `mappend` _             = l
+instance Monoid (First a) where
+        mempty = First Nothing
+        First Nothing `mappend` r = r
+        l `mappend` _             = l
 -- 
 -- -- | Maybe monoid returning the rightmost non-Nothing value.
 -- --
 -- -- @'Last' a@ is isomorphic to @'Dual' ('First' a)@, and thus to
 -- -- @'Dual' ('Alt' 'Maybe' a)@
--- newtype Last a = Last { getLast :: Maybe a }
+newtype Last a = Last { getLast :: Maybe a }
 --         deriving (Eq, Ord, Read, Show, Generic, Generic1,
 --                   Functor, Applicative, Monad)
 -- 
--- instance Monoid (Last a) where
---         mempty = Last Nothing
---         l `mappend` Last Nothing = l
---         _ `mappend` r            = r
+instance Monoid (Last a) where
+        mempty = Last Nothing
+        l `mappend` Last Nothing = l
+        _ `mappend` r            = r
 -- 
 -- -- | Monoid under '<|>'.
 -- --
 -- -- @since 4.8.0.0
--- newtype Alt f a = Alt {getAlt :: f a}
+newtype Alt f a = Alt {getAlt :: f a}
 --   deriving (Generic, Generic1, Read, Show, Eq, Ord, Num, Enum,
 --             Monad, MonadPlus, Applicative, Alternative, Functor)
 -- 
--- instance Alternative f => Monoid (Alt f a) where
---         mempty = Alt empty
---         mappend = coerce ((<|>) :: f a -> f a -> f a)
+instance Alternative f => Monoid (Alt f a) where
+        mempty = Alt empty
+        mappend = coerce ((<|>) :: f a -> f a -> f a)
 -- 
 -- {-
 -- {--------------------------------------------------------------------

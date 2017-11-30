@@ -227,16 +227,16 @@ import Data.OldList hiding (
     foldr1,
 --     mapAccumL,
 --     mapAccumR,
---     maximum,
---     maximumBy,
---     minimum,
---     minimumBy,
---     length,
+    maximum,
+    maximumBy,
+    minimum,
+    minimumBy,
+    length,
     notElem,
---     null,
+    null,
 --     or,
---     product,
---     sum
+    product,
+    sum
     )
 -- 
 import GHC.Base ( Bool(..), Eq((==)), otherwise )

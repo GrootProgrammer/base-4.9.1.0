@@ -713,18 +713,18 @@ instance Alternative Maybe where
 -- -- The MonadPlus class definition
 -- 
 -- -- | Monads that also support choice and failure.
--- class (Alternative m, Monad m) => MonadPlus m where
+class (Alternative m, Monad m) => MonadPlus m where
 --    -- | the identity of 'mplus'.  It should also satisfy the equations
 --    --
 --    -- > mzero >>= f  =  mzero
 --    -- > v >> mzero   =  mzero
 --    --
---    mzero :: m a
---    mzero = empty
+   mzero :: m a
+   mzero = empty
 -- 
 --    -- | an associative operation
---    mplus :: m a -> m a -> m a
---    mplus = (<|>)
+   mplus :: m a -> m a -> m a
+   mplus = (<|>)
 -- 
 -- instance MonadPlus Maybe
 -- 
