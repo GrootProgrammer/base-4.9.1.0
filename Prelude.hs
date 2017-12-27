@@ -150,7 +150,9 @@ module Prelude (
 --     -- ** Exception handling in the I\/O monad
 --     IOError, ioError, userError,
 -- 
-    g2Entry
+    g2Entry1,
+    g2Entry2,
+    g2Entry3
   ) where
 -- 
 -- import Control.Monad
@@ -167,11 +169,22 @@ import Data.Traversable ( Traversable(..) )
 import GHC.Base hiding ( foldr, mapM, sequence )
 -- import Text.Read
 -- import GHC.Enum
--- import GHC.Num
+import GHC.Num
 -- import GHC.Real
 -- import GHC.Float
 -- import GHC.Show
 
-g2Entry :: a
-g2Entry = let x = x in x
+g2Entry1 :: [Int]
+-- g2Entry1 :: [a]
+-- g2Entry1 :: [a]
+g2Entry1 = map (+ 1) [fromInteger 1, fromInteger 2, fromInteger 3]
+
+g2Entry2 :: Int -> Int
+g2Entry2 a = head $ map (+ (a + 4)) [fromInteger 1, fromInteger 2]
+
+g2Entry3 :: Int -> [Int]
+g2Entry3 a = take 4 $ repeat a
+
+
+data TestTestFoo = TestFooConstructor [Int] [String]
 
