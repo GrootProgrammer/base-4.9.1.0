@@ -38,8 +38,8 @@ module Prelude (
 --     fst, snd, curry, uncurry,
 -- 
 --     -- ** Basic type classes
---     Eq((==), (/=)),
---     Ord(compare, (<), (<=), (>=), (>), max, min),
+    Eq((==), (/=)),
+    Ord(compare, (<), (<=), (>=), (>), max, min),
 --     Enum(succ, pred, toEnum, fromEnum, enumFrom, enumFromThen,
 --          enumFromTo, enumFromThenTo),
 --     Bounded(minBound, maxBound),
@@ -47,11 +47,11 @@ module Prelude (
 --     -- ** Numbers
 -- 
 --     -- *** Numeric types
---     Int, Integer, Float, Double,
+    Int, Integer, Float, Double,
 --     Rational, Word,
 -- 
 --     -- *** Numeric type classes
---     Num((+), (-), (*), negate, abs, signum, fromInteger),
+    Num((+), (-), (*), negate, abs, signum, fromInteger),
 --     Real(toRational),
 --     Integral(quot, rem, div, mod, quotRem, divMod, toInteger),
 --     Fractional((/), recip, fromRational),
@@ -67,31 +67,31 @@ module Prelude (
 --     fromIntegral, realToFrac,
 -- 
 --     -- ** Monoids
---     Monoid(mempty, mappend, mconcat),
+    Monoid(mempty, mappend, mconcat),
 -- 
 --     -- ** Monads and functors
---     Functor(fmap, (<$)), (<$>),
---     Applicative(pure, (<*>), (*>), (<*)),
---     Monad((>>=), (>>), return, fail),
+    Functor(fmap, (<$)), (<$>),
+    Applicative(pure, (<*>), (*>), (<*)),
+    Monad((>>=), (>>), return, fail),
 --     mapM_, sequence_, (=<<),
 -- 
 --     -- ** Folds and traversals
---     Foldable(elem,      -- :: (Foldable t, Eq a) => a -> t a -> Bool
+    Foldable(elem,      -- :: (Foldable t, Eq a) => a -> t a -> Bool
 --              -- fold,   -- :: Monoid m => t m -> m
---              foldMap,   -- :: Monoid m => (a -> m) -> t a -> m
---              foldr,     -- :: (a -> b -> b) -> b -> t a -> b
+             foldMap,   -- :: Monoid m => (a -> m) -> t a -> m
+             foldr,     -- :: (a -> b -> b) -> b -> t a -> b
 --              -- foldr', -- :: (a -> b -> b) -> b -> t a -> b
---              foldl,     -- :: (b -> a -> b) -> b -> t a -> b
+             foldl,     -- :: (b -> a -> b) -> b -> t a -> b
 --              -- foldl', -- :: (b -> a -> b) -> b -> t a -> b
---              foldr1,    -- :: (a -> a -> a) -> t a -> a
---              foldl1,    -- :: (a -> a -> a) -> t a -> a
---              maximum,   -- :: (Foldable t, Ord a) => t a -> a
---              minimum,   -- :: (Foldable t, Ord a) => t a -> a
---              product,   -- :: (Foldable t, Num a) => t a -> a
---              sum),      -- :: Num a => t a -> a
+             foldr1,    -- :: (a -> a -> a) -> t a -> a
+             foldl1,    -- :: (a -> a -> a) -> t a -> a
+             maximum,   -- :: (Foldable t, Ord a) => t a -> a
+             minimum,   -- :: (Foldable t, Ord a) => t a -> a
+             product,   -- :: (Foldable t, Num a) => t a -> a
+             sum),      -- :: Num a => t a -> a
 --              -- toList) -- :: Foldable t => t a -> [a]
 -- 
---     Traversable(traverse, sequenceA, mapM, sequence),
+    Traversable(traverse, sequenceA, mapM, sequence),
 -- 
 --     -- ** Miscellaneous functions
     id, const, (.), flip, ($), until,

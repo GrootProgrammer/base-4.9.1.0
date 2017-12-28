@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 -- {-
 -- 
 -- NOTA BENE: Do NOT use ($) anywhere in this module! The type of ($) is

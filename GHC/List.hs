@@ -408,7 +408,7 @@ maximum xs              =  foldl1 max xs
 -- -- produces good code. Note that to see if this is happending, one has to
 -- -- look at -ddump-prep, not -ddump-core!
 {-# SPECIALIZE  maximum :: [Int] -> Int #-}
-{-# SPECIALIZE  maximum :: [Integer] -> Integer #-}
+-- {-# SPECIALIZE  maximum :: [Integer] -> Integer #-}
 -- 
 -- -- | 'minimum' returns the minimum value from a list,
 -- -- which must be non-empty, finite, and of an ordered type.
@@ -420,7 +420,7 @@ minimum []              =  errorEmptyList "minimum"
 minimum xs              =  foldl1 min xs
 -- 
 {-# SPECIALIZE  minimum :: [Int] -> Int #-}
-{-# SPECIALIZE  minimum :: [Integer] -> Integer #-}
+-- {-# SPECIALIZE  minimum :: [Integer] -> Integer #-}
 -- 
 -- 
 -- -- | 'iterate' @f x@ returns an infinite list of repeated applications
