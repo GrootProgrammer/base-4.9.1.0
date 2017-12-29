@@ -57,9 +57,16 @@ module GHC.Classes(
 -- -- GHC.Magic is used in some derived instances
 import GHC.Magic ()
 import GHC.IntWord64
-import GHC.Prim
+-- import GHC.Prim
+import GHC.Prim hiding ((==#), (/=#), (>#), (>=#), (<#), (<=#),
+                        (==##), (/=##), (>##), (>=##), (<##), (<=##),
+                        eqFloat#, gtFloat#, geFloat#, ltFloat#, leFloat#,
+                        eqChar#, neChar#, gtChar#, geChar#, ltChar#, leChar#,
+                        eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#
+                       )
 -- import GHC.Tuple
-import GHC.Types
+-- import GHC.Types
+import GHC.Types hiding (isTrue#)
 -- 
 -- #include "MachDeps.h"
 -- 
@@ -784,3 +791,104 @@ x# `modInt#` y#
 --        c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41, c42, c43, c44,
 --        c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58,
 --        c59, c60, c61, c62)
+
+isTrue# :: Bool -> Bool
+isTrue# b = b
+
+-- Int#
+
+(==#) :: Int# -> Int# -> Bool
+(==#) = let x = x in x
+
+(/=#) :: Int# -> Int# -> Bool
+(/=#) = let x = x in x
+
+(>#) :: Int# -> Int# -> Bool
+(>#) = let x = x in x
+
+(>=#) :: Int# -> Int# -> Bool
+(>=#) = let x = x in x
+
+(<#) :: Int# -> Int# -> Bool
+(<#) = let x = x in x
+
+(<=#) :: Int# -> Int# -> Bool
+(<=#) = let x = x in x
+
+-- Double#
+
+(==##) :: Double# -> Double# -> Bool
+(==##) = let x = x in x
+
+(/=##) :: Double# -> Double# -> Bool
+(/=##) = let x = x in x
+
+(>##) :: Double# -> Double# -> Bool
+(>##) = let x = x in x
+
+(>=##) :: Double# -> Double# -> Bool
+(>=##) = let x = x in x
+
+(<##) :: Double# -> Double# -> Bool
+(<##) = let x = x in x
+
+(<=##) :: Double# -> Double# -> Bool
+(<=##) = let x = x in x
+
+-- Float#
+
+eqFloat# :: Float# -> Float# -> Bool
+eqFloat# = let x = x in x
+
+gtFloat# :: Float# -> Float# -> Bool
+gtFloat# = let x = x in x
+
+geFloat# :: Float# -> Float# -> Bool
+geFloat# = let x = x in x
+
+ltFloat# :: Float# -> Float# -> Bool
+ltFloat# = let x = x in x
+
+leFloat# :: Float# -> Float# -> Bool
+leFloat# = let x = x in x
+
+-- Char#
+
+eqChar# :: Char# -> Char# -> Bool
+eqChar# = let x = x in x
+
+neChar# :: Char# -> Char# -> Bool
+neChar# = let x = x in x
+
+gtChar# :: Char# -> Char# -> Bool
+gtChar# = let x = x in x
+
+geChar# :: Char# -> Char# -> Bool
+geChar# = let x = x in x
+
+ltChar# :: Char# -> Char# -> Bool
+ltChar# = let x = x in x
+
+leChar# :: Char# -> Char# -> Bool
+leChar# = let x = x in x
+
+-- Word#
+
+eqWord# :: Word# -> Word# -> Bool
+eqWord# = let x = x in x
+
+neWord# :: Word# -> Word# -> Bool
+neWord# = let x = x in x
+
+gtWord# :: Word# -> Word# -> Bool
+gtWord# = let x = x in x
+
+geWord# :: Word# -> Word# -> Bool
+geWord# = let x = x in x
+
+ltWord# :: Word# -> Word# -> Bool
+ltWord# = let x = x in x
+
+leWord# :: Word# -> Word# -> Bool
+leWord# = let x = x in x
+

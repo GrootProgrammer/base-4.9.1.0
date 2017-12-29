@@ -123,7 +123,8 @@ import GHC.Types
 import GHC.Classes
 import GHC.CString
 import GHC.Magic
-import GHC.Prim
+-- import GHC.Prim
+import GHC.Prim hiding ((+#), (-#), (*#), negateInt#)
 import GHC.Err
 -- import {-# SOURCE #-} GHC.IO (failIO,mplusIO)
 -- 
@@ -1223,3 +1224,16 @@ asTypeOf                =  const
 -- --      unpackFoldr "foo" c (unpackFoldr "baz" c n)  =  unpackFoldr "foobaz" c n
 -- 
 --   #-}
+
+(+#) :: Int# -> Int# -> Int#
+(+#) = let x = x in x
+
+(-#) :: Int# -> Int# -> Int#
+(-#) = let x = x in x
+
+(*#) :: Int# -> Int# -> Int#
+(*#) = let x = x in x
+
+negateInt# :: Int# -> Int#
+negateInt# = let x = x in x
+
