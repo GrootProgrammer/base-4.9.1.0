@@ -15,7 +15,7 @@ import GHC.Base
 -- 
 -- -- | The 'Prelude.toEnum' method restricted to the type 'Data.Char.Char'.
 chr :: Int -> Char
-chr = let x = x in x
+chr = chr
 -- chr i@(I# i#)
 --  | isTrue# (int2Word# i# `leWord#` 0x10FFFF##) = C# (chr# i#)
 --  | otherwise

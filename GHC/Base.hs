@@ -1226,14 +1226,14 @@ asTypeOf                =  const
 --   #-}
 
 (+#) :: Int# -> Int# -> Int#
-(+#) = let x = x in x
+(+#) = (+#)
 
 (-#) :: Int# -> Int# -> Int#
-(-#) = let x = x in x
+(-#) = (-#)
 
 (*#) :: Int# -> Int# -> Int#
-(*#) = let x = x in x
+(*#) = (*#)
 
 negateInt# :: Int# -> Int#
-negateInt# = let x = x in x
+negateInt# = negateInt#
 

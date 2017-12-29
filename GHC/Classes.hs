@@ -798,97 +798,97 @@ isTrue# b = b
 -- Int#
 
 (==#) :: Int# -> Int# -> Bool
-(==#) = let x = x in x
+(==#) = (==#)
 
 (/=#) :: Int# -> Int# -> Bool
-(/=#) = let x = x in x
+(/=#) = (/=#)
 
 (>#) :: Int# -> Int# -> Bool
-(>#) = let x = x in x
+(>#) = (>#)
 
 (>=#) :: Int# -> Int# -> Bool
-(>=#) = let x = x in x
+(>=#) = (>=#)
 
 (<#) :: Int# -> Int# -> Bool
-(<#) = let x = x in x
+(<#) = (<#)
 
 (<=#) :: Int# -> Int# -> Bool
-(<=#) = let x = x in x
+(<=#) = (<=#)
 
 -- Double#
 
 (==##) :: Double# -> Double# -> Bool
-(==##) = let x = x in x
+(==##) = (==##)
 
 (/=##) :: Double# -> Double# -> Bool
-(/=##) = let x = x in x
+(/=##) = (/=##)
 
 (>##) :: Double# -> Double# -> Bool
-(>##) = let x = x in x
+(>##) = (>##)
 
 (>=##) :: Double# -> Double# -> Bool
-(>=##) = let x = x in x
+(>=##) = (>=##)
 
 (<##) :: Double# -> Double# -> Bool
-(<##) = let x = x in x
+(<##) = (<##)
 
 (<=##) :: Double# -> Double# -> Bool
-(<=##) = let x = x in x
+(<=##) = (<=##)
 
 -- Float#
 
 eqFloat# :: Float# -> Float# -> Bool
-eqFloat# = let x = x in x
+eqFloat# = eqFloat#
 
 gtFloat# :: Float# -> Float# -> Bool
-gtFloat# = let x = x in x
+gtFloat# = gtFloat#
 
 geFloat# :: Float# -> Float# -> Bool
-geFloat# = let x = x in x
+geFloat# = geFloat#
 
 ltFloat# :: Float# -> Float# -> Bool
-ltFloat# = let x = x in x
+ltFloat# = ltFloat#
 
 leFloat# :: Float# -> Float# -> Bool
-leFloat# = let x = x in x
+leFloat# = leFloat#
 
 -- Char#
 
 eqChar# :: Char# -> Char# -> Bool
-eqChar# = let x = x in x
+eqChar# = eqChar#
 
 neChar# :: Char# -> Char# -> Bool
-neChar# = let x = x in x
+neChar# = neChar#
 
 gtChar# :: Char# -> Char# -> Bool
-gtChar# = let x = x in x
+gtChar# = gtChar#
 
 geChar# :: Char# -> Char# -> Bool
-geChar# = let x = x in x
+geChar# = geChar#
 
 ltChar# :: Char# -> Char# -> Bool
-ltChar# = let x = x in x
+ltChar# = ltChar#
 
 leChar# :: Char# -> Char# -> Bool
-leChar# = let x = x in x
+leChar# = leChar#
 
 -- Word#
 
 eqWord# :: Word# -> Word# -> Bool
-eqWord# = let x = x in x
+eqWord# = eqWord#
 
 neWord# :: Word# -> Word# -> Bool
-neWord# = let x = x in x
+neWord# = neWord#
 
 gtWord# :: Word# -> Word# -> Bool
-gtWord# = let x = x in x
+gtWord# = gtWord#
 
 geWord# :: Word# -> Word# -> Bool
-geWord# = let x = x in x
+geWord# = geWord#
 
 ltWord# :: Word# -> Word# -> Bool
-ltWord# = let x = x in x
+ltWord# = ltWord#
 
 leWord# :: Word# -> Word# -> Bool
-leWord# = let x = x in x
+leWord# = leWord#
 

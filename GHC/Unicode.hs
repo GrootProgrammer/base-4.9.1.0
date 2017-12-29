@@ -156,31 +156,31 @@ data GeneralCategory
 -- -- Space
 -- --
 generalCategory :: Char -> GeneralCategory
-generalCategory = let x = x in x
+generalCategory = generalCategory
 -- generalCategory c = toEnum $ fromIntegral $ wgencat $ fromIntegral $ ord c
 -- 
 -- -- | Selects the first 128 characters of the Unicode character set,
 -- -- corresponding to the ASCII character set.
 isAscii                 :: Char -> Bool
-isAscii = let x = x in x
+isAscii = isAscii
 -- isAscii c               =  c <  '\x80'
 -- 
 -- -- | Selects the first 256 characters of the Unicode character set,
 -- -- corresponding to the ISO 8859-1 (Latin-1) character set.
 isLatin1                :: Char -> Bool
-isLatin1 = let x = x in x
+isLatin1 = isLatin1
 -- isLatin1 c              =  c <= '\xff'
 -- 
 -- -- | Selects ASCII lower-case letters,
 -- -- i.e. characters satisfying both 'isAscii' and 'isLower'.
 isAsciiLower :: Char -> Bool
-isAsciiLower = let x = x in x
+isAsciiLower = isAsciiLower
 -- isAsciiLower c          =  c >= 'a' && c <= 'z'
 -- 
 -- -- | Selects ASCII upper-case letters,
 -- -- i.e. characters satisfying both 'isAscii' and 'isUpper'.
 isAsciiUpper :: Char -> Bool
-isAsciiUpper = let x = x in x
+isAsciiUpper = isAsciiUpper
 -- isAsciiUpper c          =  c >= 'A' && c <= 'Z'
 -- 
 -- -- | Selects control characters, which are the non-printing characters of
@@ -194,7 +194,7 @@ isPrint                 :: Char -> Bool
 -- -- | Returns 'True' for any Unicode space character, and the control
 -- -- characters @\\t@, @\\n@, @\\r@, @\\f@, @\\v@.
 isSpace                 :: Char -> Bool
-isSpace = let x = x in x
+isSpace = isSpace
 -- -- isSpace includes non-breaking space
 -- -- The magic 0x377 isn't really that magical. As of 2014, all the codepoints
 -- -- at or below 0x377 have been assigned, so we shouldn't have to worry about
@@ -229,7 +229,7 @@ isAlphaNum              :: Char -> Bool
 -- 
 -- -- | Selects ASCII digits, i.e. @\'0\'@..@\'9\'@.
 isDigit                 :: Char -> Bool
-isDigit = let x = x in x
+isDigit = isDigit
 -- isDigit c               =  (fromIntegral (ord c - ord '0') :: Word) <= 9
 -- 
 -- -- We use an addition and an unsigned comparison instead of two signed
@@ -239,13 +239,13 @@ isDigit = let x = x in x
 -- 
 -- -- | Selects ASCII octal digits, i.e. @\'0\'@..@\'7\'@.
 isOctDigit              :: Char -> Bool
-isOctDigit = let x = x in x
+isOctDigit = isOctDigit
 -- isOctDigit c            =  (fromIntegral (ord c - ord '0') :: Word) <= 7
 -- 
 -- -- | Selects ASCII hexadecimal digits,
 -- -- i.e. @\'0\'@..@\'9\'@, @\'a\'@..@\'f\'@, @\'A\'@..@\'F\'@.
 isHexDigit              :: Char -> Bool
-isHexDigit = let x = x in x
+isHexDigit = isHexDigit
 -- isHexDigit c            =  isDigit c ||
 --                            (fromIntegral (ord c - ord 'A')::Word) <= 5 ||
 --                            (fromIntegral (ord c - ord 'a')::Word) <= 5
@@ -287,7 +287,7 @@ isHexDigit = let x = x in x
 -- -- True
 -- --
 isPunctuation :: Char -> Bool
-isPunctuation = let x = x in x
+isPunctuation = isPunctuation
 -- isPunctuation c = case generalCategory c of
 --         ConnectorPunctuation    -> True
 --         DashPunctuation         -> True
@@ -334,7 +334,7 @@ isPunctuation = let x = x in x
 -- -- False
 -- --
 isSymbol :: Char -> Bool
-isSymbol = let x = x in x
+isSymbol = isSymbol
 -- isSymbol c = case generalCategory c of
 --         MathSymbol              -> True
 --         CurrencySymbol          -> True
@@ -375,45 +375,45 @@ toTitle c = chr (towtitle (ord c))
 -- 
 -- foreign import ccall unsafe "u_iswalpha"
 iswalpha :: Int -> Int
-iswalpha = let x = x in x
+iswalpha = iswalpha
 -- 
 -- foreign import ccall unsafe "u_iswalnum"
 iswalnum :: Int -> Int
-iswalnum = let x = x in x
+iswalnum = iswalnum
 -- 
 -- foreign import ccall unsafe "u_iswcntrl"
 iswcntrl :: Int -> Int
-iswcntrl = let x = x in x
+iswcntrl = iswcntrl
 -- 
 -- foreign import ccall unsafe "u_iswspace"
 iswspace :: Int -> Int
-iswspace = let x = x in x
+iswspace = iswspace
 -- 
 -- foreign import ccall unsafe "u_iswprint"
 iswprint :: Int -> Int
-iswprint = let x = x in x
+iswprint = iswprint
 -- 
 -- foreign import ccall unsafe "u_iswlower"
 iswlower :: Int -> Int
-iswlower = let x = x in x
+iswlower = iswlower
 -- 
 -- foreign import ccall unsafe "u_iswupper"
 iswupper :: Int -> Int
-iswupper = let x = x in x
+iswupper = iswupper
 -- 
 -- foreign import ccall unsafe "u_towlower"
 towlower :: Int -> Int
-towlower = let x = x in x
+towlower = towlower
 -- 
 -- foreign import ccall unsafe "u_towupper"
 towupper :: Int -> Int
-towupper = let x = x in x
+towupper = towupper
 -- 
 -- foreign import ccall unsafe "u_towtitle"
 towtitle :: Int -> Int
-towtitle = let x = x in x
+towtitle = towtitle
 -- 
 -- foreign import ccall unsafe "u_gencat"
 wgencat :: Int -> Int
-wgencat = let x = x in x
+wgencat = wgencat
 -- 

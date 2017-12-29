@@ -35,7 +35,7 @@ import GHC.Integer ()   -- Make sure Integer is compiled first
 -- -- | 'error' stops execution and displays an error message.
 error :: forall (r :: RuntimeRep). forall (a :: TYPE r).
          HasCallStack => [Char] -> a
-error = let x = x in x
+error = error
 -- error s = raise# (errorCallWithCallStackException s ?callStack)
 --           -- Bleh, we should be using 'GHC.Stack.callStack' instead of
 --           -- '?callStack' here, but 'GHC.Stack.callStack' depends on
@@ -47,7 +47,7 @@ error = let x = x in x
 -- -- @since 4.9.0.0
 errorWithoutStackTrace :: forall (r :: RuntimeRep). forall (a :: TYPE r).
                           [Char] -> a
-errorWithoutStackTrace = let x = x in x
+errorWithoutStackTrace = errorWithoutStackTrace
 -- errorWithoutStackTrace s =
 --   -- we don't have withFrozenCallStack yet, so we just inline the definition
 --   let ?callStack = freezeCallStack emptyCallStack
