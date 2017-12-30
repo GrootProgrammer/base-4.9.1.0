@@ -50,8 +50,10 @@ module GHC.Stack.Types (
 --     which imports ‘Data.Maybe’ (libraries/base/Data/Maybe.hs)
 -- -}
 -- 
-import GHC.Classes (Eq)
-import GHC.Types (Char, Int)
+-- import GHC.Classes (Eq)
+import GHC.Classes2 (Eq)
+-- import GHC.Types (Char, Int)
+import GHC.Types2 (Char, Int)
 -- 
 -- -- Make implicit dependency known to build system
 -- import GHC.Tuple ()

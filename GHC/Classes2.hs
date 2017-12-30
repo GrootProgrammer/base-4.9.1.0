@@ -4,139 +4,54 @@
              KindSignatures, DataKinds, ConstraintKinds,
               MultiParamTypeClasses, FunctionalDependencies #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
---   -- ip :: IP x a => a  is strictly speaking ambiguous, but IP is magic
-{-# LANGUAGE UndecidableSuperClasses #-}
---   -- Because of the type-variable superclasses for tuples
--- 
+  -- ip :: IP x a => a  is strictly speaking ambiguous, but IP is magic
+-- {-# LANGUAGE UndecidableSuperClasses #-}
+  -- Because of the type-variable superclasses for tuples
+
 {-# OPTIONS_GHC -Wno-unused-imports #-}
--- -- -Wno-unused-imports needed for the GHC.Tuple import below. Sigh.
--- 
+-- -Wno-unused-imports needed for the GHC.Tuple import below. Sigh.
+
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
--- -- -Wno-unused-top-binds is there (I hope) to stop Haddock complaining
--- -- about the constraint tuples being defined but not used
--- 
+-- -Wno-unused-top-binds is there (I hope) to stop Haddock complaining
+-- about the constraint tuples being defined but not used
+
 {-# OPTIONS_HADDOCK hide #-}
--- -----------------------------------------------------------------------------
--- -- |
--- -- Module      :  GHC.Classes
--- -- Copyright   :  (c) The University of Glasgow, 1992-2002
--- -- License     :  see libraries/base/LICENSE
--- --
--- -- Maintainer  :  cvs-ghc@haskell.org
--- -- Stability   :  internal
--- -- Portability :  non-portable (GHC extensions)
--- --
--- -- Basic classes.
--- --
--- -----------------------------------------------------------------------------
--- 
-module GHC.Classes(
---     -- * Implicit paramaters
---     IP(..),
--- 
---     -- * Equality and ordering
-    Eq(..),
-    Ord(..),
---     -- ** Monomorphic equality operators
---     -- | See GHC.Classes#matching_overloaded_methods_in_rules
-    eqInt, neInt,
-    eqWord, neWord,
-    eqChar, neChar,
-    eqFloat, eqDouble,
---     -- ** Monomorphic comparison operators
-    gtInt, geInt, leInt, ltInt, compareInt, compareInt#,
-    gtWord, geWord, leWord, ltWord, compareWord, compareWord#,
--- 
---     -- * Functions over Bool
-    (&&), (||), not,
--- 
---     -- * Integer arithmetic
-    divInt#, modInt#
- ) where
--- 
--- -- GHC.Magic is used in some derived instances
-import GHC.Magic ()
-import GHC.IntWord64
--- import GHC.Prim
-import GHC.Prim hiding ((==#), (/=#), (>#), (>=#), (<#), (<=#),
-                        (==##), (/=##), (>##), (>=##), (<##), (<=##),
-                        eqFloat#, gtFloat#, geFloat#, ltFloat#, leFloat#,
-                        eqChar#, neChar#, gtChar#, geChar#, ltChar#, leChar#,
-                        eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#
-                       )
--- import GHC.Tuple
--- import GHC.Types
-import GHC.Types hiding (isTrue#)
--- 
--- #include "MachDeps.h"
--- 
+
+module GHC.Classes2
+  (
+    module GHC.Classes2,
+    module GHC.Classes
+  ) where
+
+import GHC.Classes hiding
+    (Eq(..),
+     Ord(..),
+     eqInt, neInt,
+     eqWord, neWord,
+     eqChar, neChar,
+     eqFloat, eqDouble,
+     gtInt, geInt, leInt, ltInt, compareInt, compareInt#,
+     gtWord, geWord, leWord, ltWord, compareWord, compareWord#,
+     (&&), (||), not,
+     divInt#, modInt#
+    )
+
+import GHC.Types2
+import GHC.Prim2
+
 infix  4  ==, /=, <, <=, >=, >
-infixr 3  &&
-infixr 2  ||
--- 
-default ()              -- Double isn't available yet
--- 
--- -- | The syntax @?x :: a@ is desugared into @IP "x" a@
--- -- IP is declared very early, so that libraries can take
--- -- advantage of the implicit-call-stack feature
--- class IP (x :: Symbol) a | x -> a where
---   ip :: a
--- 
--- {- $matching_overloaded_methods_in_rules
--- 
--- Matching on class methods (e.g. @(==)@) in rewrite rules tends to be a bit
--- fragile. For instance, consider this motivating example from the @bytestring@
--- library,
--- 
--- > break :: (Word8 -> Bool) -> ByteString -> (ByteString, ByteString)
--- > breakByte :: Word8 -> ByteString -> (ByteString, ByteString)
--- > {-# RULES "break -> breakByte" forall a. break (== x) = breakByte x #-}
--- 
--- Here we have two functions, with @breakByte@ providing an optimized
--- implementation of @break@ where the predicate is merely testing for equality
--- with a known @Word8@. As written, however, this rule will be quite fragile as
--- the @(==)@ class operation rule may rewrite the predicate before our @break@
--- rule has a chance to fire.
--- 
--- For this reason, most of the primitive types in @base@ have 'Eq' and 'Ord'
--- instances defined in terms of helper functions with inlinings delayed to phase
--- 1. For instance, @Word8@\'s @Eq@ instance looks like,
--- 
--- > instance Eq Word8 where
--- >     (==) = eqWord8
--- >     (/=) = neWord8
--- >
--- > eqWord8, neWord8 :: Word8 -> Word8 -> Bool
--- > eqWord8 (W8# x) (W8# y) = ...
--- > neWord8 (W8# x) (W8# y) = ...
--- > {-# INLINE [1] eqWord8 #-}
--- > {-# INLINE [1] neWord8 #-}
--- 
--- This allows us to save our @break@ rule above by rewriting it to instead match
--- against @eqWord8@,
--- 
--- > {-# RULES "break -> breakByte" forall a. break (`eqWord8` x) = breakByte x #-}
--- 
--- Currently this is only done for '(==)', '(/=)', '(<)', '(<=)', '(>)', and '(>=)'
--- for the types in "GHC.Word" and "GHC.Int".
--- -}
--- 
--- -- | The 'Eq' class defines equality ('==') and inequality ('/=').
--- -- All the basic datatypes exported by the "Prelude" are instances of 'Eq',
--- -- and 'Eq' may be derived for any datatype whose constituents are also
--- -- instances of 'Eq'.
--- --
--- -- Minimal complete definition: either '==' or '/='.
--- --
+infixr 3 &&
+infixr 2 ||
+
 class  Eq a  where
     (==), (/=)           :: a -> a -> Bool
--- 
+
     {-# INLINE (/=) #-}
     {-# INLINE (==) #-}
     x /= y               = not (x == y)
     x == y               = not (x /= y)
     {-# MINIMAL (==) | (/=) #-}
--- 
+
 -- deriving instance Eq ()
 -- deriving instance (Eq  a, Eq  b) => Eq  (a, b)
 -- deriving instance (Eq  a, Eq  b, Eq  c) => Eq  (a, b, c)
@@ -170,7 +85,7 @@ class  Eq a  where
 -- deriving instance (Eq a, Eq b, Eq c, Eq d, Eq e, Eq f, Eq g,
 --                    Eq h, Eq i, Eq j, Eq k, Eq l, Eq m, Eq n, Eq o)
 --                => Eq (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o)
--- 
+
 instance (Eq a) => Eq [a] where
     {-# SPECIALISE instance Eq [[Char]] #-}
     {-# SPECIALISE instance Eq [Char] #-}
@@ -178,53 +93,61 @@ instance (Eq a) => Eq [a] where
     []     == []     = True
     (x:xs) == (y:ys) = x == y && xs == ys
     _xs    == _ys    = False
--- 
--- deriving instance Eq Bool
--- deriving instance Eq Ordering
--- 
+
+instance Eq Bool where
+    True  == True  = True
+    False == False = True
+    _     == _     = False
+
+instance Eq Ordering where
+    LT == LT = True
+    EQ == EQ = True
+    GT == GT = True
+    _  == _  = False
+
 instance Eq Word where
     (==) = eqWord
     (/=) = neWord
--- 
--- -- See GHC.Classes#matching_overloaded_methods_in_rules
+
+-- See GHC.Classes#matching_overloaded_methods_in_rules
 {-# INLINE [1] eqWord #-}
 {-# INLINE [1] neWord #-}
 eqWord, neWord :: Word -> Word -> Bool
 (W# x) `eqWord` (W# y) = isTrue# (x `eqWord#` y)
 (W# x) `neWord` (W# y) = isTrue# (x `neWord#` y)
--- 
--- -- See GHC.Classes#matching_overloaded_methods_in_rules
+
+-- See GHC.Classes#matching_overloaded_methods_in_rules
 instance Eq Char where
     (==) = eqChar
     (/=) = neChar
--- 
--- -- See GHC.Classes#matching_overloaded_methods_in_rules
+
+-- See GHC.Classes#matching_overloaded_methods_in_rules
 {-# INLINE [1] eqChar #-}
 {-# INLINE [1] neChar #-}
 eqChar, neChar :: Char -> Char -> Bool
 (C# x) `eqChar` (C# y) = isTrue# (x `eqChar#` y)
 (C# x) `neChar` (C# y) = isTrue# (x `neChar#` y)
--- 
+
 instance Eq Float where
     (==) = eqFloat
--- 
--- -- See GHC.Classes#matching_overloaded_methods_in_rules
+
+-- See GHC.Classes#matching_overloaded_methods_in_rules
 {-# INLINE [1] eqFloat #-}
 eqFloat :: Float -> Float -> Bool
 (F# x) `eqFloat` (F# y) = isTrue# (x `eqFloat#` y)
--- 
+
 instance Eq Double where
     (==) = eqDouble
--- 
--- -- See GHC.Classes#matching_overloaded_methods_in_rules
+
+-- See GHC.Classes#matching_overloaded_methods_in_rules
 {-# INLINE [1] eqDouble #-}
 eqDouble :: Double -> Double -> Bool
 (D# x) `eqDouble` (D# y) = isTrue# (x ==## y)
--- 
+
 instance Eq Int where
     (==) = eqInt
     (/=) = neInt
--- 
+
 -- -- See GHC.Classes#matching_overloaded_methods_in_rules
 {-# INLINE [1] eqInt #-}
 {-# INLINE [1] neInt #-}
@@ -272,7 +195,7 @@ class  (Eq a) => Ord a  where
     compare              :: a -> a -> Ordering
     (<), (<=), (>), (>=) :: a -> a -> Bool
     max, min             :: a -> a -> a
--- 
+
     compare x y = if x == y then EQ
 --                   -- NB: must be '<=' not '<' to validate the
 --                   -- above claim about the minimal things that
@@ -335,10 +258,20 @@ instance (Ord a) => Ord [a] where
     compare (x:xs) (y:ys) = case compare x y of
                                 EQ    -> compare xs ys
                                 other -> other
--- 
--- deriving instance Ord Bool
--- deriving instance Ord Ordering
--- 
+instance Ord Bool where
+    False <= False = True
+    False <= True  = True
+    True  <= True  = True
+    True  <= False = False
+
+instance Ord Ordering where
+    LT <= LT = True
+    LT <= EQ = True
+    LT <= GT = True
+    EQ <= EQ = True
+    EQ <= GT = True
+    GT <= GT = True
+
 -- -- We don't use deriving for Ord Char, because for Ord the derived
 -- -- instance defines only compare, which takes two primops.  Then
 -- -- '>' uses compare, and therefore takes two primops instead of one.
@@ -448,25 +381,25 @@ not False               =  True
 -- -- These don't really belong here, but we don't have a better place to
 -- -- put them
 -- 
-divInt# :: Int# -> Int# -> Int#
-x# `divInt#` y#
+-- divInt# :: Int# -> Int# -> Int#
+-- x# `divInt#` y#
 --         -- Be careful NOT to overflow if we do any additional arithmetic
 --         -- on the arguments...  the following  previous version of this
 --         -- code has problems with overflow:
 -- --    | (x# ># 0#) && (y# <# 0#) = ((x# -# y#) -# 1#) `quotInt#` y#
 -- --    | (x# <# 0#) && (y# ># 0#) = ((x# -# y#) +# 1#) `quotInt#` y#
-    =      if isTrue# (x# ># 0#) && isTrue# (y# <# 0#) then ((x# -# 1#) `quotInt#` y#) -# 1#
-      else if isTrue# (x# <# 0#) && isTrue# (y# ># 0#) then ((x# +# 1#) `quotInt#` y#) -# 1#
-      else x# `quotInt#` y#
+--     =      if isTrue# (x# ># 0#) && isTrue# (y# <# 0#) then ((x# -# 1#) `quotInt#` y#) -# 1#
+--       else if isTrue# (x# <# 0#) && isTrue# (y# ># 0#) then ((x# +# 1#) `quotInt#` y#) -# 1#
+--       else x# `quotInt#` y#
 -- 
-modInt# :: Int# -> Int# -> Int#
-x# `modInt#` y#
-    = if isTrue# (x# ># 0#) && isTrue# (y# <# 0#) ||
-         isTrue# (x# <# 0#) && isTrue# (y# ># 0#)
-      then if isTrue# (r# /=# 0#) then r# +# y# else 0#
-      else r#
-    where
-    !r# = x# `remInt#` y#
+-- modInt# :: Int# -> Int# -> Int#
+-- x# `modInt#` y#
+--     = if isTrue# (x# ># 0#) && isTrue# (y# <# 0#) ||
+--          isTrue# (x# <# 0#) && isTrue# (y# ># 0#)
+--       then if isTrue# (r# /=# 0#) then r# +# y# else 0#
+--       else r#
+--     where
+--     !r# = x# `remInt#` y#
 -- 
 -- 
 -- {- *************************************************************
@@ -792,103 +725,4 @@ x# `modInt#` y#
 --        c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58,
 --        c59, c60, c61, c62)
 
-isTrue# :: Bool -> Bool
-isTrue# b = b
-
--- Int#
-
-(==#) :: Int# -> Int# -> Bool
-(==#) = (==#)
-
-(/=#) :: Int# -> Int# -> Bool
-(/=#) = (/=#)
-
-(>#) :: Int# -> Int# -> Bool
-(>#) = (>#)
-
-(>=#) :: Int# -> Int# -> Bool
-(>=#) = (>=#)
-
-(<#) :: Int# -> Int# -> Bool
-(<#) = (<#)
-
-(<=#) :: Int# -> Int# -> Bool
-(<=#) = (<=#)
-
--- Double#
-
-(==##) :: Double# -> Double# -> Bool
-(==##) = (==##)
-
-(/=##) :: Double# -> Double# -> Bool
-(/=##) = (/=##)
-
-(>##) :: Double# -> Double# -> Bool
-(>##) = (>##)
-
-(>=##) :: Double# -> Double# -> Bool
-(>=##) = (>=##)
-
-(<##) :: Double# -> Double# -> Bool
-(<##) = (<##)
-
-(<=##) :: Double# -> Double# -> Bool
-(<=##) = (<=##)
-
--- Float#
-
-eqFloat# :: Float# -> Float# -> Bool
-eqFloat# = eqFloat#
-
-gtFloat# :: Float# -> Float# -> Bool
-gtFloat# = gtFloat#
-
-geFloat# :: Float# -> Float# -> Bool
-geFloat# = geFloat#
-
-ltFloat# :: Float# -> Float# -> Bool
-ltFloat# = ltFloat#
-
-leFloat# :: Float# -> Float# -> Bool
-leFloat# = leFloat#
-
--- Char#
-
-eqChar# :: Char# -> Char# -> Bool
-eqChar# = eqChar#
-
-neChar# :: Char# -> Char# -> Bool
-neChar# = neChar#
-
-gtChar# :: Char# -> Char# -> Bool
-gtChar# = gtChar#
-
-geChar# :: Char# -> Char# -> Bool
-geChar# = geChar#
-
-ltChar# :: Char# -> Char# -> Bool
-ltChar# = ltChar#
-
-leChar# :: Char# -> Char# -> Bool
-leChar# = leChar#
-
--- Word#
-
-eqWord# :: Word# -> Word# -> Bool
-eqWord# = eqWord#
-
-neWord# :: Word# -> Word# -> Bool
-neWord# = neWord#
-
-gtWord# :: Word# -> Word# -> Bool
-gtWord# = gtWord#
-
-geWord# :: Word# -> Word# -> Bool
-geWord# = geWord#
-
-ltWord# :: Word# -> Word# -> Bool
-ltWord# = ltWord#
-
-leWord# :: Word# -> Word# -> Bool
-leWord# = leWord#
 

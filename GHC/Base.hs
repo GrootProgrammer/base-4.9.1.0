@@ -109,22 +109,32 @@
 module GHC.Base
         (
         module GHC.Base,
-        module GHC.Classes,
-        module GHC.CString,
-        module GHC.Magic,
-        module GHC.Types,
-        module GHC.Prim,        -- Re-export GHC.Prim and [boot] GHC.Err,
+--         module GHC.Classes,
+        module GHC.Classes2,
+--         module GHC.CString,
+        module GHC.CString2,
+--         module GHC.Magic,
+        module GHC.Magic2,
+--         module GHC.Types,
+        module GHC.Types2,
+--         module GHC.Prim,        -- Re-export GHC.Prim and [boot] GHC.Err,
+        module GHC.Prim2,        -- Re-export GHC.Prim and [boot] GHC.Err,
 --                                 -- to avoid lots of people having to
         module GHC.Err          -- import it explicitly
   )
         where
 -- 
-import GHC.Types
-import GHC.Classes
-import GHC.CString
-import GHC.Magic
+-- import GHC.Types
+import GHC.Types2
+-- import GHC.Classes
+import GHC.Classes2
+-- import GHC.CString
+import GHC.CString2
+-- import GHC.Magic
+import GHC.Magic2
 -- import GHC.Prim
-import GHC.Prim hiding ((+#), (-#), (*#), negateInt#)
+import GHC.Prim2
+
 import GHC.Err
 -- import {-# SOURCE #-} GHC.IO (failIO,mplusIO)
 -- 
@@ -1224,16 +1234,4 @@ asTypeOf                =  const
 -- --      unpackFoldr "foo" c (unpackFoldr "baz" c n)  =  unpackFoldr "foobaz" c n
 -- 
 --   #-}
-
-(+#) :: Int# -> Int# -> Int#
-(+#) = (+#)
-
-(-#) :: Int# -> Int# -> Int#
-(-#) = (-#)
-
-(*#) :: Int# -> Int# -> Int#
-(*#) = (*#)
-
-negateInt# :: Int# -> Int#
-negateInt# = negateInt#
 
