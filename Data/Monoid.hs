@@ -113,7 +113,7 @@ newtype Sum a = Sum { getSum :: a }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic, Generic1, Num)
 -- 
 instance Num a => Monoid (Sum a) where
-        mempty = Sum (fromInteger 0)
+        mempty = Sum (fromInteger Naught)
         mappend = coerce ((+) :: a -> a -> a)
 -- --        Sum x `mappend` Sum y = Sum (x + y)
 -- 
@@ -132,7 +132,7 @@ newtype Product a = Product { getProduct :: a }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic, Generic1, Num)
 -- 
 instance Num a => Monoid (Product a) where
-        mempty = Product (fromInteger 1)
+        mempty = Product (fromInteger oneInteger)
         mappend = coerce ((*) :: a -> a -> a)
 -- --        Product x `mappend` Product y = Product (x * y)
 -- 

@@ -16,10 +16,12 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
-module GHC.Num (module GHC.Num, module GHC.Integer) where
+-- module GHC.Num (module GHC.Num, module GHC.Integer) where
+module GHC.Num (module GHC.Num, module GHC.Integer2) where
 -- 
 import GHC.Base
-import GHC.Integer
+-- import GHC.Integer
+import GHC.Integer2
 -- 
 infixl 7  *
 infixl 6  +, -
@@ -53,7 +55,7 @@ class  Num a  where
     {-# INLINE (-) #-}
     {-# INLINE negate #-}
     x - y               = x + negate y
-    negate x            = (fromInteger 0) - x
+    negate x            = (fromInteger Naught) - x
 -- 
 -- -- | the same as @'flip' ('-')@.
 -- --
@@ -88,13 +90,13 @@ instance  Num Int  where
 --     signum _               = 1
 --     fromInteger i          = W# (integerToWord i)
 -- 
--- instance  Num Integer  where
---     (+) = plusInteger
---     (-) = minusInteger
---     (*) = timesInteger
---     negate         = negateInteger
---     fromInteger x  =  x
+instance  Num Integer  where
+    (+) = plusInteger
+    (-) = minusInteger
+    (*) = timesInteger
+    negate         = negateInteger
+    fromInteger x  =  x
 -- 
---     abs = absInteger
---     signum = signumInteger
+    abs = absInteger
+    signum = signumInteger
 

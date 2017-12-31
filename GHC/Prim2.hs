@@ -6,19 +6,25 @@
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
 module GHC.Prim2
-  (
-    module GHC.Prim2,
-    module GHC.Prim
+  ( module GHC.Prim2
+  , module GHC.Prim
   ) where
 
 import GHC.Types2 (Bool)
 import GHC.Prim hiding
     ((+#), (-#), (*#), negateInt#,
      (==#), (/=#), (>#), (>=#), (<#), (<=#),
+
      (==##), (/=##), (>##), (>=##), (<##), (<=##),
+
      eqFloat#, gtFloat#, geFloat#, ltFloat#, leFloat#,
+     negateFloat#, powerFloat#,
+     plusFloat#, minusFloat#, timesFloat#, divideFloat#,
+
      eqChar#, neChar#, gtChar#, geChar#, ltChar#, leChar#,
-     eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#)
+     eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#,
+     word2Int#
+     )
 
 -- Int# operators
 
@@ -91,6 +97,24 @@ ltFloat# = ltFloat#
 leFloat# :: Float# -> Float# -> Bool
 leFloat# = leFloat#
 
+negateFloat# :: Float# -> Float#
+negateFloat# = negateFloat#
+
+powerFloat# :: Float# -> Float# -> Float#
+powerFloat# = powerFloat#
+
+plusFloat# :: Float# -> Float# -> Float#
+plusFloat# = plusFloat#
+
+minusFloat# :: Float# -> Float# -> Float#
+minusFloat# = minusFloat#
+
+timesFloat# :: Float# -> Float# -> Float#
+timesFloat# = timesFloat#
+
+divideFloat# :: Float# -> Float# -> Float#
+divideFloat# = divideFloat#
+
 -- Char#
 
 eqChar# :: Char# -> Char# -> Bool
@@ -130,4 +154,7 @@ ltWord# = ltWord#
 
 leWord# :: Word# -> Word# -> Bool
 leWord# = leWord#
+
+word2Int# :: Word# -> Int#
+word2Int# = word2Int#
 

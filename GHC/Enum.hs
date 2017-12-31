@@ -1,6 +1,6 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, BangPatterns, MagicHash #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, BangPatterns, MagicHash #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -18,21 +18,22 @@
 -- 
 -- #include "MachDeps.h"
 -- 
--- module GHC.Enum(
---         Bounded(..), Enum(..),
---         boundedEnumFrom, boundedEnumFromThen,
---         toEnumError, fromEnumError, succError, predError,
+module GHC.Enum(
+        Bounded(..), Enum(..),
+        boundedEnumFrom, boundedEnumFromThen,
+        toEnumError, fromEnumError, succError, predError,
 -- 
 --         -- Instances for Bounded and Enum: (), Char, Int
 -- 
---    ) where
+   ) where
 -- 
--- import GHC.Base hiding ( many )
+import GHC.Base hiding ( many )
 -- import GHC.Char
 -- import GHC.Integer
--- import GHC.Num
+import GHC.Integer2
+import GHC.Num
 -- import GHC.Show
--- default ()              -- Double isn't available yet
+default ()              -- Double isn't available yet
 -- 
 -- -- | The 'Bounded' class is used to name the upper and lower limits of a
 -- -- type.  'Ord' is not a superclass of 'Bounded' since types that are not
@@ -44,8 +45,8 @@
 -- -- 'Bounded' may also be derived for single-constructor datatypes whose
 -- -- constituent types are in 'Bounded'.
 -- 
--- class  Bounded a  where
---     minBound, maxBound :: a
+class  Bounded a  where
+    minBound, maxBound :: a
 -- 
 -- -- | Class 'Enum' defines operations on sequentially ordered types.
 -- --
@@ -76,51 +77,53 @@
 -- -- >        bound | fromEnum y >= fromEnum x = maxBound
 -- -- >              | otherwise                = minBound
 -- --
--- class  Enum a   where
+class  Enum a   where
 --     -- | the successor of a value.  For numeric types, 'succ' adds 1.
---     succ                :: a -> a
+    succ                :: a -> a
 --     -- | the predecessor of a value.  For numeric types, 'pred' subtracts 1.
---     pred                :: a -> a
+    pred                :: a -> a
 --     -- | Convert from an 'Int'.
---     toEnum              :: Int -> a
+    toEnum              :: Int -> a
 --     -- | Convert to an 'Int'.
 --     -- It is implementation-dependent what 'fromEnum' returns when
 --     -- applied to a value that is too large to fit in an 'Int'.
---     fromEnum            :: a -> Int
+    fromEnum            :: a -> Int
 -- 
 --     -- | Used in Haskell's translation of @[n..]@.
---     enumFrom            :: a -> [a]
+    enumFrom            :: a -> [a]
 --     -- | Used in Haskell's translation of @[n,n'..]@.
---     enumFromThen        :: a -> a -> [a]
+    enumFromThen        :: a -> a -> [a]
 --     -- | Used in Haskell's translation of @[n..m]@.
---     enumFromTo          :: a -> a -> [a]
+    enumFromTo          :: a -> a -> [a]
 --     -- | Used in Haskell's translation of @[n,n'..m]@.
---     enumFromThenTo      :: a -> a -> a -> [a]
+    enumFromThenTo      :: a -> a -> a -> [a]
 -- 
---     succ                   = toEnum . (+ 1)  . fromEnum
---     pred                   = toEnum . (subtract 1) . fromEnum
---     enumFrom x             = map toEnum [fromEnum x ..]
---     enumFromThen x y       = map toEnum [fromEnum x, fromEnum y ..]
---     enumFromTo x y         = map toEnum [fromEnum x .. fromEnum y]
---     enumFromThenTo x1 x2 y = map toEnum [fromEnum x1, fromEnum x2 .. fromEnum y]
+    succ                   = toEnum . (+ 1)  . fromEnum
+    pred                   = toEnum . (subtract 1) . fromEnum
+    enumFrom x             = map toEnum [fromEnum x ..]
+    enumFromThen x y       = map toEnum [fromEnum x, fromEnum y ..]
+    enumFromTo x y         = map toEnum [fromEnum x .. fromEnum y]
+    enumFromThenTo x1 x2 y = map toEnum [fromEnum x1, fromEnum x2 .. fromEnum y]
 -- 
 -- -- Default methods for bounded enumerations
--- boundedEnumFrom :: (Enum a, Bounded a) => a -> [a]
--- boundedEnumFrom n = map toEnum [fromEnum n .. fromEnum (maxBound `asTypeOf` n)]
+boundedEnumFrom :: (Enum a, Bounded a) => a -> [a]
+boundedEnumFrom n = map toEnum [fromEnum n .. fromEnum (maxBound `asTypeOf` n)]
 -- 
--- boundedEnumFromThen :: (Enum a, Bounded a) => a -> a -> [a]
--- boundedEnumFromThen n1 n2
---   | i_n2 >= i_n1  = map toEnum [i_n1, i_n2 .. fromEnum (maxBound `asTypeOf` n1)]
---   | otherwise     = map toEnum [i_n1, i_n2 .. fromEnum (minBound `asTypeOf` n1)]
---   where
---     i_n1 = fromEnum n1
---     i_n2 = fromEnum n2
+boundedEnumFromThen :: (Enum a, Bounded a) => a -> a -> [a]
+boundedEnumFromThen n1 n2
+  | i_n2 >= i_n1  = map toEnum [i_n1, i_n2 .. fromEnum (maxBound `asTypeOf` n1)]
+  | otherwise     = map toEnum [i_n1, i_n2 .. fromEnum (minBound `asTypeOf` n1)]
+  where
+    i_n1 = fromEnum n1
+    i_n2 = fromEnum n2
 -- 
 -- ------------------------------------------------------------------------
 -- -- Helper functions
 -- ------------------------------------------------------------------------
 -- 
--- {-# NOINLINE toEnumError #-}
+{-# NOINLINE toEnumError #-}
+toEnumError :: a
+toEnumError = toEnumError
 -- toEnumError :: (Show a) => String -> Int -> (a,a) -> b
 -- toEnumError inst_ty i bnds =
 --     errorWithoutStackTrace $ "Enum.toEnum{" ++ inst_ty ++ "}: tag (" ++
@@ -128,7 +131,9 @@
 --             ") is outside of bounds " ++
 --             show bnds
 -- 
--- {-# NOINLINE fromEnumError #-}
+{-# NOINLINE fromEnumError #-}
+fromEnumError :: a
+fromEnumError = fromEnumError
 -- fromEnumError :: (Show a) => String -> a -> b
 -- fromEnumError inst_ty x =
 --     errorWithoutStackTrace $ "Enum.fromEnum{" ++ inst_ty ++ "}: value (" ++
@@ -136,12 +141,16 @@
 --             ") is outside of Int's bounds " ++
 --             show (minBound::Int, maxBound::Int)
 -- 
--- {-# NOINLINE succError #-}
+{-# NOINLINE succError #-}
+succError :: a
+succError = succError
 -- succError :: String -> a
 -- succError inst_ty =
 --     errorWithoutStackTrace $ "Enum.succ{" ++ inst_ty ++ "}: tried to take `succ' of maxBound"
 -- 
--- {-# NOINLINE predError #-}
+{-# NOINLINE predError #-}
+predError :: a
+predError = predError
 -- predError :: String -> a
 -- predError inst_ty =
 --     errorWithoutStackTrace $ "Enum.pred{" ++ inst_ty ++ "}: tried to take `pred' of minBound"
@@ -260,65 +269,65 @@
 -- -- Bool
 -- ------------------------------------------------------------------------
 -- 
--- instance Bounded Bool where
---   minBound = False
---   maxBound = True
+instance Bounded Bool where
+  minBound = False
+  maxBound = True
 -- 
--- instance Enum Bool where
---   succ False = True
---   succ True  = errorWithoutStackTrace "Prelude.Enum.Bool.succ: bad argument"
+instance Enum Bool where
+  succ False = True
+  succ True  = errorWithoutStackTrace "Prelude.Enum.Bool.succ: bad argument"
 -- 
---   pred True  = False
---   pred False  = errorWithoutStackTrace "Prelude.Enum.Bool.pred: bad argument"
+  pred True  = False
+  pred False  = errorWithoutStackTrace "Prelude.Enum.Bool.pred: bad argument"
 -- 
---   toEnum n | n == 0    = False
---            | n == 1    = True
---            | otherwise = errorWithoutStackTrace "Prelude.Enum.Bool.toEnum: bad argument"
+  toEnum n | n == 0    = False
+           | n == 1    = True
+           | otherwise = errorWithoutStackTrace "Prelude.Enum.Bool.toEnum: bad argument"
 -- 
---   fromEnum False = 0
---   fromEnum True  = 1
+  fromEnum False = 0
+  fromEnum True  = 1
 -- 
 --   -- Use defaults for the rest
---   enumFrom     = boundedEnumFrom
---   enumFromThen = boundedEnumFromThen
+  enumFrom     = boundedEnumFrom
+  enumFromThen = boundedEnumFromThen
 -- 
 -- ------------------------------------------------------------------------
 -- -- Ordering
 -- ------------------------------------------------------------------------
 -- 
--- instance Bounded Ordering where
---   minBound = LT
---   maxBound = GT
+instance Bounded Ordering where
+  minBound = LT
+  maxBound = GT
 -- 
--- instance Enum Ordering where
---   succ LT = EQ
---   succ EQ = GT
---   succ GT = errorWithoutStackTrace "Prelude.Enum.Ordering.succ: bad argument"
+instance Enum Ordering where
+  succ LT = EQ
+  succ EQ = GT
+  succ GT = errorWithoutStackTrace "Prelude.Enum.Ordering.succ: bad argument"
 -- 
---   pred GT = EQ
---   pred EQ = LT
---   pred LT = errorWithoutStackTrace "Prelude.Enum.Ordering.pred: bad argument"
+  pred GT = EQ
+  pred EQ = LT
+  pred LT = errorWithoutStackTrace "Prelude.Enum.Ordering.pred: bad argument"
 -- 
---   toEnum n | n == 0 = LT
---            | n == 1 = EQ
---            | n == 2 = GT
---   toEnum _ = errorWithoutStackTrace "Prelude.Enum.Ordering.toEnum: bad argument"
+  toEnum n | n == 0 = LT
+           | n == 1 = EQ
+           | n == 2 = GT
+  toEnum _ = errorWithoutStackTrace "Prelude.Enum.Ordering.toEnum: bad argument"
 -- 
---   fromEnum LT = 0
---   fromEnum EQ = 1
---   fromEnum GT = 2
+  fromEnum LT = 0
+  fromEnum EQ = 1
+  fromEnum GT = 2
 -- 
 --   -- Use defaults for the rest
---   enumFrom     = boundedEnumFrom
---   enumFromThen = boundedEnumFromThen
+  enumFrom     = boundedEnumFrom
+  enumFromThen = boundedEnumFromThen
 -- 
 -- ------------------------------------------------------------------------
 -- -- Char
 -- ------------------------------------------------------------------------
 -- 
--- instance  Bounded Char  where
---     minBound =  '\0'
---     maxBound =  '\x10FFFF'
+instance  Bounded Char  where
+    minBound =  '\0'
+    maxBound =  '\x10FFFF'
 -- 
 -- instance  Enum Char  where
 --     succ (C# c#)
@@ -443,34 +452,34 @@
 --         (c) remember that Int is bounded, so [1..] terminates at maxInt
 -- -}
 -- 
--- instance  Bounded Int where
---     minBound =  minInt
---     maxBound =  maxInt
+instance  Bounded Int where
+    minBound =  minInt
+    maxBound =  maxInt
 -- 
--- instance  Enum Int  where
---     succ x
---        | x == maxBound  = errorWithoutStackTrace "Prelude.Enum.succ{Int}: tried to take `succ' of maxBound"
---        | otherwise      = x + 1
---     pred x
---        | x == minBound  = errorWithoutStackTrace "Prelude.Enum.pred{Int}: tried to take `pred' of minBound"
---        | otherwise      = x - 1
+instance  Enum Int  where
+    succ x
+       | x == maxBound  = errorWithoutStackTrace "Prelude.Enum.succ{Int}: tried to take `succ' of maxBound"
+       | otherwise      = x + 1
+    pred x
+       | x == minBound  = errorWithoutStackTrace "Prelude.Enum.pred{Int}: tried to take `pred' of minBound"
+       | otherwise      = x - 1
 -- 
---     toEnum   x = x
---     fromEnum x = x
+    toEnum   x = x
+    fromEnum x = x
 -- 
---     {-# INLINE enumFrom #-}
---     enumFrom (I# x) = eftInt x maxInt#
---         where !(I# maxInt#) = maxInt
---         -- Blarg: technically I guess enumFrom isn't strict!
+    {-# INLINE enumFrom #-}
+    enumFrom (I# x) = eftInt x maxInt#
+        where !(I# maxInt#) = maxInt
+        -- Blarg: technically I guess enumFrom isn't strict!
 -- 
---     {-# INLINE enumFromTo #-}
---     enumFromTo (I# x) (I# y) = eftInt x y
+    {-# INLINE enumFromTo #-}
+    enumFromTo (I# x) (I# y) = eftInt x y
 -- 
---     {-# INLINE enumFromThen #-}
---     enumFromThen (I# x1) (I# x2) = efdInt x1 x2
+    {-# INLINE enumFromThen #-}
+    enumFromThen (I# x1) (I# x2) = efdInt x1 x2
 -- 
---     {-# INLINE enumFromThenTo #-}
---     enumFromThenTo (I# x1) (I# x2) (I# y) = efdtInt x1 x2 y
+    {-# INLINE enumFromThenTo #-}
+    enumFromThenTo (I# x1) (I# x2) (I# y) = efdtInt x1 x2 y
 -- 
 -- 
 -- -----------------------------------------------------
@@ -478,10 +487,10 @@
 -- -- most common form, so we take a lot of care
 -- -- In particular, we have rules for deforestation
 -- 
--- {-# RULES
--- "eftInt"        [~1] forall x y. eftInt x y = build (\ c n -> eftIntFB c n x y)
--- "eftIntList"    [1] eftIntFB  (:) [] = eftInt
---  #-}
+{-# RULES
+"eftInt"        [~1] forall x y. eftInt x y = build (\ c n -> eftIntFB c n x y)
+"eftIntList"    [1] eftIntFB  (:) [] = eftInt
+ #-}
 -- 
 -- {- Note [How the Enum rules work]
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -490,8 +499,9 @@
 -- * Phase 0: optionally inline eftInt
 -- -}
 -- 
--- {-# NOINLINE [1] eftInt #-}
--- eftInt :: Int# -> Int# -> [Int]
+{-# NOINLINE [1] eftInt #-}
+eftInt :: Int# -> Int# -> [Int]
+eftInt = eftInt
 -- -- [x1..x2]
 -- eftInt x0 y | isTrue# (x0 ># y) = []
 --             | otherwise         = go x0
@@ -500,8 +510,9 @@
 --                                then []
 --                                else go (x +# 1#)
 -- 
--- {-# INLINE [0] eftIntFB #-}
--- eftIntFB :: (Int -> r -> r) -> r -> Int# -> Int# -> r
+{-# INLINE [0] eftIntFB #-}
+eftIntFB :: (Int -> r -> r) -> r -> Int# -> Int# -> r
+eftIntFB = eftIntFB
 -- eftIntFB c n x0 y | isTrue# (x0 ># y) = n
 --                   | otherwise         = go x0
 --                  where
@@ -519,27 +530,30 @@
 -- -- The code is more complicated because of worries about Int overflow.
 -- 
 -- -- See Note [How the Enum rules work]
--- {-# RULES
--- "efdtInt"       [~1] forall x1 x2 y.
---                      efdtInt x1 x2 y = build (\ c n -> efdtIntFB c n x1 x2 y)
--- "efdtIntUpList" [1]  efdtIntFB (:) [] = efdtInt
---  #-}
+{-# RULES
+"efdtInt"       [~1] forall x1 x2 y.
+                     efdtInt x1 x2 y = build (\ c n -> efdtIntFB c n x1 x2 y)
+"efdtIntUpList" [1]  efdtIntFB (:) [] = efdtInt
+ #-}
 -- 
--- efdInt :: Int# -> Int# -> [Int]
+efdInt :: Int# -> Int# -> [Int]
+efdInt = efdInt
 -- -- [x1,x2..maxInt]
 -- efdInt x1 x2
 --  | isTrue# (x2 >=# x1) = case maxInt of I# y -> efdtIntUp x1 x2 y
 --  | otherwise           = case minInt of I# y -> efdtIntDn x1 x2 y
 -- 
--- {-# NOINLINE [1] efdtInt #-}
--- efdtInt :: Int# -> Int# -> Int# -> [Int]
+{-# NOINLINE [1] efdtInt #-}
+efdtInt :: Int# -> Int# -> Int# -> [Int]
+efdtInt = efdtInt
 -- -- [x1,x2..y]
 -- efdtInt x1 x2 y
 --  | isTrue# (x2 >=# x1) = efdtIntUp x1 x2 y
 --  | otherwise           = efdtIntDn x1 x2 y
 -- 
--- {-# INLINE [0] efdtIntFB #-}
--- efdtIntFB :: (Int -> r -> r) -> r -> Int# -> Int# -> Int# -> r
+{-# INLINE [0] efdtIntFB #-}
+efdtIntFB :: (Int -> r -> r) -> r -> Int# -> Int# -> Int# -> r
+efdtIntFB = efdtIntFB
 -- efdtIntFB c n x1 x2 y
 --  | isTrue# (x2 >=# x1) = efdtIntUpFB c n x1 x2 y
 --  | otherwise           = efdtIntDnFB c n x1 x2 y
@@ -785,33 +799,33 @@
 -- -- Integer
 -- ------------------------------------------------------------------------
 -- 
--- instance  Enum Integer  where
---     succ x               = x + 1
---     pred x               = x - 1
---     toEnum (I# n)        = smallInteger n
---     fromEnum n           = I# (integerToInt n)
+instance  Enum Integer  where
+    succ x               = x + oneInteger
+    pred x               = x - oneInteger
+    toEnum (I# n)        = smallInteger n
+    fromEnum n           = I# (integerToInt n)
 -- 
---     {-# INLINE enumFrom #-}
---     {-# INLINE enumFromThen #-}
---     {-# INLINE enumFromTo #-}
---     {-# INLINE enumFromThenTo #-}
---     enumFrom x             = enumDeltaInteger   x 1
---     enumFromThen x y       = enumDeltaInteger   x (y-x)
---     enumFromTo x lim       = enumDeltaToInteger x 1     lim
---     enumFromThenTo x y lim = enumDeltaToInteger x (y-x) lim
+    {-# INLINE enumFrom #-}
+    {-# INLINE enumFromThen #-}
+    {-# INLINE enumFromTo #-}
+    {-# INLINE enumFromThenTo #-}
+    enumFrom x             = enumDeltaInteger   x oneInteger
+    enumFromThen x y       = enumDeltaInteger   x (y-x)
+    enumFromTo x lim       = enumDeltaToInteger x oneInteger     lim
+    enumFromThenTo x y lim = enumDeltaToInteger x (y-x) lim
 -- 
 -- -- See Note [How the Enum rules work]
--- {-# RULES
--- "enumDeltaInteger"      [~1] forall x y.   enumDeltaInteger x y         = build (\c _ -> enumDeltaIntegerFB c x y)
--- "efdtInteger"           [~1] forall x d l. enumDeltaToInteger x d l     = build (\c n -> enumDeltaToIntegerFB  c n x d l)
--- "efdtInteger1"          [~1] forall x l.   enumDeltaToInteger x 1 l     = build (\c n -> enumDeltaToInteger1FB c n x l)
--- 
--- "enumDeltaToInteger1FB" [1] forall c n x.  enumDeltaToIntegerFB c n x 1 = enumDeltaToInteger1FB c n x
--- 
--- "enumDeltaInteger"      [1] enumDeltaIntegerFB    (:)     = enumDeltaInteger
--- "enumDeltaToInteger"    [1] enumDeltaToIntegerFB  (:) []  = enumDeltaToInteger
--- "enumDeltaToInteger1"   [1] enumDeltaToInteger1FB (:) []  = enumDeltaToInteger1
---  #-}
+{-# RULES
+"enumDeltaInteger"      [~1] forall x y.   enumDeltaInteger x y         = build (\c _ -> enumDeltaIntegerFB c x y)
+"efdtInteger"           [~1] forall x d l. enumDeltaToInteger x d l     = build (\c n -> enumDeltaToIntegerFB  c n x d l)
+"efdtInteger1"          [~1] forall x l.   enumDeltaToInteger x 1 l     = build (\c n -> enumDeltaToInteger1FB c n x l)
+
+"enumDeltaToInteger1FB" [1] forall c n x.  enumDeltaToIntegerFB c n x 1 = enumDeltaToInteger1FB c n x
+
+"enumDeltaInteger"      [1] enumDeltaIntegerFB    (:)     = enumDeltaInteger
+"enumDeltaToInteger"    [1] enumDeltaToIntegerFB  (:) []  = enumDeltaToInteger
+"enumDeltaToInteger1"   [1] enumDeltaToInteger1FB (:) []  = enumDeltaToInteger1
+ #-}
 -- 
 -- {- Note [Enum Integer rules for literal 1]
 -- The "1" rules above specialise for the common case where delta = 1,
@@ -826,67 +840,67 @@
 -- the special case varies more from the general case, due to the issue of overflows.
 -- -}
 -- 
--- {-# NOINLINE [0] enumDeltaIntegerFB #-}
--- enumDeltaIntegerFB :: (Integer -> b -> b) -> Integer -> Integer -> b
--- enumDeltaIntegerFB c x0 d = go x0
---   where go x = x `seq` (x `c` go (x+d))
+{-# NOINLINE [0] enumDeltaIntegerFB #-}
+enumDeltaIntegerFB :: (Integer -> b -> b) -> Integer -> Integer -> b
+enumDeltaIntegerFB c x0 d = go x0
+  where go x = x `seq` (x `c` go (x+d))
 -- 
--- {-# NOINLINE [1] enumDeltaInteger #-}
--- enumDeltaInteger :: Integer -> Integer -> [Integer]
--- enumDeltaInteger x d = x `seq` (x : enumDeltaInteger (x+d) d)
+{-# NOINLINE [1] enumDeltaInteger #-}
+enumDeltaInteger :: Integer -> Integer -> [Integer]
+enumDeltaInteger x d = x `seq` (x : enumDeltaInteger (x+d) d)
 -- -- strict accumulator, so
 -- --     head (drop 1000000 [1 .. ]
 -- -- works
 -- 
--- {-# NOINLINE [0] enumDeltaToIntegerFB #-}
+{-# NOINLINE [0] enumDeltaToIntegerFB #-}
 -- -- Don't inline this until RULE "enumDeltaToInteger" has had a chance to fire
--- enumDeltaToIntegerFB :: (Integer -> a -> a) -> a
---                      -> Integer -> Integer -> Integer -> a
--- enumDeltaToIntegerFB c n x delta lim
---   | delta >= 0 = up_fb c n x delta lim
---   | otherwise  = dn_fb c n x delta lim
+enumDeltaToIntegerFB :: (Integer -> a -> a) -> a
+                     -> Integer -> Integer -> Integer -> a
+enumDeltaToIntegerFB c n x delta lim
+  | delta >= Naught = up_fb c n x delta lim
+  | otherwise  = dn_fb c n x delta lim
 -- 
--- {-# NOINLINE [0] enumDeltaToInteger1FB #-}
+{-# NOINLINE [0] enumDeltaToInteger1FB #-}
 -- -- Don't inline this until RULE "enumDeltaToInteger" has had a chance to fire
--- enumDeltaToInteger1FB :: (Integer -> a -> a) -> a
---                       -> Integer -> Integer -> a
--- enumDeltaToInteger1FB c n x0 lim = go (x0 :: Integer)
---                       where
---                         go x | x > lim   = n
---                              | otherwise = x `c` go (x+1)
+enumDeltaToInteger1FB :: (Integer -> a -> a) -> a
+                      -> Integer -> Integer -> a
+enumDeltaToInteger1FB c n x0 lim = go (x0 :: Integer)
+                      where
+                        go x | x > lim   = n
+                             | otherwise = x `c` go (x+oneInteger)
 -- 
--- {-# NOINLINE [1] enumDeltaToInteger #-}
--- enumDeltaToInteger :: Integer -> Integer -> Integer -> [Integer]
--- enumDeltaToInteger x delta lim
---   | delta >= 0 = up_list x delta lim
---   | otherwise  = dn_list x delta lim
+{-# NOINLINE [1] enumDeltaToInteger #-}
+enumDeltaToInteger :: Integer -> Integer -> Integer -> [Integer]
+enumDeltaToInteger x delta lim
+  | delta >= Naught = up_list x delta lim
+  | otherwise  = dn_list x delta lim
 -- 
--- {-# NOINLINE [1] enumDeltaToInteger1 #-}
--- enumDeltaToInteger1 :: Integer -> Integer -> [Integer]
+{-# NOINLINE [1] enumDeltaToInteger1 #-}
+enumDeltaToInteger1 :: Integer -> Integer -> [Integer]
 -- -- Special case for Delta = 1
--- enumDeltaToInteger1 x0 lim = go (x0 :: Integer)
---                       where
---                         go x | x > lim   = []
---                              | otherwise = x : go (x+1)
+enumDeltaToInteger1 x0 lim = go (x0 :: Integer)
+                      where
+                        go x | x > lim   = []
+                             | otherwise = x : go (x+oneInteger)
 -- 
--- up_fb :: (Integer -> a -> a) -> a -> Integer -> Integer -> Integer -> a
--- up_fb c n x0 delta lim = go (x0 :: Integer)
---                       where
---                         go x | x > lim   = n
---                              | otherwise = x `c` go (x+delta)
--- dn_fb :: (Integer -> a -> a) -> a -> Integer -> Integer -> Integer -> a
--- dn_fb c n x0 delta lim = go (x0 :: Integer)
---                       where
---                         go x | x < lim   = n
---                              | otherwise = x `c` go (x+delta)
+up_fb :: (Integer -> a -> a) -> a -> Integer -> Integer -> Integer -> a
+up_fb c n x0 delta lim = go (x0 :: Integer)
+                      where
+                        go x | x > lim   = n
+                             | otherwise = x `c` go (x+delta)
+dn_fb :: (Integer -> a -> a) -> a -> Integer -> Integer -> Integer -> a
+dn_fb c n x0 delta lim = go (x0 :: Integer)
+                      where
+                        go x | x < lim   = n
+                             | otherwise = x `c` go (x+delta)
 -- 
--- up_list :: Integer -> Integer -> Integer -> [Integer]
--- up_list x0 delta lim = go (x0 :: Integer)
---                     where
---                         go x | x > lim   = []
---                              | otherwise = x : go (x+delta)
--- dn_list :: Integer -> Integer -> Integer -> [Integer]
--- dn_list x0 delta lim = go (x0 :: Integer)
---                     where
---                         go x | x < lim   = []
---                              | otherwise = x : go (x+delta)
+up_list :: Integer -> Integer -> Integer -> [Integer]
+up_list x0 delta lim = go (x0 :: Integer)
+                    where
+                        go x | x > lim   = []
+                             | otherwise = x : go (x+delta)
+dn_list :: Integer -> Integer -> Integer -> [Integer]
+dn_list x0 delta lim = go (x0 :: Integer)
+                    where
+                        go x | x < lim   = []
+                             | otherwise = x : go (x+delta)

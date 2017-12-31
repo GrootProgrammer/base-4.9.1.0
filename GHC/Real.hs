@@ -1,7 +1,8 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, MagicHash, UnboxedTuples, BangPatterns #-}
--- {-# OPTIONS_GHC -Wno-orphans #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, MagicHash, UnboxedTuples, BangPatterns #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -18,12 +19,12 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Real where
+module GHC.Real where
 -- 
--- import GHC.Base
--- import GHC.Num
+import GHC.Base
+import GHC.Num
 -- import GHC.List
--- import GHC.Enum
+import GHC.Enum
 -- import GHC.Show
 -- import {-# SOURCE #-} GHC.Exception( divZeroException, overflowException, ratioZeroDenomException )
 -- 
@@ -35,11 +36,11 @@
 -- # endif
 -- #endif
 -- 
--- infixr 8  ^, ^^
--- infixl 7  /, `quot`, `rem`, `div`, `mod`
--- infixl 7  %
+infixr 8  ^, ^^
+infixl 7  /, `quot`, `rem`, `div`, `mod`
+infixl 7  %
 -- 
--- default ()              -- Double isn't available yet,
+default ()              -- Double isn't available yet,
 --                         -- and we shouldn't be using defaults anyway
 -- 
 -- ------------------------------------------------------------------------
@@ -49,16 +50,19 @@
 -- -- We put them here because they are needed relatively early
 -- -- in the libraries before the Exception type has been defined yet.
 -- 
--- {-# NOINLINE divZeroError #-}
--- divZeroError :: a
+{-# NOINLINE divZeroError #-}
+divZeroError :: a
+divZeroError = divZeroError
 -- divZeroError = raise# divZeroException
 -- 
--- {-# NOINLINE ratioZeroDenominatorError #-}
--- ratioZeroDenominatorError :: a
+{-# NOINLINE ratioZeroDenominatorError #-}
+ratioZeroDenominatorError :: a
+ratioZeroDenominatorError = ratioZeroDenominatorError
 -- ratioZeroDenominatorError = raise# ratioZeroDenomException
 -- 
--- {-# NOINLINE overflowError #-}
--- overflowError :: a
+{-# NOINLINE overflowError #-}
+overflowError :: a
+overflowError = overflowError
 -- overflowError = raise# overflowException
 -- 
 -- --------------------------------------------------------------
@@ -66,12 +70,12 @@
 -- --------------------------------------------------------------
 -- 
 -- -- | Rational numbers, with numerator and denominator of some 'Integral' type.
--- data  Ratio a = !a :% !a  deriving (Eq)
+data  Ratio a = !a :% !a  deriving (Eq)
 -- 
 -- -- | Arbitrary-precision rational numbers, represented as a ratio of
 -- -- two 'Integer' values.  A rational number may be constructed using
 -- -- the '%' operator.
--- type  Rational          =  Ratio Integer
+type  Rational          =  Ratio Integer
 -- 
 -- ratioPrec, ratioPrec1 :: Int
 -- ratioPrec  = 7  -- Precedence of ':%' constructor
@@ -85,8 +89,8 @@
 -- -- immediately lead to a runtime error, because it normalises.
 -- 
 -- -- | Forms the ratio of two integral numbers.
--- {-# SPECIALISE (%) :: Integer -> Integer -> Rational #-}
--- (%)                     :: (Integral a) => a -> a -> Ratio a
+{-# SPECIALISE (%) :: Integer -> Integer -> Rational #-}
+(%)                     :: (Integral a) => a -> a -> Ratio a
 -- 
 -- -- | Extract the numerator of the ratio in reduced form:
 -- -- the numerator and denominator have no common factor and the denominator
@@ -102,76 +106,80 @@
 -- -- | 'reduce' is a subsidiary function used only in this module.
 -- -- It normalises a ratio by dividing both numerator and denominator by
 -- -- their greatest common divisor.
--- reduce ::  (Integral a) => a -> a -> Ratio a
--- {-# SPECIALISE reduce :: Integer -> Integer -> Rational #-}
+reduce ::  (Integral a) => a -> a -> Ratio a
+{-# SPECIALISE reduce :: Integer -> Integer -> Rational #-}
+reduce x y = if y == (fromInteger Naught)
+               then ratioZeroDenominatorError
+               else let d = gcd x y
+                    in (x `quot` d) :% (y `quot` d)
 -- reduce _ 0              =  ratioZeroDenominatorError
 -- reduce x y              =  (x `quot` d) :% (y `quot` d)
 --                            where d = gcd x y
 -- 
--- x % y                   =  reduce (x * signum y) (abs y)
+x % y                   =  reduce (x * signum y) (abs y)
 -- 
--- numerator   (x :% _)    =  x
--- denominator (_ :% y)    =  y
+numerator   (x :% _)    =  x
+denominator (_ :% y)    =  y
 -- 
 -- --------------------------------------------------------------
 -- -- Standard numeric classes
 -- --------------------------------------------------------------
 -- 
--- class  (Num a, Ord a) => Real a  where
+class  (Num a, Ord a) => Real a  where
 --     -- | the rational equivalent of its real argument with full precision
---     toRational          ::  a -> Rational
+    toRational          ::  a -> Rational
 -- 
 -- -- | Integral numbers, supporting integer division.
--- class  (Real a, Enum a) => Integral a  where
+class  (Real a, Enum a) => Integral a  where
 --     -- | integer division truncated toward zero
---     quot                :: a -> a -> a
+    quot                :: a -> a -> a
 --     -- | integer remainder, satisfying
 --     --
 --     -- > (x `quot` y)*y + (x `rem` y) == x
---     rem                 :: a -> a -> a
+    rem                 :: a -> a -> a
 --     -- | integer division truncated toward negative infinity
---     div                 :: a -> a -> a
+    div                 :: a -> a -> a
 --     -- | integer modulus, satisfying
 --     --
 --     -- > (x `div` y)*y + (x `mod` y) == x
---     mod                 :: a -> a -> a
+    mod                 :: a -> a -> a
 --     -- | simultaneous 'quot' and 'rem'
---     quotRem             :: a -> a -> (a,a)
+    quotRem             :: a -> a -> (a,a)
 --     -- | simultaneous 'div' and 'mod'
---     divMod              :: a -> a -> (a,a)
+    divMod              :: a -> a -> (a,a)
 --     -- | conversion to 'Integer'
---     toInteger           :: a -> Integer
+    toInteger           :: a -> Integer
 -- 
---     {-# INLINE quot #-}
---     {-# INLINE rem #-}
---     {-# INLINE div #-}
---     {-# INLINE mod #-}
---     n `quot` d          =  q  where (q,_) = quotRem n d
---     n `rem` d           =  r  where (_,r) = quotRem n d
---     n `div` d           =  q  where (q,_) = divMod n d
---     n `mod` d           =  r  where (_,r) = divMod n d
+    {-# INLINE quot #-}
+    {-# INLINE rem #-}
+    {-# INLINE div #-}
+    {-# INLINE mod #-}
+    n `quot` d          =  q  where (q,_) = quotRem n d
+    n `rem` d           =  r  where (_,r) = quotRem n d
+    n `div` d           =  q  where (q,_) = divMod n d
+    n `mod` d           =  r  where (_,r) = divMod n d
 -- 
---     divMod n d          =  if signum r == negate (signum d) then (q-1, r+d) else qr
---                            where qr@(q,r) = quotRem n d
+    divMod n d          =  if signum r == negate (signum d) then (q-(fromInteger oneInteger), r+d) else qr
+                           where qr@(q,r) = quotRem n d
 -- 
 -- -- | Fractional numbers, supporting real division.
--- class  (Num a) => Fractional a  where
---     {-# MINIMAL fromRational, (recip | (/)) #-}
+class  (Num a) => Fractional a  where
+    {-# MINIMAL fromRational, (recip | (/)) #-}
 -- 
 --     -- | fractional division
---     (/)                 :: a -> a -> a
+    (/)                 :: a -> a -> a
 --     -- | reciprocal fraction
---     recip               :: a -> a
+    recip               :: a -> a
 --     -- | Conversion from a 'Rational' (that is @'Ratio' 'Integer'@).
 --     -- A floating literal stands for an application of 'fromRational'
 --     -- to a value of type 'Rational', so such literals have type
 --     -- @('Fractional' a) => a@.
---     fromRational        :: Rational -> a
+    fromRational        :: Rational -> a
 -- 
---     {-# INLINE recip #-}
---     {-# INLINE (/) #-}
---     recip x             =  1 / x
---     x / y               = x * recip y
+    {-# INLINE recip #-}
+    {-# INLINE (/) #-}
+    recip x             =  (fromInteger oneInteger) / x
+    x / y               = x * recip y
 -- 
 -- -- | Extracting components of fractions.
 -- class  (Real a, Fractional a) => RealFrac a  where
@@ -236,51 +244,51 @@
 -- -- Instances for Int
 -- --------------------------------------------------------------
 -- 
--- instance  Real Int  where
---     toRational x        =  toInteger x :% 1
+instance  Real Int  where
+    toRational x        =  toInteger x :% (fromInteger oneInteger)
 -- 
--- instance  Integral Int  where
---     toInteger (I# i) = smallInteger i
--- 
---     a `quot` b
---      | b == 0                     = divZeroError
---      | b == (-1) && a == minBound = overflowError -- Note [Order of tests]
+instance  Integral Int  where
+    toInteger (I# i) = smallInteger i
+
+    a `quot` b
+     | b == 0                     = divZeroError
+     | b == (-1) && a == minBound = overflowError -- Note [Order of tests]
 --                                                   -- in GHC.Int
---      | otherwise                  =  a `quotInt` b
+     | otherwise                  =  a `quotInt` b
 -- 
---     a `rem` b
---      | b == 0                     = divZeroError
+    a `rem` b
+     | b == 0                     = divZeroError
 --        -- The quotRem CPU instruction fails for minBound `quotRem` -1,
 --        -- but minBound `rem` -1 is well-defined (0). We therefore
 --        -- special-case it.
---      | b == (-1)                  = 0
---      | otherwise                  =  a `remInt` b
+     | b == (-1)                  = 0
+     | otherwise                  =  a `remInt` b
 -- 
---     a `div` b
---      | b == 0                     = divZeroError
---      | b == (-1) && a == minBound = overflowError -- Note [Order of tests]
+    a `div` b
+     | b == 0                     = divZeroError
+     | b == (-1) && a == minBound = overflowError -- Note [Order of tests]
 --                                                   -- in GHC.Int
---      | otherwise                  =  a `divInt` b
+     | otherwise                  =  a `divInt` b
 -- 
---     a `mod` b
---      | b == 0                     = divZeroError
+    a `mod` b
+     | b == 0                     = divZeroError
 --        -- The divMod CPU instruction fails for minBound `divMod` -1,
 --        -- but minBound `mod` -1 is well-defined (0). We therefore
 --        -- special-case it.
---      | b == (-1)                  = 0
---      | otherwise                  =  a `modInt` b
+     | b == (-1)                  = 0
+     | otherwise                  =  a `modInt` b
 -- 
---     a `quotRem` b
---      | b == 0                     = divZeroError
+    a `quotRem` b
+     | b == 0                     = divZeroError
 --        -- Note [Order of tests] in GHC.Int
---      | b == (-1) && a == minBound = (overflowError, 0)
---      | otherwise                  =  a `quotRemInt` b
+     | b == (-1) && a == minBound = (overflowError, 0)
+     | otherwise                  =  a `quotRemInt` b
 -- 
---     a `divMod` b
---      | b == 0                     = divZeroError
+    a `divMod` b
+     | b == 0                     = divZeroError
 --        -- Note [Order of tests] in GHC.Int
---      | b == (-1) && a == minBound = (overflowError, 0)
---      | otherwise                  =  a `divModInt` b
+     | b == (-1) && a == minBound = (overflowError, 0)
+     | otherwise                  =  a `divModInt` b
 -- 
 -- --------------------------------------------------------------
 -- -- Instances for @Word@
@@ -316,8 +324,8 @@
 -- -- Instances for Integer
 -- --------------------------------------------------------------
 -- 
--- instance  Real Integer  where
---     toRational x        =  x :% 1
+instance  Real Integer  where
+    toRational x        =  x :% (fromInteger oneInteger)
 -- 
 -- -- Note [Integer division constant folding]
 -- -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -331,31 +339,43 @@
 -- -- happen because they are all marked with NOINLINE pragma - see documentation
 -- -- of integer-gmp or integer-simple.
 -- 
--- instance  Integral Integer where
---     toInteger n      = n
+instance  Integral Integer where
+    toInteger n      = n
 -- 
---     {-# INLINE quot #-}
+    {-# INLINE quot #-}
+    _ `quot` Naught = divZeroError
+    n `quot` d      = n `quotInteger` d
 --     _ `quot` 0 = divZeroError
 --     n `quot` d = n `quotInteger` d
 -- 
---     {-# INLINE rem #-}
+    {-# INLINE rem #-}
+    _ `rem` Naught = divZeroError
+    n `rem` d      = n `remInteger` d
 --     _ `rem` 0 = divZeroError
 --     n `rem` d = n `remInteger` d
 -- 
---     {-# INLINE div #-}
+    {-# INLINE div #-}
+    _ `div` Naught = divZeroError
+    n `div` d      = n `divInteger` d
 --     _ `div` 0 = divZeroError
 --     n `div` d = n `divInteger` d
 -- 
---     {-# INLINE mod #-}
+    {-# INLINE mod #-}
+    _ `mod` Naught = divZeroError
+    n `mod` d      = n `modInteger` d
 --     _ `mod` 0 = divZeroError
 --     n `mod` d = n `modInteger` d
 -- 
---     {-# INLINE divMod #-}
+    {-# INLINE divMod #-}
+    n `divMod` Naught = divZeroError
+    n `divMod` d      = case n `divModInteger` d of (# x, y #) -> (x, y)
 --     _ `divMod` 0 = divZeroError
 --     n `divMod` d = case n `divModInteger` d of
 --                      (# x, y #) -> (x, y)
 -- 
---     {-# INLINE quotRem #-}
+    {-# INLINE quotRem #-}
+    _ `quotRem` Naught = divZeroError
+    n `quotRem` d      = case n `quotRemInteger` d of (# q, r #) -> (q, r)
 --     _ `quotRem` 0 = divZeroError
 --     n `quotRem` d = case n `quotRemInteger` d of
 --                       (# q, r #) -> (q, r)
@@ -427,19 +447,19 @@
 -- --------------------------------------------------------------
 -- 
 -- -- | general coercion from integral types
--- {-# NOINLINE [1] fromIntegral #-}
--- fromIntegral :: (Integral a, Num b) => a -> b
--- fromIntegral = fromInteger . toInteger
+{-# NOINLINE [1] fromIntegral #-}
+fromIntegral :: (Integral a, Num b) => a -> b
+fromIntegral = fromInteger . toInteger
 -- 
--- {-# RULES
--- "fromIntegral/Int->Int" fromIntegral = id :: Int -> Int
---     #-}
+{-# RULES
+"fromIntegral/Int->Int" fromIntegral = id :: Int -> Int
+    #-}
 -- 
--- {-# RULES
--- "fromIntegral/Int->Word"  fromIntegral = \(I# x#) -> W# (int2Word# x#)
--- "fromIntegral/Word->Int"  fromIntegral = \(W# x#) -> I# (word2Int# x#)
--- "fromIntegral/Word->Word" fromIntegral = id :: Word -> Word
---     #-}
+{-# RULES
+"fromIntegral/Int->Word"  fromIntegral = \(I# x#) -> W# (int2Word# x#)
+"fromIntegral/Word->Int"  fromIntegral = \(W# x#) -> I# (word2Int# x#)
+"fromIntegral/Word->Word" fromIntegral = id :: Word -> Word
+    #-}
 -- 
 -- -- | general coercion to fractional types
 -- realToFrac :: (Real a, Fractional b) => a -> b
@@ -468,12 +488,13 @@
 -- 
 -- -------------------------------------------------------
 -- -- | raise a number to a non-negative integral power
--- {-# SPECIALISE [1] (^) ::
---         Integer -> Integer -> Integer,
---         Integer -> Int -> Integer,
---         Int -> Int -> Int #-}
--- {-# INLINABLE [1] (^) #-}    -- See Note [Inlining (^)]
--- (^) :: (Num a, Integral b) => a -> b -> a
+{-# SPECIALISE [1] (^) ::
+        Integer -> Integer -> Integer,
+        Integer -> Int -> Integer,
+        Int -> Int -> Int #-}
+{-# INLINABLE [1] (^) #-}    -- See Note [Inlining (^)]
+(^) :: (Num a, Integral b) => a -> b -> a
+(^) = (^)
 -- x0 ^ y0 | y0 < 0    = errorWithoutStackTrace "Negative exponent"
 --         | y0 == 0   = 1
 --         | otherwise = f x0 y0
@@ -487,9 +508,9 @@
 --                   | otherwise = g (x * x) ((y - 1) `quot` 2) (x * z)
 -- 
 -- -- | raise a number to an integral power
--- (^^)            :: (Fractional a, Integral b) => a -> b -> a
--- {-# INLINABLE [1] (^^) #-}         -- See Note [Inlining (^)
--- x ^^ n          =  if n >= 0 then x^n else recip (x^(negate n))
+(^^)            :: (Fractional a, Integral b) => a -> b -> a
+{-# INLINABLE [1] (^^) #-}         -- See Note [Inlining (^)
+x ^^ n          =  if n >= (fromInteger Naught) then x^n else recip (x^(negate n))
 -- 
 -- {- Note [Inlining (^)
 --    ~~~~~~~~~~~~~~~~~~~~~
@@ -609,16 +630,22 @@
 -- -- Note: Since for signed fixed-width integer types, @'abs' 'minBound' < 0@,
 -- -- the result may be negative if one of the arguments is @'minBound'@ (and
 -- -- necessarily is if the other is @0@ or @'minBound'@) for such types.
--- gcd             :: (Integral a) => a -> a -> a
--- {-# NOINLINE [1] gcd #-}
--- gcd x y         =  gcd' (abs x) (abs y)
+gcd             :: (Integral a) => a -> a -> a
+{-# NOINLINE [1] gcd #-}
+gcd x y         =  gcd' (abs x) (abs y)
+                   where gcd' a b = if b == (fromInteger Naught)
+                                      then a
+                                      else gcd' b (a `rem` b)
 --                    where gcd' a 0  =  a
 --                          gcd' a b  =  gcd' b (a `rem` b)
 -- 
 -- -- | @'lcm' x y@ is the smallest positive integer that both @x@ and @y@ divide.
--- lcm             :: (Integral a) => a -> a -> a
--- {-# SPECIALISE lcm :: Int -> Int -> Int #-}
--- {-# NOINLINE [1] lcm #-}
+lcm             :: (Integral a) => a -> a -> a
+{-# SPECIALISE lcm :: Int -> Int -> Int #-}
+{-# NOINLINE [1] lcm #-}
+lcm x y = if x == fromInteger Naught || y == fromInteger Naught
+            then fromInteger Naught
+            else abs ((x `quot` (gcd x y)) * y)
 -- lcm _ 0         =  0
 -- lcm 0 _         =  0
 -- lcm x y         =  abs ((x `quot` (gcd x y)) * y)

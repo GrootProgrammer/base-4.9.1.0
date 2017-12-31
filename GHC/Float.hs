@@ -1,14 +1,14 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP
---            , NoImplicitPrelude
---            , MagicHash
---            , UnboxedTuples
---   #-}
--- {-# LANGUAGE CApiFFI #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP
+           , NoImplicitPrelude
+           , MagicHash
+           , UnboxedTuples
+  #-}
+{-# LANGUAGE CApiFFI #-}
 -- -- We believe we could deorphan this module, by moving lots of things
 -- -- around, but we haven't got there yet:
--- {-# OPTIONS_GHC -Wno-orphans #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -27,25 +27,25 @@
 -- 
 -- #include "ieee-flpt.h"
 -- 
--- module GHC.Float
---    ( module GHC.Float
+module GHC.Float
+   ( module GHC.Float
 --    , Float(..), Double(..), Float#, Double#
 --    , double2Int, int2Double, float2Int, int2Float
 -- 
 --     -- * Monomorphic equality operators
 --     -- | See GHC.Classes#matching_overloaded_methods_in_rules
 --    , eqFloat, eqDouble
---    ) where
+   ) where
 -- 
 -- import Data.Maybe
 -- 
 -- import Data.Bits
--- import GHC.Base
+import GHC.Base
 -- import GHC.List
--- import GHC.Enum
+import GHC.Enum
 -- import GHC.Show
--- import GHC.Num
--- import GHC.Real
+import GHC.Num
+import GHC.Real
 -- import GHC.Arr
 -- import GHC.Float.RealFracMethods
 -- import GHC.Float.ConversionUtils
@@ -239,22 +239,23 @@
 -- -- Float
 -- ------------------------------------------------------------------------
 -- 
--- instance  Num Float  where
---     (+)         x y     =  plusFloat x y
---     (-)         x y     =  minusFloat x y
---     negate      x       =  negateFloat x
---     (*)         x y     =  timesFloat x y
---     abs x    | x == 0    = 0 -- handles (-0.0)
---              | x >  0    = x
---              | otherwise = negateFloat x
---     signum x | x > 0     = 1
---              | x < 0     = negateFloat 1
---              | otherwise = x -- handles 0.0, (-0.0), and NaN
+instance  Num Float  where
+    (+)         x y     =  plusFloat x y
+    (-)         x y     =  minusFloat x y
+    negate      x       =  negateFloat x
+    (*)         x y     =  timesFloat x y
+    abs x    | x == (fromInteger Naught)    = fromInteger Naught -- handles (-0.0)
+             | x >  (fromInteger Naught)    = x
+             | otherwise = negateFloat x
+    signum x | x > (fromInteger Naught)     = fromInteger oneInteger
+             | x < (fromInteger Naught)     = negateFloat (fromInteger oneInteger)
+             | otherwise = x -- handles 0.0, (-0.0), and NaN
 -- 
---     {-# INLINE fromInteger #-}
---     fromInteger i = F# (floatFromInteger i)
+    {-# INLINE fromInteger #-}
+    fromInteger i = F# (floatFromInteger i)
 -- 
--- instance  Real Float  where
+instance  Real Float  where
+    toRational = toRational
 --     toRational (F# x#)  =
 --         case decodeFloat_Int# x# of
 --           (# m#, e# #)
@@ -266,13 +267,14 @@
 --             | otherwise                                         ->
 --                     smallInteger m# :% shiftLInteger 1 (negateInt# e#)
 -- 
--- instance  Fractional Float  where
---     (/) x y             =  divideFloat x y
---     {-# INLINE fromRational #-}
---     fromRational (n:%d) = rationalToFloat n d
---     recip x             =  1.0 / x
+instance  Fractional Float  where
+    (/) x y             =  divideFloat x y
+    {-# INLINE fromRational #-}
+    fromRational (n:%d) = rationalToFloat n d
+    recip x             =  (fromInteger oneInteger) / x
 -- 
--- rationalToFloat :: Integer -> Integer -> Float
+rationalToFloat :: Integer -> Integer -> Float
+rationalToFloat = rationalToFloat
 -- {-# NOINLINE [1] rationalToFloat #-}
 -- rationalToFloat n 0
 --     | n == 0        = 0/0
@@ -1056,40 +1058,40 @@
 -- -- Definitions of the boxed PrimOps; these will be
 -- -- used in the case of partial applications, etc.
 -- 
--- plusFloat, minusFloat, timesFloat, divideFloat :: Float -> Float -> Float
--- plusFloat   (F# x) (F# y) = F# (plusFloat# x y)
--- minusFloat  (F# x) (F# y) = F# (minusFloat# x y)
--- timesFloat  (F# x) (F# y) = F# (timesFloat# x y)
--- divideFloat (F# x) (F# y) = F# (divideFloat# x y)
+plusFloat, minusFloat, timesFloat, divideFloat :: Float -> Float -> Float
+plusFloat   (F# x) (F# y) = F# (plusFloat# x y)
+minusFloat  (F# x) (F# y) = F# (minusFloat# x y)
+timesFloat  (F# x) (F# y) = F# (timesFloat# x y)
+divideFloat (F# x) (F# y) = F# (divideFloat# x y)
 -- 
--- negateFloat :: Float -> Float
--- negateFloat (F# x)        = F# (negateFloat# x)
+negateFloat :: Float -> Float
+negateFloat (F# x)        = F# (negateFloat# x)
 -- 
--- gtFloat, geFloat, ltFloat, leFloat :: Float -> Float -> Bool
--- gtFloat     (F# x) (F# y) = isTrue# (gtFloat# x y)
--- geFloat     (F# x) (F# y) = isTrue# (geFloat# x y)
--- ltFloat     (F# x) (F# y) = isTrue# (ltFloat# x y)
--- leFloat     (F# x) (F# y) = isTrue# (leFloat# x y)
+gtFloat, geFloat, ltFloat, leFloat :: Float -> Float -> Bool
+gtFloat     (F# x) (F# y) = isTrue# (gtFloat# x y)
+geFloat     (F# x) (F# y) = isTrue# (geFloat# x y)
+ltFloat     (F# x) (F# y) = isTrue# (ltFloat# x y)
+leFloat     (F# x) (F# y) = isTrue# (leFloat# x y)
 -- 
--- expFloat, logFloat, sqrtFloat :: Float -> Float
--- sinFloat, cosFloat, tanFloat  :: Float -> Float
--- asinFloat, acosFloat, atanFloat  :: Float -> Float
--- sinhFloat, coshFloat, tanhFloat  :: Float -> Float
--- expFloat    (F# x) = F# (expFloat# x)
--- logFloat    (F# x) = F# (logFloat# x)
--- sqrtFloat   (F# x) = F# (sqrtFloat# x)
--- sinFloat    (F# x) = F# (sinFloat# x)
--- cosFloat    (F# x) = F# (cosFloat# x)
--- tanFloat    (F# x) = F# (tanFloat# x)
--- asinFloat   (F# x) = F# (asinFloat# x)
--- acosFloat   (F# x) = F# (acosFloat# x)
--- atanFloat   (F# x) = F# (atanFloat# x)
--- sinhFloat   (F# x) = F# (sinhFloat# x)
--- coshFloat   (F# x) = F# (coshFloat# x)
--- tanhFloat   (F# x) = F# (tanhFloat# x)
+expFloat, logFloat, sqrtFloat :: Float -> Float
+sinFloat, cosFloat, tanFloat  :: Float -> Float
+asinFloat, acosFloat, atanFloat  :: Float -> Float
+sinhFloat, coshFloat, tanhFloat  :: Float -> Float
+expFloat    (F# x) = F# (expFloat# x)
+logFloat    (F# x) = F# (logFloat# x)
+sqrtFloat   (F# x) = F# (sqrtFloat# x)
+sinFloat    (F# x) = F# (sinFloat# x)
+cosFloat    (F# x) = F# (cosFloat# x)
+tanFloat    (F# x) = F# (tanFloat# x)
+asinFloat   (F# x) = F# (asinFloat# x)
+acosFloat   (F# x) = F# (acosFloat# x)
+atanFloat   (F# x) = F# (atanFloat# x)
+sinhFloat   (F# x) = F# (sinhFloat# x)
+coshFloat   (F# x) = F# (coshFloat# x)
+tanhFloat   (F# x) = F# (tanhFloat# x)
 -- 
--- powerFloat :: Float -> Float -> Float
--- powerFloat  (F# x) (F# y) = F# (powerFloat# x y)
+powerFloat :: Float -> Float -> Float
+powerFloat  (F# x) (F# y) = F# (powerFloat# x y)
 -- 
 -- -- definitions of the boxed PrimOps; these will be
 -- -- used in the case of partial applications, etc.

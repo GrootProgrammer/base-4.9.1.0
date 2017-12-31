@@ -36,7 +36,8 @@ module GHC.List (
 import Data.Maybe
 import GHC.Base
 import GHC.Num (Num(..))
-import GHC.Integer (Integer)
+-- import GHC.Integer (Integer)
+import GHC.Integer2
 -- 
 infixl 9  !!
 infix  4 `elem`, `notElem`
@@ -236,12 +237,12 @@ foldl1' _ []             =  errorEmptyList "foldl1'"
 -- -- | The 'sum' function computes the sum of a finite list of numbers.
 sum                     :: (Num a) => [a] -> a
 {-# INLINE sum #-}
-sum                     =  foldl (+) (fromInteger 0)
+sum                     =  foldl (+) (fromInteger Naught)
 -- 
 -- -- | The 'product' function computes the product of a finite list of numbers.
 product                 :: (Num a) => [a] -> a
 {-# INLINE product #-}
-product                 =  foldl (*) (fromInteger 1)
+product                 =  foldl (*) (fromInteger oneInteger)
 -- 
 -- -- | 'scanl' is similar to 'foldl', but returns a list of successive
 -- -- reduced values from the left:
