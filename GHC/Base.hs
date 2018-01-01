@@ -141,7 +141,7 @@ import GHC.Err
 -- import GHC.Tuple ()     -- Note [Depend on GHC.Tuple]
 import GHC.Tuple2 ()     -- Note [Depend on GHC.Tuple]
 -- import GHC.Integer ()   -- Note [Depend on GHC.Integer]
-import GHC.Integer2 ()   -- Note [Depend on GHC.Integer]
+import GHC.Integer2 ()
 -- 
 infixr 9  .
 infixr 5  ++

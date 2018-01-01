@@ -67,18 +67,25 @@ subtract :: (Num a) => a -> a -> a
 subtract x y = y - x
 -- 
 instance  Num Int  where
-    I# x + I# y = I# (x +# y)
-    I# x - I# y = I# (x -# y)
-    negate (I# x) = I# (negateInt# x)
-    I# x * I# y = I# (x *# y)
-    abs n  = if n `geInt` 0 then n else negate n
+--     I# x + I# y = I# (x +# y)
+    (+) = plusInt
+--     I# x - I# y = I# (x -# y)
+    (-) = minusInt
+--     negate (I# x) = I# (negateInt# x)
+    negate = negateInt
+--     I# x * I# y = I# (x *# y)
+    (*) = timesInt
+--     abs n  = if n `geInt` 0 then n else negate n
+    abs = absInt
 -- 
-    signum n | n `ltInt` 0 = negate 1
-             | n `eqInt` 0 = 0
-             | otherwise   = 1
+--     signum n | n `ltInt` 0 = negate 1
+--              | n `eqInt` 0 = 0
+--              | otherwise   = 1
+    signum = signumInt
 -- 
-    {-# INLINE fromInteger #-}   -- Just to be sure!
-    fromInteger i = I# (integerToInt i)
+--     {-# INLINE fromInteger #-}   -- Just to be sure!
+--     fromInteger i = I# (integerToInt i)
+    fromInteger = fromIntegerInt
 -- 
 -- instance Num Word where
 --     (W# x#) + (W# y#)      = W# (x# `plusWord#` y#)
@@ -99,4 +106,34 @@ instance  Num Integer  where
 -- 
     abs = absInteger
     signum = signumInteger
+
+{-# NOINLINE plusInt #-}
+plusInt :: Int -> Int -> Int
+plusInt (I# x) (I# y) = I# (x +# y)
+
+{-# NOINLINE minusInt #-}
+minusInt :: Int -> Int -> Int
+minusInt (I# x) (I# y) = I# (x -# y)
+
+{-# NOINLINE timesInt #-}
+timesInt :: Int -> Int -> Int
+timesInt (I# x) (I# y) = I# (x *# y)
+
+{-# NOINLINE negateInt #-}
+negateInt :: Int -> Int
+negateInt (I# x) = I# (negateInt# x)
+
+{-# NOINLINE absInt #-}
+absInt :: Int -> Int
+absInt n = if n `geInt` 0 then n else negate n
+
+{-# NOINLINE signumInt #-}
+signumInt :: Int -> Int
+signumInt n | n `ltInt` 0 = negate 1
+            | n `eqInt` 0 = 0
+            | otherwise   = 1
+
+{-# NOINLINE fromIntegerInt #-}
+fromIntegerInt :: Integer -> Int
+fromIntegerInt i = I# (integerToInt i)
 

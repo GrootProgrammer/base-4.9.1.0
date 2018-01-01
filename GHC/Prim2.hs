@@ -18,8 +18,9 @@ import GHC.Prim hiding
      (==##), (/=##), (>##), (>=##), (<##), (<=##),
 
      eqFloat#, gtFloat#, geFloat#, ltFloat#, leFloat#,
-     negateFloat#, powerFloat#,
+     negateFloat#,
      plusFloat#, minusFloat#, timesFloat#, divideFloat#,
+     powerFloat#, sqrtFloat#,
 
      eqChar#, neChar#, gtChar#, geChar#, ltChar#, leChar#,
      eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#,
@@ -100,9 +101,6 @@ leFloat# = leFloat#
 negateFloat# :: Float# -> Float#
 negateFloat# = negateFloat#
 
-powerFloat# :: Float# -> Float# -> Float#
-powerFloat# = powerFloat#
-
 plusFloat# :: Float# -> Float# -> Float#
 plusFloat# = plusFloat#
 
@@ -114,6 +112,12 @@ timesFloat# = timesFloat#
 
 divideFloat# :: Float# -> Float# -> Float#
 divideFloat# = divideFloat#
+
+powerFloat# :: Float# -> Float# -> Float#
+powerFloat# = powerFloat#
+
+sqrtFloat# :: Float# -> Float#
+sqrtFloat# = sqrtFloat#
 
 -- Char#
 

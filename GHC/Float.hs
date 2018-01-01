@@ -29,12 +29,12 @@
 -- 
 module GHC.Float
    ( module GHC.Float
---    , Float(..), Double(..), Float#, Double#
+   , Float(..), Double(..), Float#, Double#
 --    , double2Int, int2Double, float2Int, int2Float
 -- 
 --     -- * Monomorphic equality operators
 --     -- | See GHC.Classes#matching_overloaded_methods_in_rules
---    , eqFloat, eqDouble
+   , eqFloat, eqDouble
    ) where
 -- 
 -- import Data.Maybe
