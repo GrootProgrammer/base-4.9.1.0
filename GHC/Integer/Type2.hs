@@ -1,77 +1,81 @@
-
+-- 
 {-# LANGUAGE CPP, MagicHash, NoImplicitPrelude, BangPatterns, UnboxedTuples,
              UnliftedFFITypes #-}
-
+-- 
 module GHC.Integer.Type2
   ( module GHC.Integer.Type2
   ) where
-
+-- 
 -- import GHC.Integer.Type ()
-
+-- 
 import GHC.Prim2
 import GHC.Classes2
 import GHC.Types2
 import GHC.Tuple2 ()
-
-
---------------------------------------------------
-data Integer = Positive !Positive | Negative !Positive | Naught
 -- 
--- -------------------------------------------------------------------
+-- 
+-- data Integer = Positive !Positive | Negative !Positive | Naught
+
+data Integer = Integer Int#
+
 -- -- The hard work is done on positive numbers
 -- 
 -- -- Least significant bit is first
 -- 
 -- -- Positive's have the property that they contain at least one Bit,
 -- -- and their last Bit is One.
-type Positive = Digits
-type Positives = List Positive
+-- type Positive = Digits
+-- type Positives = List Positive
 -- 
-data Digits = Some !Digit !Digits
-            | None
-type Digit = Word#
+-- data Digits = Some !Digit !Digits
+--             | None
+-- type Digit = Word#
 -- 
 -- -- XXX Could move [] above us
-data List a = Nil | Cons a (List a)
+-- data List a = Nil | Cons a (List a)
 -- 
-mkInteger :: Bool   -- non-negative?
-          -> [Int]  -- absolute value in 31 bit chunks, least significant first
+-- mkInteger :: Bool   -- non-negative?
+--           -> [Int]  -- absolute value in 31 bit chunks, least significant first
 --                     -- ideally these would be Words rather than Ints, but
 --                     -- we don't have Word available at the moment.
-          -> Integer
-mkInteger nonNegative is = let abs = f is
-                           in if nonNegative then abs else negateInteger abs
-    where f [] = Naught
-          f (I# i : is') = smallInteger i `orInteger` shiftLInteger (f is') 31#
+--           -> Integer
+-- mkInteger nonNegative is = let abs = f is
+--                            in if nonNegative then abs else negateInteger abs
+--     where f [] = Naught
+--           f (I# i : is') = smallInteger i `orInteger` shiftLInteger (f is') 31#
 -- 
 errorInteger :: Integer
-errorInteger = Positive errorPositive
+errorInteger = Integer 47#
+-- errorInteger = Positive errorPositive
 -- 
-errorPositive :: Positive
-errorPositive = Some 47## None -- Random number
+-- errorPositive :: Positive
+-- errorPositive = Some 47## None -- Random number
 -- 
 {-# NOINLINE smallInteger #-}
 smallInteger :: Int# -> Integer
-smallInteger i = if isTrue# (i >=# 0#) then wordToInteger (int2Word# i)
-                 else -- XXX is this right for -minBound?
-                      negateInteger (wordToInteger (int2Word# (negateInt# i)))
+smallInteger x = Integer x
+-- smallInteger i = if isTrue# (i >=# 0#) then wordToInteger (int2Word# i)
+--                  else -- XXX is this right for -minBound?
+--                       negateInteger (wordToInteger (int2Word# (negateInt# i)))
 -- 
-{-# NOINLINE wordToInteger #-}
-wordToInteger :: Word# -> Integer
-wordToInteger w = if isTrue# (w `eqWord#` 0##)
-                  then Naught
-                  else Positive (Some w None)
+-- {-# NOINLINE wordToInteger #-}
+-- wordToInteger :: Word# -> Integer
+-- wordToInteger w = if isTrue# (w `eqWord#` 0##)
+--                   then Naught
+--                   else Positive (Some w None)
 -- 
-{-# NOINLINE integerToWord #-}
-integerToWord :: Integer -> Word#
-integerToWord (Positive (Some w _)) = w
-integerToWord (Negative (Some w _)) = 0## `minusWord#` w
+-- {-# NOINLINE integerToWord #-}
+-- integerToWord :: Integer -> Word#
+-- integerToWord (Positive (Some w _)) = w
+-- integerToWord (Negative (Some w _)) = 0## `minusWord#` w
 -- -- Must be Naught by the invariant:
-integerToWord _ = 0##
+-- integerToWord _ = 0##
 -- 
 {-# NOINLINE integerToInt #-}
 integerToInt :: Integer -> Int#
-integerToInt i = word2Int# (integerToWord i)
+integerToInt (Integer x) = x
+
+-- integerToInt i = word2Int# (integerToWord i)
 -- 
 -- #if WORD_SIZE_IN_BITS == 64
 -- -- Nothing
@@ -105,11 +109,22 @@ integerToInt i = word2Int# (integerToWord i)
 -- #error WORD_SIZE_IN_BITS not supported
 -- #endif
 -- 
+zeroInteger :: Integer
+zeroInteger = Integer 0#
+
+{-# NOINLINE oneInteger #-}
 oneInteger :: Integer
-oneInteger = Positive onePositive
+oneInteger = Integer 1#
+-- oneInteger = Positive onePositive
 -- 
+{-# NOINLINE twoInteger #-}
+twoInteger :: Integer
+twoInteger = oneInteger `plusInteger` oneInteger
+--
+{-# NOINLINE negativeOneInteger #-}
 negativeOneInteger :: Integer
-negativeOneInteger = Negative onePositive
+negativeOneInteger = zeroInteger `minusInteger` oneInteger
+-- negativeOneInteger = Negative onePositive
 -- 
 -- twoToTheThirtytwoInteger :: Integer
 -- twoToTheThirtytwoInteger = Positive twoToTheThirtytwoPositive
@@ -172,9 +187,10 @@ negativeOneInteger = Negative onePositive
 -- 
 {-# NOINLINE floatFromInteger #-}
 floatFromInteger :: Integer -> Float#
-floatFromInteger Naught = 0.0#
-floatFromInteger (Positive p) = floatFromPositive p
-floatFromInteger (Negative p) = negateFloat# (floatFromPositive p)
+floatFromInteger (Integer x) = fromIntToReal x
+-- floatFromInteger Naught = 0.0#
+-- floatFromInteger (Positive p) = floatFromPositive p
+-- floatFromInteger (Negative p) = negateFloat# (floatFromPositive p)
 -- 
 -- {-# NOINLINE andInteger #-}
 -- andInteger :: Integer -> Integer -> Integer
@@ -221,8 +237,8 @@ floatFromInteger (Negative p) = negateFloat# (floatFromPositive p)
 --                                      in digitsToNegativeInteger z'
 -- 
 -- {-# NOINLINE orInteger #-}
-orInteger :: Integer -> Integer -> Integer
-orInteger = orInteger
+-- orInteger :: Integer -> Integer -> Integer
+-- orInteger = orInteger
 -- Naught     `orInteger` (!i)       = i
 -- (!i)       `orInteger` Naught     = i
 -- Positive x `orInteger` Positive y = Positive (x `orDigits` y)
@@ -285,16 +301,16 @@ orInteger = orInteger
 -- complementInteger :: Integer -> Integer
 -- complementInteger x = negativeOneInteger `minusInteger` x
 -- 
-{-# NOINLINE shiftLInteger #-}
-shiftLInteger :: Integer -> Int# -> Integer
-shiftLInteger = shiftLInteger
+-- {-# NOINLINE shiftLInteger #-}
+-- shiftLInteger :: Integer -> Int# -> Integer
+-- shiftLInteger = shiftLInteger
 -- shiftLInteger (Positive p) i = Positive (shiftLPositive p i)
 -- shiftLInteger (Negative n) i = Negative (shiftLPositive n i)
 -- shiftLInteger Naught       _ = Naught
 -- 
-{-# NOINLINE shiftRInteger #-}
-shiftRInteger :: Integer -> Int# -> Integer
-shiftRInteger = shiftRInteger
+-- {-# NOINLINE shiftRInteger #-}
+-- shiftRInteger :: Integer -> Int# -> Integer
+-- shiftRInteger = shiftRInteger
 -- shiftRInteger (Positive p)   i = shiftRPositive p i
 -- shiftRInteger j@(Negative _) i
 --     = complementInteger (shiftRInteger (complementInteger j) i)
@@ -310,87 +326,131 @@ shiftRInteger = shiftRInteger
 -- twosComplementPositive :: Positive -> DigitsOnes
 -- twosComplementPositive p = flipBits (p `minusPositive` onePositive)
 -- 
-flipBits :: Digits -> DigitsOnes
-flipBits ds = DigitsOnes (flipBitsDigits ds)
+-- flipBits :: Digits -> DigitsOnes
+-- flipBits ds = DigitsOnes (flipBitsDigits ds)
 -- 
-flipBitsDigits :: Digits -> Digits
-flipBitsDigits None = None
-flipBitsDigits (Some w ws) = Some (not# w) (flipBitsDigits ws)
+-- flipBitsDigits :: Digits -> Digits
+-- flipBitsDigits None = None
+-- flipBitsDigits (Some w ws) = Some (not# w) (flipBitsDigits ws)
 -- 
 {-# NOINLINE negateInteger #-}
 negateInteger :: Integer -> Integer
-negateInteger (Positive p) = Negative p
-negateInteger (Negative p) = Positive p
-negateInteger Naught       = Naught
+negateInteger (Integer x) = Integer (negateInt# x)
+-- negateInteger (Positive p) = Negative p
+-- negateInteger (Negative p) = Positive p
+-- negateInteger Naught       = Naught
 -- 
 -- -- Note [Avoid patError]
 {-# NOINLINE plusInteger #-}
 plusInteger :: Integer -> Integer -> Integer
-Positive p1    `plusInteger` Positive p2 = Positive (p1 `plusPositive` p2)
-Negative p1    `plusInteger` Negative p2 = Negative (p1 `plusPositive` p2)
-Positive p1    `plusInteger` Negative p2
-    = case p1 `comparePositive` p2 of
-      GT -> Positive (p1 `minusPositive` p2)
-      EQ -> Naught
-      LT -> Negative (p2 `minusPositive` p1)
-Negative p1    `plusInteger` Positive p2
-    = Positive p2 `plusInteger` Negative p1
-Naught         `plusInteger` Naught         = Naught
-Naught         `plusInteger` i@(Positive _) = i
-Naught         `plusInteger` i@(Negative _) = i
-i@(Positive _) `plusInteger` Naught         = i
-i@(Negative _) `plusInteger` Naught         = i
+(Integer x) `plusInteger` (Integer y) = Integer (x +# y)
+-- Positive p1    `plusInteger` Positive p2 = Positive (p1 `plusPositive` p2)
+-- Negative p1    `plusInteger` Negative p2 = Negative (p1 `plusPositive` p2)
+-- Positive p1    `plusInteger` Negative p2
+--     = case p1 `comparePositive` p2 of
+--       GT -> Positive (p1 `minusPositive` p2)
+--       EQ -> Naught
+--       LT -> Negative (p2 `minusPositive` p1)
+-- Negative p1    `plusInteger` Positive p2
+--     = Positive p2 `plusInteger` Negative p1
+-- Naught         `plusInteger` Naught         = Naught
+-- Naught         `plusInteger` i@(Positive _) = i
+-- Naught         `plusInteger` i@(Negative _) = i
+-- i@(Positive _) `plusInteger` Naught         = i
+-- i@(Negative _) `plusInteger` Naught         = i
 -- 
 {-# NOINLINE minusInteger #-}
 minusInteger :: Integer -> Integer -> Integer
-i1 `minusInteger` i2 = i1 `plusInteger` negateInteger i2
+x `minusInteger` y = x `plusInteger` (negateInteger y)
+-- i1 `minusInteger` i2 = i1 `plusInteger` negateInteger i2
 -- 
 {-# NOINLINE timesInteger #-}
 timesInteger :: Integer -> Integer -> Integer
-Positive p1 `timesInteger` Positive p2 = Positive (p1 `timesPositive` p2)
-Negative p1 `timesInteger` Negative p2 = Positive (p1 `timesPositive` p2)
-Positive p1 `timesInteger` Negative p2 = Negative (p1 `timesPositive` p2)
-Negative p1 `timesInteger` Positive p2 = Negative (p1 `timesPositive` p2)
-(!_)        `timesInteger` (!_)        = Naught
+(Integer x) `timesInteger` (Integer y) = Integer (x *# y)
+-- Positive p1 `timesInteger` Positive p2 = Positive (p1 `timesPositive` p2)
+-- Negative p1 `timesInteger` Negative p2 = Positive (p1 `timesPositive` p2)
+-- Positive p1 `timesInteger` Negative p2 = Negative (p1 `timesPositive` p2)
+-- Negative p1 `timesInteger` Positive p2 = Negative (p1 `timesPositive` p2)
+-- (!_)        `timesInteger` (!_)        = Naught
 -- 
--- {-# NOINLINE divModInteger #-}
+{-# NOINLINE divModInteger #-}
 divModInteger :: Integer -> Integer -> (# Integer, Integer #)
 n `divModInteger` d =
     case n `quotRemInteger` d of
         (# q, r #) ->
-            if signumInteger r `eqInteger`
-               negateInteger (signumInteger d)
+            if signumInteger r `eqInteger` (negateInteger (signumInteger d))
             then (# q `minusInteger` oneInteger, r `plusInteger` d #)
             else (# q, r #)
+-- n `divModInteger` d =
+--     case n `quotRemInteger` d of
+--         (# q, r #) ->
+--             if signumInteger r `eqInteger`
+--                negateInteger (signumInteger d)
+--             then (# q `minusInteger` oneInteger, r `plusInteger` d #)
+--             else (# q, r #)
 -- 
 {-# NOINLINE divInteger #-}
 divInteger :: Integer -> Integer -> Integer
 n `divInteger` d = quotient
-    where (# quotient, _ #) = n `divModInteger` d
+  where (# quotient, _ #) = n `divModInteger` d
+-- n `divInteger` d = quotient
+--     where (# quotient, _ #) = n `divModInteger` d
 -- 
 {-# NOINLINE modInteger #-}
 modInteger :: Integer -> Integer -> Integer
 n `modInteger` d = modulus
-    where (# _, modulus #) = n `divModInteger` d
+  where (# _, modulus #) = n `divModInteger` d
+-- n `modInteger` d = modulus
+--     where (# _, modulus #) = n `divModInteger` d
 -- 
 {-# NOINLINE quotRemInteger #-}
 quotRemInteger :: Integer -> Integer -> (# Integer, Integer #)
-Naught      `quotRemInteger` (!_)        = (# Naught, Naught #)
-(!_)        `quotRemInteger` Naught
-    = (# errorInteger, errorInteger #) -- XXX Can't happen
+(Integer 0#) `quotRemInteger` (!_) = (# zeroInteger, zeroInteger #)
+(!_) `quotRemInteger` (Integer 0#) = (# errorInteger, errorInteger #)
+-- (!_) `quotRemInteger` (Integer 0#) = error "Division by zero"
+x `quotRemInteger` y =
+  case (# x > zeroInteger, y > zeroInteger #) of
+    (# True, True #) -> (# x `quotPositive` y, x `remPositive` y #)
+    (# False, True #) ->
+      case (# (negateInteger x) `quotPositive` y
+           ,  (negateInteger x) `remPositive` y #) of
+        (# q, r #) -> (# negateInteger q, negateInteger r #)
+    (# True, False #) ->
+      case (# x `quotPositive` (negateInteger y)
+           ,  x `remPositive` (negateInteger y) #) of
+        (# q, r #) -> (# negateInteger q, r #)
+    (# False, False #) ->
+      case (# (negateInteger x) `quotPositive` (negateInteger y)
+           ,  (negateInteger x) `remPositive` (negateInteger y) #) of
+        (# q, r #) -> (# q, negateInteger r #)
+
+-- Naught      `quotRemInteger` (!_)        = (# Naught, Naught #)
+-- (!_)        `quotRemInteger` Naught
+--     = (# errorInteger, errorInteger #) -- XXX Can't happen
 -- XXX _            `quotRemInteger` Naught     = error "Division by zero"
-Positive p1 `quotRemInteger` Positive p2 = p1 `quotRemPositive` p2
-Negative p1 `quotRemInteger` Positive p2 = case p1 `quotRemPositive` p2 of
-                                           (# q, r #) ->
-                                               (# negateInteger q,
-                                                  negateInteger r #)
-Positive p1 `quotRemInteger` Negative p2 = case p1 `quotRemPositive` p2 of
-                                           (# q, r #) ->
-                                               (# negateInteger q, r #)
-Negative p1 `quotRemInteger` Negative p2 = case p1 `quotRemPositive` p2 of
-                                           (# q, r #) ->
-                                               (# q, negateInteger r #)
+-- Positive p1 `quotRemInteger` Positive p2 = p1 `quotRemPositive` p2
+-- Negative p1 `quotRemInteger` Positive p2 = case p1 `quotRemPositive` p2 of
+--                                            (# q, r #) ->
+--                                                (# negateInteger q,
+--                                                   negateInteger r #)
+-- Positive p1 `quotRemInteger` Negative p2 = case p1 `quotRemPositive` p2 of
+--                                            (# q, r #) ->
+--                                                (# negateInteger q, r #)
+-- Negative p1 `quotRemInteger` Negative p2 = case p1 `quotRemPositive` p2 of
+--                                            (# q, r #) ->
+--                                                (# q, negateInteger r #)
 -- 
+
+quotPositive :: Integer -> Integer -> Integer
+x `quotPositive` y = if x < zeroInteger
+                     then zeroInteger
+                     else oneInteger `plusInteger`
+                          ((x `minusInteger` y) `quotPositive` y)
+
+remPositive :: Integer -> Integer -> Integer
+x `remPositive` y = if x `minusInteger` y < zeroInteger
+                    then x else (x `minusInteger` y) `remPositive` y
+
 {-# NOINLINE quotInteger #-}
 quotInteger :: Integer -> Integer -> Integer
 x `quotInteger` y = case x `quotRemInteger` y of
@@ -403,16 +463,23 @@ x `remInteger` y = case x `quotRemInteger` y of
 -- 
 {-# NOINLINE compareInteger #-}
 compareInteger :: Integer -> Integer -> Ordering
-Positive x `compareInteger` Positive y = x `comparePositive` y
-Positive _ `compareInteger` (!_)       = GT
-Naught     `compareInteger` Naught     = EQ
-Naught     `compareInteger` Negative _ = GT
-Negative x `compareInteger` Negative y = y `comparePositive` x
-(!_)       `compareInteger` (!_)       = LT
+x `compareInteger` y =
+  if x `minusInteger` y == zeroInteger
+    then EQ
+    else if x `minusInteger` y > zeroInteger
+      then GT
+      else LT
+
+-- Positive x `compareInteger` Positive y = x `comparePositive` y
+-- Positive _ `compareInteger` (!_)       = GT
+-- Naught     `compareInteger` Naught     = EQ
+-- Naught     `compareInteger` Negative _ = GT
+-- Negative x `compareInteger` Negative y = y `comparePositive` x
+-- (!_)       `compareInteger` (!_)       = LT
 -- 
 {-# NOINLINE eqInteger# #-}
 eqInteger# :: Integer -> Integer -> Bool
-eqInteger# = eqInteger#
+(Integer x) `eqInteger#` (Integer y) = isTrue# (x ==# y)
 -- eqInteger# :: Integer -> Integer -> Int#
 -- x `eqInteger#` y = case x `compareInteger` y of
 --                         EQ -> 1#
@@ -420,7 +487,8 @@ eqInteger# = eqInteger#
 -- 
 {-# NOINLINE neqInteger# #-}
 neqInteger# :: Integer -> Integer -> Bool
-neqInteger# = neqInteger#
+(Integer x) `neqInteger#` (Integer y) = isTrue# (x ==# y)
+-- neqInteger# = neqInteger#
 -- neqInteger# :: Integer -> Integer -> Int#
 -- x `neqInteger#` y = case x `compareInteger` y of
 --                          EQ -> 0#
@@ -438,7 +506,7 @@ instance  Eq Integer  where
 -- 
 {-# NOINLINE ltInteger# #-}
 ltInteger# :: Integer -> Integer -> Bool
-ltInteger# = ltInteger#
+(Integer x) `ltInteger#` (Integer y) = x <# y
 -- ltInteger# :: Integer -> Integer -> Int#
 -- x `ltInteger#` y = case x `compareInteger` y of
 --                         LT -> 1#
@@ -446,7 +514,7 @@ ltInteger# = ltInteger#
 -- 
 {-# NOINLINE gtInteger# #-}
 gtInteger# :: Integer -> Integer -> Bool
-gtInteger# = gtInteger#
+(Integer x) `gtInteger#` (Integer y) = x ># y
 -- gtInteger# :: Integer -> Integer -> Int#
 -- x `gtInteger#` y = case x `compareInteger` y of
 --                         GT -> 1#
@@ -454,7 +522,8 @@ gtInteger# = gtInteger#
 -- 
 {-# NOINLINE leInteger# #-}
 leInteger# :: Integer -> Integer -> Bool
-leInteger# = leInteger#
+(Integer x) `leInteger#` (Integer y) = x <=# y
+-- leInteger# = leInteger#
 -- leInteger# :: Integer -> Integer -> Int#
 -- x `leInteger#` y = case x `compareInteger` y of
 --                         GT -> 0#
@@ -462,7 +531,8 @@ leInteger# = leInteger#
 -- 
 {-# NOINLINE geInteger# #-}
 geInteger# :: Integer -> Integer -> Bool
-geInteger# = geInteger#
+(Integer x) `geInteger#` (Integer y) = x >=# y
+-- geInteger# = geInteger#
 -- geInteger# :: Integer -> Integer -> Int#
 -- x `geInteger#` y = case x `compareInteger` y of
 --                         LT -> 0#
@@ -485,16 +555,24 @@ instance Ord Integer where
     (>=) = geInteger
     compare = compareInteger
 -- 
--- {-# NOINLINE absInteger #-}
+{-# NOINLINE absInteger #-}
 absInteger :: Integer -> Integer
-absInteger (Negative x) = Positive x
-absInteger x = x
+absInteger x = if x >= zeroInteger then x else negateInteger x
+-- absInteger (Negative x) = Positive x
+-- absInteger x = x
 -- 
 {-# NOINLINE signumInteger #-}
 signumInteger :: Integer -> Integer
-signumInteger (Negative _) = negativeOneInteger
-signumInteger Naught       = Naught
-signumInteger (Positive _) = oneInteger
+signumInteger x =
+  if x == zeroInteger
+    then zeroInteger
+    else if x > zeroInteger
+      then oneInteger
+      else negativeOneInteger
+
+-- signumInteger (Negative _) = negativeOneInteger
+-- signumInteger Naught       = Naught
+-- signumInteger (Positive _) = oneInteger
 -- 
 -- {-# NOINLINE hashInteger #-}
 -- hashInteger :: Integer -> Int#
@@ -503,8 +581,8 @@ signumInteger (Positive _) = oneInteger
 -- -------------------------------------------------------------------
 -- -- The hard work is done on positive numbers
 -- 
-onePositive :: Positive
-onePositive = Some 1## None
+-- onePositive :: Positive
+-- onePositive = Some 1## None
 -- 
 -- halfBoundUp, fullBound :: () -> Digit
 -- lowHalfMask :: () -> Digit
@@ -563,18 +641,18 @@ onePositive = Some 1## None
 -- #endif
 -- 
 -- -- Note [Avoid patError]
-comparePositive :: Positive -> Positive -> Ordering
-Some x xs `comparePositive` Some y ys = case xs `comparePositive` ys of
-                                        EQ ->      if isTrue# (x `ltWord#` y) then LT
-                                              else if isTrue# (x `gtWord#` y) then GT
-                                              else                                 EQ
-                                        res -> res
-None      `comparePositive` None      = EQ
-(Some {}) `comparePositive` None      = GT
-None      `comparePositive` (Some {}) = LT
+-- comparePositive :: Positive -> Positive -> Ordering
+-- Some x xs `comparePositive` Some y ys = case xs `comparePositive` ys of
+--                                         EQ ->      if isTrue# (x `ltWord#` y) then LT
+--                                               else if isTrue# (x `gtWord#` y) then GT
+--                                               else                                 EQ
+--                                         res -> res
+-- None      `comparePositive` None      = EQ
+-- (Some {}) `comparePositive` None      = GT
+-- None      `comparePositive` (Some {}) = LT
 -- 
-plusPositive :: Positive -> Positive -> Positive
-plusPositive = plusPositive
+-- plusPositive :: Positive -> Positive -> Positive
+-- plusPositive = plusPositive
 -- plusPositive x0 y0 = addWithCarry 0## x0 y0
 --  where -- digit `elem` [0, 1]
 --        -- Note [Avoid patError]
@@ -625,8 +703,8 @@ plusPositive = plusPositive
 -- -- Requires x > y
 -- -- In recursive calls, x >= y and x == y => result is None
 -- -- Note [Avoid patError]
-minusPositive :: Positive -> Positive -> Positive
-minusPositive = minusPositive
+-- minusPositive :: Positive -> Positive -> Positive
+-- minusPositive = minusPositive
 -- Some x xs `minusPositive` Some y ys
 --  = if isTrue# (x `eqWord#` y)
 --    then case xs `minusPositive` ys of
@@ -645,8 +723,8 @@ minusPositive = minusPositive
 -- -- XXX None `minusPositive` _ = error "minusPositive: Requirement x > y not met"
 -- 
 -- -- Note [Avoid patError]
-timesPositive :: Positive -> Positive -> Positive
-timesPositive = timesPositive
+-- timesPositive :: Positive -> Positive -> Positive
+-- timesPositive = timesPositive
 -- -- XXX None's can't happen here:
 -- None            `timesPositive` None        = errorPositive
 -- None            `timesPositive` (Some {})   = errorPositive
@@ -766,8 +844,8 @@ timesPositive = timesPositive
 --          _                    -> Naught
 -- 
 -- -- Long division
-quotRemPositive :: Positive -> Positive -> (# Integer, Integer #)
-quotRemPositive = quotRemPositive
+-- quotRemPositive :: Positive -> Positive -> (# Integer, Integer #)
+-- quotRemPositive = quotRemPositive
 -- (!xs) `quotRemPositive` (!ys)
 --     = case f xs of
 --       (# d, m #) -> (# digitsMaybeZeroToInteger d,
@@ -820,7 +898,7 @@ quotRemPositive = quotRemPositive
 -- -- i.e. ones off to infinity. This makes sense when we want to "and"
 -- -- a DigitOnes with a Digits, as the latter will bound the size of the
 -- -- result.
-newtype DigitsOnes = DigitsOnes Digits
+-- newtype DigitsOnes = DigitsOnes Digits
 -- 
 -- -- Note [Avoid patError]
 -- andDigitsOnes :: DigitsOnes -> Digits -> Digits
@@ -831,11 +909,11 @@ newtype DigitsOnes = DigitsOnes Digits
 --     = Some (w1 `and#` w2) (andDigitsOnes (DigitsOnes ws1) ws2)
 -- 
 -- -- Note [Avoid patError]
-orDigits :: Digits -> Digits -> Digits
-orDigits None          None          = None
-orDigits None          ds@(Some {})  = ds
-orDigits ds@(Some {})  None          = ds
-orDigits (Some w1 ds1) (Some w2 ds2) = Some (w1 `or#` w2) (orDigits ds1 ds2)
+-- orDigits :: Digits -> Digits -> Digits
+-- orDigits None          None          = None
+-- orDigits None          ds@(Some {})  = ds
+-- orDigits ds@(Some {})  None          = ds
+-- orDigits (Some w1 ds1) (Some w2 ds2) = Some (w1 `or#` w2) (orDigits ds1 ds2)
 -- 
 -- -- Note [Avoid patError]
 -- xorDigits :: Digits -> Digits -> Digits
@@ -856,8 +934,8 @@ orDigits (Some w1 ds1) (Some w2 ds2) = Some (w1 `or#` w2) (orDigits ds1 ds2)
 --        +## int2Double# (word2Int# l)
 -- 
 -- -- XXX We'd really like word2Float# for this
-floatFromPositive :: Positive -> Float#
-floatFromPositive = floatFromPositive
+-- floatFromPositive :: Positive -> Float#
+-- floatFromPositive = floatFromPositive
 -- floatFromPositive None = 0.0#
 -- floatFromPositive (Some w ds)
 --     = case splitHalves w of
@@ -893,4 +971,4 @@ floatFromPositive = floatFromPositive
 -- 
 -- 
 -- 
-
+-- 

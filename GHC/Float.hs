@@ -244,11 +244,11 @@ instance  Num Float  where
     (-)         x y     =  minusFloat x y
     negate      x       =  negateFloat x
     (*)         x y     =  timesFloat x y
-    abs x    | x == (fromInteger Naught)    = fromInteger Naught -- handles (-0.0)
-             | x >  (fromInteger Naught)    = x
+    abs x    | x == (fromInteger zeroInteger) = fromInteger zeroInteger -- handles (-0.0)
+             | x >  (fromInteger zeroInteger) = x
              | otherwise = negateFloat x
-    signum x | x > (fromInteger Naught)     = fromInteger oneInteger
-             | x < (fromInteger Naught)     = negateFloat (fromInteger oneInteger)
+    signum x | x > (fromInteger zeroInteger) = fromInteger oneInteger
+             | x < (fromInteger zeroInteger)= negateFloat (fromInteger oneInteger)
              | otherwise = x -- handles 0.0, (-0.0), and NaN
 -- 
     {-# INLINE fromInteger #-}

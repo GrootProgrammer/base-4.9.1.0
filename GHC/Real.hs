@@ -108,7 +108,7 @@ type  Rational          =  Ratio Integer
 -- -- their greatest common divisor.
 reduce ::  (Integral a) => a -> a -> Ratio a
 {-# SPECIALISE reduce :: Integer -> Integer -> Rational #-}
-reduce x y = if y == (fromInteger Naught)
+reduce x y = if y == (fromInteger zeroInteger)
                then ratioZeroDenominatorError
                else let d = gcd x y
                     in (x `quot` d) :% (y `quot` d)
@@ -343,39 +343,39 @@ instance  Integral Integer where
     toInteger n      = n
 -- 
     {-# INLINE quot #-}
-    _ `quot` Naught = divZeroError
-    n `quot` d      = n `quotInteger` d
+    n `quot` d = if d == zeroInteger then divZeroError else n `quotInteger` d
 --     _ `quot` 0 = divZeroError
 --     n `quot` d = n `quotInteger` d
 -- 
     {-# INLINE rem #-}
-    _ `rem` Naught = divZeroError
-    n `rem` d      = n `remInteger` d
+    n `rem` d = if d == zeroInteger then divZeroError else n `remInteger` d
 --     _ `rem` 0 = divZeroError
 --     n `rem` d = n `remInteger` d
 -- 
     {-# INLINE div #-}
-    _ `div` Naught = divZeroError
-    n `div` d      = n `divInteger` d
+    n `div` d = if d == zeroInteger then divZeroError else n `divInteger` d
 --     _ `div` 0 = divZeroError
 --     n `div` d = n `divInteger` d
 -- 
     {-# INLINE mod #-}
-    _ `mod` Naught = divZeroError
-    n `mod` d      = n `modInteger` d
+    n `mod` d = if d == zeroInteger then divZeroError else n `modInteger` d
 --     _ `mod` 0 = divZeroError
 --     n `mod` d = n `modInteger` d
 -- 
     {-# INLINE divMod #-}
-    n `divMod` Naught = divZeroError
-    n `divMod` d      = case n `divModInteger` d of (# x, y #) -> (x, y)
+    n `divMod` d = if d == zeroInteger
+                   then divZeroError
+                   else case n `divModInteger` d of
+                     (# x, y #) -> (x, y)
 --     _ `divMod` 0 = divZeroError
 --     n `divMod` d = case n `divModInteger` d of
 --                      (# x, y #) -> (x, y)
 -- 
     {-# INLINE quotRem #-}
-    _ `quotRem` Naught = divZeroError
-    n `quotRem` d      = case n `quotRemInteger` d of (# q, r #) -> (q, r)
+    n `quotRem` d = if d == zeroInteger
+                    then divZeroError
+                    else case n `quotRemInteger` d of
+                      (# q, r #) -> (q, r)
 --     _ `quotRem` 0 = divZeroError
 --     n `quotRem` d = case n `quotRemInteger` d of
 --                       (# q, r #) -> (q, r)
@@ -462,9 +462,9 @@ fromIntegral = fromInteger . toInteger
     #-}
 -- 
 -- -- | general coercion to fractional types
--- realToFrac :: (Real a, Fractional b) => a -> b
--- {-# NOINLINE [1] realToFrac #-}
--- realToFrac = fromRational . toRational
+realToFrac :: (Real a, Fractional b) => a -> b
+{-# NOINLINE [1] realToFrac #-}
+realToFrac = fromRational . toRational
 -- 
 -- --------------------------------------------------------------
 -- -- Overloaded numeric functions
@@ -480,11 +480,11 @@ fromIntegral = fromInteger . toInteger
 --    | x < 0     = showParen (p > 6) (showChar '-' . showPos (-x))
 --    | otherwise = showPos x
 -- 
--- even, odd       :: (Integral a) => a -> Bool
--- even n          =  n `rem` 2 == 0
--- odd             =  not . even
--- {-# INLINEABLE even #-}
--- {-# INLINEABLE odd  #-}
+even, odd :: (Integral a) => a -> Bool
+even n =  n `rem` (fromInteger twoInteger) == fromInteger zeroInteger
+odd    =  not . even
+{-# INLINEABLE even #-}
+{-# INLINEABLE odd  #-}
 -- 
 -- -------------------------------------------------------
 -- -- | raise a number to a non-negative integral power
@@ -494,23 +494,28 @@ fromIntegral = fromInteger . toInteger
         Int -> Int -> Int #-}
 {-# INLINABLE [1] (^) #-}    -- See Note [Inlining (^)]
 (^) :: (Num a, Integral b) => a -> b -> a
-(^) = (^)
--- x0 ^ y0 | y0 < 0    = errorWithoutStackTrace "Negative exponent"
---         | y0 == 0   = 1
---         | otherwise = f x0 y0
---     where -- f : x0 ^ y0 = x ^ y
---           f x y | even y    = f (x * x) (y `quot` 2)
---                 | y == 1    = x
---                 | otherwise = g (x * x) ((y - 1) `quot` 2) x
---           -- g : x0 ^ y0 = (x ^ y) * z
---           g x y z | even y = g (x * x) (y `quot` 2) z
---                   | y == 1 = x * z
---                   | otherwise = g (x * x) ((y - 1) `quot` 2) (x * z)
+x0 ^ y0 | y0 < (fromInteger zeroInteger)  = errorWithoutStackTrace "Negative exponent"
+        | y0 == (fromInteger zeroInteger) = fromInteger oneInteger
+        | otherwise = f x0 y0
+    where -- f : x0 ^ y0 = x ^ y
+          -- f x y | even y = f (x * x) (y `quot` 2)
+          --       | y == (fromInteger oneInteger) = x
+          --       | otherwise = g (x * x) ((y - 1) `quot` 2) x
+          f x y | even y = f (x * x) (y `quot` (fromInteger twoInteger))
+                | y == (fromInteger oneInteger) = x
+                | otherwise = g (x * x) ((y - (fromInteger oneInteger)) `quot` (fromInteger twoInteger)) x
+          -- g : x0 ^ y0 = (x ^ y) * z
+          -- g x y z | even y = g (x * x) (y `quot` 2) z
+          --         | y == 1 = x * z
+          --         | otherwise = g (x * x) ((y - 1) `quot` 2) (x * z)
+          g x y z | even y = g (x * x) (y `quot` (fromInteger twoInteger)) z
+                  | y == (fromInteger oneInteger) = x * z
+                  | otherwise = g (x * x) ((y - (fromInteger oneInteger))) (x * z)
 -- 
 -- -- | raise a number to an integral power
-(^^)            :: (Fractional a, Integral b) => a -> b -> a
+(^^) :: (Fractional a, Integral b) => a -> b -> a
 {-# INLINABLE [1] (^^) #-}         -- See Note [Inlining (^)
-x ^^ n          =  if n >= (fromInteger Naught) then x^n else recip (x^(negate n))
+x ^^ n =  if n >= (fromInteger zeroInteger) then x^n else recip (x^(negate n))
 -- 
 -- {- Note [Inlining (^)
 --    ~~~~~~~~~~~~~~~~~~~~~
@@ -633,7 +638,7 @@ x ^^ n          =  if n >= (fromInteger Naught) then x^n else recip (x^(negate n
 gcd             :: (Integral a) => a -> a -> a
 {-# NOINLINE [1] gcd #-}
 gcd x y         =  gcd' (abs x) (abs y)
-                   where gcd' a b = if b == (fromInteger Naught)
+                   where gcd' a b = if b == (fromInteger zeroInteger)
                                       then a
                                       else gcd' b (a `rem` b)
 --                    where gcd' a 0  =  a
@@ -643,8 +648,8 @@ gcd x y         =  gcd' (abs x) (abs y)
 lcm             :: (Integral a) => a -> a -> a
 {-# SPECIALISE lcm :: Int -> Int -> Int #-}
 {-# NOINLINE [1] lcm #-}
-lcm x y = if x == fromInteger Naught || y == fromInteger Naught
-            then fromInteger Naught
+lcm x y = if x == fromInteger zeroInteger || y == fromInteger zeroInteger
+            then fromInteger zeroInteger
             else abs ((x `quot` (gcd x y)) * y)
 -- lcm _ 0         =  0
 -- lcm 0 _         =  0

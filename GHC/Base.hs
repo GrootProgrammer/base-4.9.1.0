@@ -216,7 +216,18 @@ default ()              -- Double isn't available yet
 -- -- error monad can be built using the 'Data.Either.Either' type.
 -- --
 data  Maybe a  =  Nothing | Just a
-  deriving (Eq, Ord)
+--   deriving (Eq, Ord)
+
+instance (Eq a) => Eq (Maybe a) where
+    Nothing == Nothing = True
+    Just x  == Just y  = x == y
+
+instance (Ord a) => Ord (Maybe a) where
+    Nothing <= Nothing = True
+    Nothing <= Just _  = True
+    Just _  <= Nothing = False
+    Just x  <= Just y  = x <= y
+
 -- 
 -- -- | The class of monoids (types with an associative binary operation that
 -- -- has an identity).  Instances should satisfy the following laws:

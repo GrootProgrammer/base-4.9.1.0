@@ -857,7 +857,7 @@ enumDeltaInteger x d = x `seq` (x : enumDeltaInteger (x+d) d)
 enumDeltaToIntegerFB :: (Integer -> a -> a) -> a
                      -> Integer -> Integer -> Integer -> a
 enumDeltaToIntegerFB c n x delta lim
-  | delta >= Naught = up_fb c n x delta lim
+  | delta >= zeroInteger = up_fb c n x delta lim
   | otherwise  = dn_fb c n x delta lim
 -- 
 {-# NOINLINE [0] enumDeltaToInteger1FB #-}
@@ -872,7 +872,7 @@ enumDeltaToInteger1FB c n x0 lim = go (x0 :: Integer)
 {-# NOINLINE [1] enumDeltaToInteger #-}
 enumDeltaToInteger :: Integer -> Integer -> Integer -> [Integer]
 enumDeltaToInteger x delta lim
-  | delta >= Naught = up_list x delta lim
+  | delta >= zeroInteger = up_list x delta lim
   | otherwise  = dn_list x delta lim
 -- 
 {-# NOINLINE [1] enumDeltaToInteger1 #-}

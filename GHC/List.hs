@@ -237,7 +237,7 @@ foldl1' _ []             =  errorEmptyList "foldl1'"
 -- -- | The 'sum' function computes the sum of a finite list of numbers.
 sum                     :: (Num a) => [a] -> a
 {-# INLINE sum #-}
-sum                     =  foldl (+) (fromInteger Naught)
+sum                     =  foldl (+) (fromInteger zeroInteger)
 -- 
 -- -- | The 'product' function computes the product of a finite list of numbers.
 product                 :: (Num a) => [a] -> a

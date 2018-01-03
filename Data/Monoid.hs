@@ -113,7 +113,7 @@ newtype Sum a = Sum { getSum :: a }
 --         deriving (Eq, Ord, Read, Show, Bounded, Generic, Generic1, Num)
 -- 
 instance Num a => Monoid (Sum a) where
-        mempty = Sum (fromInteger Naught)
+        mempty = Sum (fromInteger zeroInteger)
         mappend = coerce ((+) :: a -> a -> a)
 -- --        Sum x `mappend` Sum y = Sum (x + y)
 -- 
