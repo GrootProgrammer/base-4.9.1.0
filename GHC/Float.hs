@@ -240,20 +240,28 @@ import GHC.Real
 -- ------------------------------------------------------------------------
 -- 
 instance  Num Float  where
-    (+)         x y     =  plusFloat x y
-    (-)         x y     =  minusFloat x y
-    negate      x       =  negateFloat x
-    (*)         x y     =  timesFloat x y
-    abs x    | x == (fromInteger zeroInteger) = fromInteger zeroInteger -- handles (-0.0)
-             | x >  (fromInteger zeroInteger) = x
-             | otherwise = negateFloat x
-    signum x | x > (fromInteger zeroInteger) = fromInteger oneInteger
-             | x < (fromInteger zeroInteger)= negateFloat (fromInteger oneInteger)
-             | otherwise = x -- handles 0.0, (-0.0), and NaN
+--     (+)         x y     =  plusFloat x y
+    (+)    = plusFloat
+--     (-)         x y     =  minusFloat x y
+    (-)    = minusFloat
+--     negate      x       =  negateFloat x
+    negate = negateFloat
+--     (*)         x y     =  timesFloat x y
+    (*)    = timesFloat
+--     abs x    | x == (fromInteger zeroInteger) = fromInteger zeroInteger -- handles (-0.0)
+--              | x >  (fromInteger zeroInteger) = x
+--              | otherwise = negateFloat x
+    abs    = absFloat
+--     signum x | x > (fromInteger zeroInteger) = fromInteger oneInteger
+--              | x < (fromInteger zeroInteger)= negateFloat (fromInteger oneInteger)
+--              | otherwise = x -- handles 0.0, (-0.0), and NaN
 -- 
-    {-# INLINE fromInteger #-}
-    fromInteger i = F# (floatFromInteger i)
+    signum = signumFloat
+--     {-# INLINE fromInteger #-}
+--     fromInteger i = F# (floatFromInteger i)
+    fromInteger = fromIntegerFloat
 -- 
+
 instance  Real Float  where
     toRational = toRational
 --     toRational (F# x#)  =
@@ -1058,14 +1066,40 @@ rationalToFloat = rationalToFloat
 -- -- Definitions of the boxed PrimOps; these will be
 -- -- used in the case of partial applications, etc.
 -- 
-plusFloat, minusFloat, timesFloat, divideFloat :: Float -> Float -> Float
+{-# NOINLINE plusFloat #-}
+plusFloat :: Float -> Float -> Float
 plusFloat   (F# x) (F# y) = F# (plusFloat# x y)
+
+{-# NOINLINE minusFloat #-}
+minusFloat :: Float -> Float -> Float
 minusFloat  (F# x) (F# y) = F# (minusFloat# x y)
+
+{-# NOINLINE timesFloat #-}
+timesFloat :: Float -> Float -> Float
 timesFloat  (F# x) (F# y) = F# (timesFloat# x y)
+
+{-# NOINLINE divideFloat #-}
+divideFloat :: Float -> Float -> Float
 divideFloat (F# x) (F# y) = F# (divideFloat# x y)
 -- 
+{-# NOINLINE negateFloat #-}
 negateFloat :: Float -> Float
 negateFloat (F# x)        = F# (negateFloat# x)
+
+{-# NOINLINE absFloat #-}
+absFloat :: Float -> Float
+absFloat x | x == (fromInteger zeroInteger) = fromInteger zeroInteger
+           | x > (fromInteger zeroInteger) = x
+           | otherwise = negateFloat x
+
+{-# NOINLINE signumFloat #-}
+signumFloat :: Float -> Float
+signumFloat x | x > (fromInteger zeroInteger) = fromInteger oneInteger
+              | x < (fromInteger zeroInteger)= negateFloat (fromInteger oneInteger)
+              | otherwise = x -- handles 0.0, (-0.0), and NaN
+{-# NOINLINE fromIntegerFloat #-}
+fromIntegerFloat :: Integer -> Float
+fromIntegerFloat i = F# (floatFromInteger i)
 -- 
 gtFloat, geFloat, ltFloat, leFloat :: Float -> Float -> Bool
 gtFloat     (F# x) (F# y) = isTrue# (gtFloat# x y)
@@ -1073,25 +1107,25 @@ geFloat     (F# x) (F# y) = isTrue# (geFloat# x y)
 ltFloat     (F# x) (F# y) = isTrue# (ltFloat# x y)
 leFloat     (F# x) (F# y) = isTrue# (leFloat# x y)
 -- 
-expFloat, logFloat, sqrtFloat :: Float -> Float
-sinFloat, cosFloat, tanFloat  :: Float -> Float
-asinFloat, acosFloat, atanFloat  :: Float -> Float
-sinhFloat, coshFloat, tanhFloat  :: Float -> Float
-expFloat    (F# x) = F# (expFloat# x)
-logFloat    (F# x) = F# (logFloat# x)
-sqrtFloat   (F# x) = F# (sqrtFloat# x)
-sinFloat    (F# x) = F# (sinFloat# x)
-cosFloat    (F# x) = F# (cosFloat# x)
-tanFloat    (F# x) = F# (tanFloat# x)
-asinFloat   (F# x) = F# (asinFloat# x)
-acosFloat   (F# x) = F# (acosFloat# x)
-atanFloat   (F# x) = F# (atanFloat# x)
-sinhFloat   (F# x) = F# (sinhFloat# x)
-coshFloat   (F# x) = F# (coshFloat# x)
-tanhFloat   (F# x) = F# (tanhFloat# x)
+-- expFloat, logFloat, sqrtFloat :: Float -> Float
+-- sinFloat, cosFloat, tanFloat  :: Float -> Float
+-- asinFloat, acosFloat, atanFloat  :: Float -> Float
+-- sinhFloat, coshFloat, tanhFloat  :: Float -> Float
+-- expFloat    (F# x) = F# (expFloat# x)
+-- logFloat    (F# x) = F# (logFloat# x)
+-- sqrtFloat   (F# x) = F# (sqrtFloat# x)
+-- sinFloat    (F# x) = F# (sinFloat# x)
+-- cosFloat    (F# x) = F# (cosFloat# x)
+-- tanFloat    (F# x) = F# (tanFloat# x)
+-- asinFloat   (F# x) = F# (asinFloat# x)
+-- acosFloat   (F# x) = F# (acosFloat# x)
+-- atanFloat   (F# x) = F# (atanFloat# x)
+-- sinhFloat   (F# x) = F# (sinhFloat# x)
+-- coshFloat   (F# x) = F# (coshFloat# x)
+-- tanhFloat   (F# x) = F# (tanhFloat# x)
 -- 
-powerFloat :: Float -> Float -> Float
-powerFloat  (F# x) (F# y) = F# (powerFloat# x y)
+-- powerFloat :: Float -> Float -> Float
+-- powerFloat  (F# x) (F# y) = F# (powerFloat# x y)
 -- 
 -- -- definitions of the boxed PrimOps; these will be
 -- -- used in the case of partial applications, etc.

@@ -48,7 +48,8 @@ module Prelude (
 --     -- ** Numbers
 -- 
 --     -- *** Numeric types
-    Int, Integer, Float, Double,
+--     Int, Integer, Float, Double,
+    Int(..), Integer(..), Float(..), Double(..),
 --     Rational, Word,
 -- 
 --     -- *** Numeric type classes
@@ -174,6 +175,8 @@ import GHC.Num
 import GHC.Real
 import GHC.Float
 -- import GHC.Show
+
+import GHC.Integer2
 
 g2Entry1 :: [Int]
 g2Entry1 = g2Entry1

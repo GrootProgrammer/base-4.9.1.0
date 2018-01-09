@@ -102,7 +102,8 @@ instance  Num Integer  where
     (-) = minusInteger
     (*) = timesInteger
     negate         = negateInteger
-    fromInteger x  =  x
+--     fromInteger x  =  x
+    fromInteger    = fromIntegerInteger
 -- 
     abs = absInteger
     signum = signumInteger
@@ -136,4 +137,8 @@ signumInt n | n `ltInt` 0 = negate 1
 {-# NOINLINE fromIntegerInt #-}
 fromIntegerInt :: Integer -> Int
 fromIntegerInt i = I# (integerToInt i)
+
+{-# NOINLINE fromIntegerInteger #-}
+fromIntegerInteger :: Integer -> Integer
+fromIntegerInteger x = x
 

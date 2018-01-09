@@ -16,7 +16,7 @@ import GHC.Tuple2 ()
 -- 
 -- data Integer = Positive !Positive | Negative !Positive | Naught
 
-data Integer = Integer Int#
+data Integer = Z# Int#
 
 -- -- The hard work is done on positive numbers
 -- 
@@ -45,7 +45,7 @@ data Integer = Integer Int#
 --           f (I# i : is') = smallInteger i `orInteger` shiftLInteger (f is') 31#
 -- 
 errorInteger :: Integer
-errorInteger = Integer 47#
+errorInteger = Z# 47#
 -- errorInteger = Positive errorPositive
 -- 
 -- errorPositive :: Positive
@@ -53,7 +53,7 @@ errorInteger = Integer 47#
 -- 
 {-# NOINLINE smallInteger #-}
 smallInteger :: Int# -> Integer
-smallInteger x = Integer x
+smallInteger x = Z# x
 -- smallInteger i = if isTrue# (i >=# 0#) then wordToInteger (int2Word# i)
 --                  else -- XXX is this right for -minBound?
 --                       negateInteger (wordToInteger (int2Word# (negateInt# i)))
@@ -73,7 +73,7 @@ smallInteger x = Integer x
 -- 
 {-# NOINLINE integerToInt #-}
 integerToInt :: Integer -> Int#
-integerToInt (Integer x) = x
+integerToInt (Z# x) = x
 
 -- integerToInt i = word2Int# (integerToWord i)
 -- 
@@ -110,11 +110,11 @@ integerToInt (Integer x) = x
 -- #endif
 -- 
 zeroInteger :: Integer
-zeroInteger = Integer 0#
+zeroInteger = Z# 0#
 
 {-# NOINLINE oneInteger #-}
 oneInteger :: Integer
-oneInteger = Integer 1#
+oneInteger = Z# 1#
 -- oneInteger = Positive onePositive
 -- 
 {-# NOINLINE twoInteger #-}
@@ -187,7 +187,7 @@ negativeOneInteger = zeroInteger `minusInteger` oneInteger
 -- 
 {-# NOINLINE floatFromInteger #-}
 floatFromInteger :: Integer -> Float#
-floatFromInteger (Integer x) = fromIntToReal x
+floatFromInteger (Z# x) = fromIntToReal x
 -- floatFromInteger Naught = 0.0#
 -- floatFromInteger (Positive p) = floatFromPositive p
 -- floatFromInteger (Negative p) = negateFloat# (floatFromPositive p)
@@ -335,7 +335,7 @@ floatFromInteger (Integer x) = fromIntToReal x
 -- 
 {-# NOINLINE negateInteger #-}
 negateInteger :: Integer -> Integer
-negateInteger (Integer x) = Integer (negateInt# x)
+negateInteger (Z# x) = Z# (negateInt# x)
 -- negateInteger (Positive p) = Negative p
 -- negateInteger (Negative p) = Positive p
 -- negateInteger Naught       = Naught
@@ -343,7 +343,7 @@ negateInteger (Integer x) = Integer (negateInt# x)
 -- -- Note [Avoid patError]
 {-# NOINLINE plusInteger #-}
 plusInteger :: Integer -> Integer -> Integer
-(Integer x) `plusInteger` (Integer y) = Integer (x +# y)
+(Z# x) `plusInteger` (Z# y) = Z# (x +# y)
 -- Positive p1    `plusInteger` Positive p2 = Positive (p1 `plusPositive` p2)
 -- Negative p1    `plusInteger` Negative p2 = Negative (p1 `plusPositive` p2)
 -- Positive p1    `plusInteger` Negative p2
@@ -366,7 +366,7 @@ x `minusInteger` y = x `plusInteger` (negateInteger y)
 -- 
 {-# NOINLINE timesInteger #-}
 timesInteger :: Integer -> Integer -> Integer
-(Integer x) `timesInteger` (Integer y) = Integer (x *# y)
+(Z# x) `timesInteger` (Z# y) = Z# (x *# y)
 -- Positive p1 `timesInteger` Positive p2 = Positive (p1 `timesPositive` p2)
 -- Negative p1 `timesInteger` Negative p2 = Positive (p1 `timesPositive` p2)
 -- Positive p1 `timesInteger` Negative p2 = Negative (p1 `timesPositive` p2)
@@ -405,8 +405,8 @@ n `modInteger` d = modulus
 -- 
 {-# NOINLINE quotRemInteger #-}
 quotRemInteger :: Integer -> Integer -> (# Integer, Integer #)
-(Integer 0#) `quotRemInteger` (!_) = (# zeroInteger, zeroInteger #)
-(!_) `quotRemInteger` (Integer 0#) = (# errorInteger, errorInteger #)
+(Z# 0#) `quotRemInteger` (!_) = (# zeroInteger, zeroInteger #)
+(!_) `quotRemInteger` (Z# 0#) = (# errorInteger, errorInteger #)
 -- (!_) `quotRemInteger` (Integer 0#) = error "Division by zero"
 x `quotRemInteger` y =
   case (# x > zeroInteger, y > zeroInteger #) of
@@ -479,7 +479,7 @@ x `compareInteger` y =
 -- 
 {-# NOINLINE eqInteger# #-}
 eqInteger# :: Integer -> Integer -> Bool
-(Integer x) `eqInteger#` (Integer y) = isTrue# (x ==# y)
+(Z# x) `eqInteger#` (Z# y) = isTrue# (x ==# y)
 -- eqInteger# :: Integer -> Integer -> Int#
 -- x `eqInteger#` y = case x `compareInteger` y of
 --                         EQ -> 1#
@@ -487,7 +487,7 @@ eqInteger# :: Integer -> Integer -> Bool
 -- 
 {-# NOINLINE neqInteger# #-}
 neqInteger# :: Integer -> Integer -> Bool
-(Integer x) `neqInteger#` (Integer y) = isTrue# (x ==# y)
+(Z# x) `neqInteger#` (Z# y) = isTrue# (x ==# y)
 -- neqInteger# = neqInteger#
 -- neqInteger# :: Integer -> Integer -> Int#
 -- x `neqInteger#` y = case x `compareInteger` y of
@@ -506,7 +506,7 @@ instance  Eq Integer  where
 -- 
 {-# NOINLINE ltInteger# #-}
 ltInteger# :: Integer -> Integer -> Bool
-(Integer x) `ltInteger#` (Integer y) = x <# y
+(Z# x) `ltInteger#` (Z# y) = x <# y
 -- ltInteger# :: Integer -> Integer -> Int#
 -- x `ltInteger#` y = case x `compareInteger` y of
 --                         LT -> 1#
@@ -514,7 +514,7 @@ ltInteger# :: Integer -> Integer -> Bool
 -- 
 {-# NOINLINE gtInteger# #-}
 gtInteger# :: Integer -> Integer -> Bool
-(Integer x) `gtInteger#` (Integer y) = x ># y
+(Z# x) `gtInteger#` (Z# y) = x ># y
 -- gtInteger# :: Integer -> Integer -> Int#
 -- x `gtInteger#` y = case x `compareInteger` y of
 --                         GT -> 1#
@@ -522,7 +522,7 @@ gtInteger# :: Integer -> Integer -> Bool
 -- 
 {-# NOINLINE leInteger# #-}
 leInteger# :: Integer -> Integer -> Bool
-(Integer x) `leInteger#` (Integer y) = x <=# y
+(Z# x) `leInteger#` (Z# y) = x <=# y
 -- leInteger# = leInteger#
 -- leInteger# :: Integer -> Integer -> Int#
 -- x `leInteger#` y = case x `compareInteger` y of
@@ -531,7 +531,7 @@ leInteger# :: Integer -> Integer -> Bool
 -- 
 {-# NOINLINE geInteger# #-}
 geInteger# :: Integer -> Integer -> Bool
-(Integer x) `geInteger#` (Integer y) = x >=# y
+(Z# x) `geInteger#` (Z# y) = x >=# y
 -- geInteger# = geInteger#
 -- geInteger# :: Integer -> Integer -> Int#
 -- x `geInteger#` y = case x `compareInteger` y of

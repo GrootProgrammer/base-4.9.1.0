@@ -116,44 +116,44 @@ timesFloat# = timesFloat#
 divideFloat# :: Float# -> Float# -> Float#
 divideFloat# = divideFloat#
 
-powerFloat# :: Float# -> Float# -> Float#
-powerFloat# = powerFloat#
-
-sqrtFloat# :: Float# -> Float#
-sqrtFloat# = sqrtFloat#
-
-expFloat# :: Float# -> Float#
-expFloat# = expFloat#
-
-logFloat# :: Float# -> Float#
-logFloat# = logFloat#
-
-sinFloat# :: Float# -> Float#
-sinFloat# = sinFloat#
-
-cosFloat# :: Float# -> Float#
-cosFloat# = cosFloat#
-
-tanFloat# :: Float# -> Float#
-tanFloat# = tanFloat#
-
-asinFloat# :: Float# -> Float#
-asinFloat# = asinFloat#
-
-acosFloat# :: Float# -> Float#
-acosFloat# = acosFloat#
-
-atanFloat# :: Float# -> Float#
-atanFloat# = atanFloat#
-
-sinhFloat# :: Float# -> Float#
-sinhFloat# = sinhFloat#
-
-coshFloat# :: Float# -> Float#
-coshFloat# = coshFloat#
-
-tanhFloat# :: Float# -> Float#
-tanhFloat# = tanhFloat#
+-- powerFloat# :: Float# -> Float# -> Float#
+-- powerFloat# = powerFloat#
+-- 
+-- sqrtFloat# :: Float# -> Float#
+-- sqrtFloat# = sqrtFloat#
+-- 
+-- expFloat# :: Float# -> Float#
+-- expFloat# = expFloat#
+-- 
+-- logFloat# :: Float# -> Float#
+-- logFloat# = logFloat#
+-- 
+-- sinFloat# :: Float# -> Float#
+-- sinFloat# = sinFloat#
+-- 
+-- cosFloat# :: Float# -> Float#
+-- cosFloat# = cosFloat#
+-- 
+-- tanFloat# :: Float# -> Float#
+-- tanFloat# = tanFloat#
+-- 
+-- asinFloat# :: Float# -> Float#
+-- asinFloat# = asinFloat#
+-- 
+-- acosFloat# :: Float# -> Float#
+-- acosFloat# = acosFloat#
+-- 
+-- atanFloat# :: Float# -> Float#
+-- atanFloat# = atanFloat#
+-- 
+-- sinhFloat# :: Float# -> Float#
+-- sinhFloat# = sinhFloat#
+-- 
+-- coshFloat# :: Float# -> Float#
+-- coshFloat# = coshFloat#
+-- 
+-- tanhFloat# :: Float# -> Float#
+-- tanhFloat# = tanhFloat#
 
 -- Char#
 
