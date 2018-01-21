@@ -6,8 +6,11 @@
 
 module GHC.Magic2
   ( module GHC.Magic2
-  , module GHC.Magic
+--   , module GHC.Magic
   ) where
 
-import GHC.Magic
+-- import GHC.Magic
+
+oneShot :: (a -> b) -> (a -> b)
+oneShot f = f
 

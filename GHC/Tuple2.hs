@@ -3,8 +3,8 @@
 
 module GHC.Tuple2
   ( module GHC.Tuple2
-  , module GHC.Tuple
+--   , module GHC.Tuple
   ) where
 
-import GHC.Tuple
+-- import GHC.Tuple
 

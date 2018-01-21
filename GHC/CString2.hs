@@ -2,8 +2,8 @@
 
 module GHC.CString2
   ( module GHC.CString2
-  , module GHC.CString
+  -- , module GHC.CString
   ) where
 
-import GHC.CString
+-- import GHC.CString
 

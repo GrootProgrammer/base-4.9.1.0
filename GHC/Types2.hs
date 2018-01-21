@@ -3,11 +3,30 @@
 
 module GHC.Types2
   ( module GHC.Types2
-  , module GHC.Types
+  , T.Bool(..)
+  , T.Coercible(..)
   ) where
 
-import GHC.Types hiding (isTrue#)
+import GHC.Prim2
 
-isTrue# :: Bool -> Bool
+import qualified GHC.Types as T
+-- import GHC.Types (Bool(..), Char) as T
+
+data Char = C# Char#
+
+data Int = I# Int#
+
+data Word = W# Word#
+
+data Float = F# Float#
+
+data Double = D# Double#
+
+data Ordering = LT | EQ | GT
+
+isTrue# :: T.Bool -> T.Bool
 isTrue# b = b
+
+char2char :: T.Char -> Char
+char2char = char2char
 

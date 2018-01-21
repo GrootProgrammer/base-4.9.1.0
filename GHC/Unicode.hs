@@ -32,10 +32,10 @@ module GHC.Unicode (
 -- 
 import GHC.Base
 import GHC.Char        (chr)
--- import GHC.Real
+import GHC.Real
 -- import GHC.Enum ( Enum (..), Bounded (..) )
 -- import GHC.Arr ( Ix (..) )
--- import GHC.Num
+import GHC.Num
 -- 
 -- -- Data.Char.chr already imports this and we need to define a Show instance
 -- -- for GeneralCategory
@@ -362,12 +362,18 @@ toTitle                 :: Char -> Char
 -- 
 -- -- Regardless of the O/S and Library, use the functions contained in WCsubst.c
 -- 
-isAlpha    c = iswalpha (ord c) /= 0
-isAlphaNum c = iswalnum (ord c) /= 0
-isControl  c = iswcntrl (ord c) /= 0
-isPrint    c = iswprint (ord c) /= 0
-isUpper    c = iswupper (ord c) /= 0
-isLower    c = iswlower (ord c) /= 0
+-- isAlpha    c = iswalpha (ord c) /= 0
+isAlpha    c = iswalpha (ord c) /= (fromInteger zeroInteger)
+-- isAlphaNum c = iswalnum (ord c) /= 0
+isAlphaNum c = iswalnum (ord c) /= (fromInteger zeroInteger)
+-- isControl  c = iswcntrl (ord c) /= 0
+isControl  c = iswcntrl (ord c) /= (fromInteger zeroInteger)
+-- isPrint    c = iswprint (ord c) /= 0
+isPrint    c = iswprint (ord c) /= (fromInteger zeroInteger)
+-- isUpper    c = iswupper (ord c) /= 0
+isUpper    c = iswupper (ord c) /= (fromInteger zeroInteger)
+-- isLower    c = iswlower (ord c) /= 0
+isLower    c = iswlower (ord c) /= (fromInteger zeroInteger)
 -- 
 toLower c = chr (towlower (ord c))
 toUpper c = chr (towupper (ord c))

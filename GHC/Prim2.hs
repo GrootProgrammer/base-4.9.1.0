@@ -7,28 +7,36 @@
 
 module GHC.Prim2
   ( module GHC.Prim2
-  , module GHC.Prim
+--   , module GHC.Prim
+  , Int#, Double#, Char#, Float#, Word#
+  , coerce
   ) where
 
-import GHC.Types2 (Bool)
-import GHC.Prim hiding
-    ((+#), (-#), (*#), negateInt#,
-     (==#), (/=#), (>#), (>=#), (<#), (<=#),
+import GHC.Prim
+  ( Int#, Double#, Char#, Float#, Word#
+  , coerce)
 
-     (==##), (/=##), (>##), (>=##), (<##), (<=##),
+import GHC.Types
+  (Bool, Char)
 
-     eqFloat#, gtFloat#, geFloat#, ltFloat#, leFloat#,
-     negateFloat#,
-     plusFloat#, minusFloat#, timesFloat#, divideFloat#,
-     powerFloat#, sqrtFloat#, expFloat#, logFloat#,
-     sinFloat#, cosFloat#, tanFloat#,
-     asinFloat#, acosFloat#, atanFloat#,
-     sinhFloat#, coshFloat#, tanhFloat#,
-
-     eqChar#, neChar#, gtChar#, geChar#, ltChar#, leChar#,
-     eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#,
-     word2Int#
-     )
+-- import GHC.Prim hiding
+--     ((+#), (-#), (*#), negateInt#,
+--      (==#), (/=#), (>#), (>=#), (<#), (<=#),
+-- 
+--      (==##), (/=##), (>##), (>=##), (<##), (<=##),
+-- 
+--      eqFloat#, gtFloat#, geFloat#, ltFloat#, leFloat#,
+--      negateFloat#,
+--      plusFloat#, minusFloat#, timesFloat#, divideFloat#,
+--      powerFloat#, sqrtFloat#, expFloat#, logFloat#,
+--      sinFloat#, cosFloat#, tanFloat#,
+--      asinFloat#, acosFloat#, atanFloat#,
+--      sinhFloat#, coshFloat#, tanhFloat#,
+-- 
+--      eqChar#, neChar#, gtChar#, geChar#, ltChar#, leChar#,
+--      eqWord#, neWord#, gtWord#, geWord#, ltWord#, leWord#,
+--      word2Int#
+--     )
 
 -- Int# operators
 
@@ -63,6 +71,15 @@ negateInt# = negateInt#
 
 (<=#) :: Int# -> Int# -> Bool
 (<=#) = (<=#)
+
+quotRemInt# :: Int# -> Int# -> (# Int#, Int# #)
+quotRemInt# x y = (# quotInt# x y, remInt# x y #)
+
+quotInt# :: Int# -> Int# -> Int#
+quotInt# = quotInt#
+
+remInt# :: Int# -> Int# -> Int#
+remInt# = remInt#
 
 -- Double#
 
@@ -175,6 +192,9 @@ ltChar# = ltChar#
 leChar# :: Char# -> Char# -> Bool
 leChar# = leChar#
 
+ord# :: Char# -> Int#
+ord# = ord#
+
 -- Word#
 
 eqWord# :: Word# -> Word# -> Bool
@@ -198,7 +218,15 @@ leWord# = leWord#
 word2Int# :: Word# -> Int#
 word2Int# = word2Int#
 
---
+int2Word# :: Int# -> Word#
+int2Word# = int2Word#
+
+-- Others
+
+seq :: a -> b -> b
+seq _ b = b  -- Anton: This is technically wrong.
+
+-- Misc add-ons
 
 fromIntToReal :: Int# -> Float#
 fromIntToReal = fromIntToReal

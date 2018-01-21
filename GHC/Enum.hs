@@ -98,24 +98,32 @@ class  Enum a   where
 --     -- | Used in Haskell's translation of @[n,n'..m]@.
     enumFromThenTo      :: a -> a -> a -> [a]
 -- 
-    succ                   = toEnum . (+ 1)  . fromEnum
-    pred                   = toEnum . (subtract 1) . fromEnum
-    enumFrom x             = map toEnum [fromEnum x ..]
-    enumFromThen x y       = map toEnum [fromEnum x, fromEnum y ..]
-    enumFromTo x y         = map toEnum [fromEnum x .. fromEnum y]
-    enumFromThenTo x1 x2 y = map toEnum [fromEnum x1, fromEnum x2 .. fromEnum y]
+    -- succ                   = toEnum . (+ 1)  . fromEnum
+    succ                   = toEnum . (+ (fromInteger oneInteger))  . fromEnum
+    -- pred                   = toEnum . (subtract 1) . fromEnum
+    pred                   = toEnum . (subtract (fromInteger oneInteger)) . fromEnum
+--     enumFrom x             = map toEnum [fromEnum x ..]
+    enumFrom = enumFrom
+--     enumFromThen x y       = map toEnum [fromEnum x, fromEnum y ..]
+    enumFromThen = enumFromThen
+--     enumFromTo x y         = map toEnum [fromEnum x .. fromEnum y]
+    enumFromTo = enumFromTo
+--     enumFromThenTo x1 x2 y = map toEnum [fromEnum x1, fromEnum x2 .. fromEnum y]
+    enumFromThenTo = enumFromThenTo
 -- 
 -- -- Default methods for bounded enumerations
 boundedEnumFrom :: (Enum a, Bounded a) => a -> [a]
-boundedEnumFrom n = map toEnum [fromEnum n .. fromEnum (maxBound `asTypeOf` n)]
+-- boundedEnumFrom n = map toEnum [fromEnum n .. fromEnum (maxBound `asTypeOf` n)]
+boundedEnumFrom = boundedEnumFrom
 -- 
 boundedEnumFromThen :: (Enum a, Bounded a) => a -> a -> [a]
-boundedEnumFromThen n1 n2
-  | i_n2 >= i_n1  = map toEnum [i_n1, i_n2 .. fromEnum (maxBound `asTypeOf` n1)]
-  | otherwise     = map toEnum [i_n1, i_n2 .. fromEnum (minBound `asTypeOf` n1)]
-  where
-    i_n1 = fromEnum n1
-    i_n2 = fromEnum n2
+boundedEnumFromThen = boundedEnumFromThen
+-- boundedEnumFromThen n1 n2
+--   | i_n2 >= i_n1  = map toEnum [i_n1, i_n2 .. fromEnum (maxBound `asTypeOf` n1)]
+--   | otherwise     = map toEnum [i_n1, i_n2 .. fromEnum (minBound `asTypeOf` n1)]
+--   where
+--     i_n1 = fromEnum n1
+--     i_n2 = fromEnum n2
 -- 
 -- ------------------------------------------------------------------------
 -- -- Helper functions
@@ -280,12 +288,12 @@ instance Enum Bool where
   pred True  = False
   pred False  = errorWithoutStackTrace "Prelude.Enum.Bool.pred: bad argument"
 -- 
-  toEnum n | n == 0    = False
-           | n == 1    = True
+  toEnum n | n == (fromInteger zeroInteger)   = False
+           | n == (fromInteger oneInteger)    = True
            | otherwise = errorWithoutStackTrace "Prelude.Enum.Bool.toEnum: bad argument"
 -- 
-  fromEnum False = 0
-  fromEnum True  = 1
+  fromEnum False = fromInteger zeroInteger
+  fromEnum True  = fromInteger oneInteger
 -- 
 --   -- Use defaults for the rest
   enumFrom     = boundedEnumFrom
@@ -308,14 +316,14 @@ instance Enum Ordering where
   pred EQ = LT
   pred LT = errorWithoutStackTrace "Prelude.Enum.Ordering.pred: bad argument"
 -- 
-  toEnum n | n == 0 = LT
-           | n == 1 = EQ
-           | n == 2 = GT
+  toEnum n | n == (fromInteger zeroInteger) = LT
+           | n == (fromInteger oneInteger) = EQ
+           | n == (fromInteger oneInteger + fromInteger oneInteger) = GT
   toEnum _ = errorWithoutStackTrace "Prelude.Enum.Ordering.toEnum: bad argument"
 -- 
-  fromEnum LT = 0
-  fromEnum EQ = 1
-  fromEnum GT = 2
+  fromEnum LT = fromInteger zeroInteger
+  fromEnum EQ = fromInteger oneInteger
+  fromEnum GT = fromInteger oneInteger + fromInteger oneInteger
 -- 
 --   -- Use defaults for the rest
   enumFrom     = boundedEnumFrom
@@ -326,8 +334,10 @@ instance Enum Ordering where
 -- ------------------------------------------------------------------------
 -- 
 instance  Bounded Char  where
-    minBound =  '\0'
-    maxBound =  '\x10FFFF'
+    -- minBound =  '\0'
+    minBound = C# '\0'#
+    -- maxBound =  '\x10FFFF'
+    maxBound = C# '\x10FFFF'#
 -- 
 -- instance  Enum Char  where
 --     succ (C# c#)
@@ -459,10 +469,10 @@ instance  Bounded Int where
 instance  Enum Int  where
     succ x
        | x == maxBound  = errorWithoutStackTrace "Prelude.Enum.succ{Int}: tried to take `succ' of maxBound"
-       | otherwise      = x + 1
+       | otherwise      = x + (fromInteger oneInteger)
     pred x
        | x == minBound  = errorWithoutStackTrace "Prelude.Enum.pred{Int}: tried to take `pred' of minBound"
-       | otherwise      = x - 1
+       | otherwise      = x - (fromInteger oneInteger)
 -- 
     toEnum   x = x
     fromEnum x = x

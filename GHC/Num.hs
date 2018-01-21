@@ -126,13 +126,13 @@ negateInt (I# x) = I# (negateInt# x)
 
 {-# NOINLINE absInt #-}
 absInt :: Int -> Int
-absInt n = if n `geInt` 0 then n else negate n
+absInt n = if n `geInt` (fromInteger zeroInteger) then n else negate n
 
 {-# NOINLINE signumInt #-}
 signumInt :: Int -> Int
-signumInt n | n `ltInt` 0 = negate 1
-            | n `eqInt` 0 = 0
-            | otherwise   = 1
+signumInt n | n `ltInt` (fromInteger zeroInteger) = negate (fromInteger oneInteger)
+            | n `eqInt` (fromInteger zeroInteger) = fromInteger zeroInteger
+            | otherwise   = fromInteger oneInteger
 
 {-# NOINLINE fromIntegerInt #-}
 fromIntegerInt :: Integer -> Int

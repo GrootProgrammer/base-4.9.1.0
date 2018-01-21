@@ -979,7 +979,8 @@ type String = [Char]
 -- 
 -- -- | The 'Prelude.fromEnum' method restricted to the type 'Data.Char.Char'.
 ord :: Char -> Int
-ord (C# c#) = I# (ord# c#)
+-- ord (C# c#) = I# (ord# c#)
+ord = ord
 -- 
 -- -- | This 'String' equality predicate is used when desugaring
 -- -- pattern-matches against strings.

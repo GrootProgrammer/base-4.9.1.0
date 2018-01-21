@@ -19,21 +19,21 @@
 
 module GHC.Classes2
   ( module GHC.Classes2
-  , module GHC.Classes
+--   , module GHC.Classes
   ) where
 
-import GHC.Classes hiding
-    (Eq(..),
-     Ord(..),
-     eqInt, neInt,
-     eqWord, neWord,
-     eqChar, neChar,
-     eqFloat, eqDouble,
-     gtInt, geInt, leInt, ltInt, compareInt, compareInt#,
-     gtWord, geWord, leWord, ltWord, compareWord, compareWord#,
-     (&&), (||), not,
-     divInt#, modInt#
-    )
+-- import GHC.Classes hiding
+--     (Eq(..),
+--      Ord(..),
+--      eqInt, neInt,
+--      eqWord, neWord,
+--      eqChar, neChar,
+--      eqFloat, eqDouble,
+--      gtInt, geInt, leInt, ltInt, compareInt, compareInt#,
+--      gtWord, geWord, leWord, ltWord, compareWord, compareWord#,
+--      (&&), (||), not,
+--      divInt#, modInt#
+--     )
 
 import GHC.Types2
 import GHC.Prim2
@@ -166,16 +166,16 @@ eqInt, neInt :: Int -> Int -> Bool
 --     | isTrue# (lo1 `ltWord64#` lo2) = LT
 --     | True                = EQ
 -- #else
-instance Eq TyCon where
-  (==) (TyCon hi1 lo1 _ _) (TyCon hi2 lo2 _ _)
-       = isTrue# (hi1 `eqWord#` hi2) && isTrue# (lo1 `eqWord#` lo2)
-instance Ord TyCon where
-  compare (TyCon hi1 lo1 _ _) (TyCon hi2 lo2 _ _)
-    | isTrue# (hi1 `gtWord#` hi2) = GT
-    | isTrue# (hi1 `ltWord#` hi2) = LT
-    | isTrue# (lo1 `gtWord#` lo2) = GT
-    | isTrue# (lo1 `ltWord#` lo2) = LT
-    | True              = EQ
+-- instance Eq TyCon where
+--   (==) (TyCon hi1 lo1 _ _) (TyCon hi2 lo2 _ _)
+--        = isTrue# (hi1 `eqWord#` hi2) && isTrue# (lo1 `eqWord#` lo2)
+-- instance Ord TyCon where
+--   compare (TyCon hi1 lo1 _ _) (TyCon hi2 lo2 _ _)
+--     | isTrue# (hi1 `gtWord#` hi2) = GT
+--     | isTrue# (hi1 `ltWord#` hi2) = LT
+--     | isTrue# (lo1 `gtWord#` lo2) = GT
+--     | isTrue# (lo1 `ltWord#` lo2) = LT
+--     | True              = EQ
 -- #endif
 -- 
 -- 

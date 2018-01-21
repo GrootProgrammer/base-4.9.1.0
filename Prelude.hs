@@ -152,6 +152,9 @@ module Prelude (
 --     -- ** Exception handling in the I\/O monad
 --     IOError, ioError, userError,
 -- 
+    
+    implies, iff,
+
     g2Entry1,
     g2Entry2,
     g2Entry3
@@ -192,6 +195,13 @@ g2Entry3 :: Int -> [Int]
 g2Entry3 = g2Entry3
 -- g2Entry3 a = take 4 $ repeat a
 
+
+implies :: Bool -> Bool -> Bool
+implies True False = False
+implies _ _ = True
+
+iff :: Bool -> Bool -> Bool
+iff x y = (implies x y) && (implies y x)
 
 data TestTestFoo = TestFooConstructor [Int] [String]
 

@@ -251,43 +251,43 @@ instance  Integral Int  where
     toInteger (I# i) = smallInteger i
 
     a `quot` b
-     | b == 0                     = divZeroError
-     | b == (-1) && a == minBound = overflowError -- Note [Order of tests]
+     | b == fromInteger zeroInteger                     = divZeroError
+     | b == (negate (fromInteger oneInteger)) && a == minBound = overflowError -- Note [Order of tests]
 --                                                   -- in GHC.Int
      | otherwise                  =  a `quotInt` b
 -- 
     a `rem` b
-     | b == 0                     = divZeroError
+     | b == fromInteger zeroInteger                     = divZeroError
 --        -- The quotRem CPU instruction fails for minBound `quotRem` -1,
 --        -- but minBound `rem` -1 is well-defined (0). We therefore
 --        -- special-case it.
-     | b == (-1)                  = 0
+     | b == (negate (fromInteger oneInteger))                  = fromInteger zeroInteger
      | otherwise                  =  a `remInt` b
 -- 
     a `div` b
-     | b == 0                     = divZeroError
-     | b == (-1) && a == minBound = overflowError -- Note [Order of tests]
+     | b == fromInteger zeroInteger                     = divZeroError
+     | b == (negate (fromInteger oneInteger)) && a == minBound = overflowError -- Note [Order of tests]
 --                                                   -- in GHC.Int
      | otherwise                  =  a `divInt` b
 -- 
     a `mod` b
-     | b == 0                     = divZeroError
+     | b == fromInteger zeroInteger                     = divZeroError
 --        -- The divMod CPU instruction fails for minBound `divMod` -1,
 --        -- but minBound `mod` -1 is well-defined (0). We therefore
 --        -- special-case it.
-     | b == (-1)                  = 0
+     | b == (negate (fromInteger oneInteger))                  = fromInteger zeroInteger
      | otherwise                  =  a `modInt` b
 -- 
     a `quotRem` b
-     | b == 0                     = divZeroError
+     | b == fromInteger zeroInteger                     = divZeroError
 --        -- Note [Order of tests] in GHC.Int
-     | b == (-1) && a == minBound = (overflowError, 0)
+     | b == (negate (fromInteger oneInteger)) && a == minBound = (overflowError, fromInteger zeroInteger)
      | otherwise                  =  a `quotRemInt` b
 -- 
     a `divMod` b
-     | b == 0                     = divZeroError
+     | b == fromInteger zeroInteger                     = divZeroError
 --        -- Note [Order of tests] in GHC.Int
-     | b == (-1) && a == minBound = (overflowError, 0)
+     | b == (negate (fromInteger oneInteger)) && a == minBound = (overflowError, fromInteger zeroInteger)
      | otherwise                  =  a `divModInt` b
 -- 
 -- --------------------------------------------------------------

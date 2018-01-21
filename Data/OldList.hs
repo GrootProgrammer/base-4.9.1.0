@@ -1059,12 +1059,14 @@ unfoldr f b0 = build (\c n ->
 -- --
 -- -- Thus @'lines' s@ contains at least as many elements as newlines in @s@.
 lines                   :: String -> [String]
-lines ""                =  []
+-- lines ""                =  []
+lines [] = []
 -- -- Somehow GHC doesn't detect the selector thunks in the below code,
 -- -- so s' keeps a reference to the first line via the pair and we have
 -- -- a space leak (cf. #4334).
 -- -- So we need to make GHC see the selector thunks with a trick.
-lines s                 =  cons (case break (== '\n') s of
+-- lines s                 =  cons (case break (== '\n') s of
+lines s                 =  cons (case break (== (C# '\n'#)) s of
                                     (l, s') -> (l, case s' of
                                                     []      -> []
                                                     _:s''   -> lines s''))
@@ -1075,7 +1077,8 @@ lines s                 =  cons (case break (== '\n') s of
 -- -- It joins lines, after appending a terminating newline to each.
 unlines                 :: [String] -> String
 -- #ifdef USE_REPORT_PRELUDE
-unlines                 =  concatMap (++ "\n")
+-- unlines                 =  concatMap (++ "\n")
+unlines                 =  concatMap (++ [C# '\n'#])
 -- #else
 -- -- HBC version (stolen)
 -- -- here's a more efficient version
@@ -1088,7 +1091,8 @@ unlines                 =  concatMap (++ "\n")
 words                   :: String -> [String]
 {-# NOINLINE [1] words #-}
 words s                 =  case dropWhile {-partain:Char.-}isSpace s of
-                                "" -> []
+--                                 "" -> []
+                                [] -> []
                                 s' -> w : words s''
                                       where (w, s'') =
                                              break {-partain:Char.-}isSpace s'
@@ -1102,7 +1106,8 @@ wordsFB :: ([Char] -> b -> b) -> b -> String -> b
 wordsFB c n = go
   where
     go s = case dropWhile isSpace s of
-             "" -> n
+--              "" -> n
+             [] -> n
              s' -> w `c` go s''
                    where (w, s'') = break isSpace s'
 -- 
@@ -1110,8 +1115,10 @@ wordsFB c n = go
 -- -- It joins words with separating spaces.
 unwords                 :: [String] -> String
 -- #ifdef USE_REPORT_PRELUDE
-unwords []              =  ""
-unwords ws              =  foldr1 (\w s -> w ++ ' ':s) ws
+-- unwords []              =  ""
+unwords []              =  []
+-- unwords ws              =  foldr1 (\w s -> w ++ ' ':s) ws
+unwords ws              =  foldr1 (\w s -> w ++ (C# ' '#):s) ws
 -- #else
 -- -- Here's a lazier version that can get the last element of a
 -- -- _|_-terminated list.

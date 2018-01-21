@@ -67,6 +67,7 @@ import Data.Monoid
 import GHC.Base hiding ( foldr )
 -- import GHC.Generics
 import GHC.Num  ( Num(..) )
+import GHC.Integer2
 -- 
 infix  4 `elem`, `notElem`
 -- 
@@ -207,7 +208,8 @@ class Foldable t where
 --     --
 --     -- @'foldr1' f = 'List.foldr1' f . 'toList'@
     foldr1 :: (a -> a -> a) -> t a -> a
-    foldr1 f xs = fromMaybe (errorWithoutStackTrace "foldr1: empty structure")
+--     foldr1 f xs = fromMaybe (errorWithoutStackTrace "foldr1: empty structure")
+    foldr1 f xs = fromMaybe (errorWithoutStackTrace (map char2char "foldr1: empty structure"))
                     (foldr mf Nothing xs)
       where
         mf x m = Just (case m of
@@ -219,7 +221,8 @@ class Foldable t where
 --     --
 --     -- @'foldl1' f = 'List.foldl1' f . 'toList'@
     foldl1 :: (a -> a -> a) -> t a -> a
-    foldl1 f xs = fromMaybe (errorWithoutStackTrace "foldl1: empty structure")
+--     foldl1 f xs = fromMaybe (errorWithoutStackTrace "foldl1: empty structure")
+    foldl1 f xs = fromMaybe (errorWithoutStackTrace (map char2char "foldl1: empty structure"))
                     (foldl mf Nothing xs)
       where
         mf m y = Just (case m of
@@ -241,7 +244,8 @@ class Foldable t where
 --     -- default implementation is optimized for structures that are similar to
 --     -- cons-lists, because there is no general way to do better.
     length :: t a -> Int
-    length = foldl' (\c _ -> c+1) 0
+--     length = foldl' (\c _ -> c+1) 0
+    length = foldl' (\c _ -> c+(fromInteger oneInteger)) (fromInteger zeroInteger)
 -- 
 --     -- | Does the element occur in the structure?
     elem :: Eq a => a -> t a -> Bool
@@ -249,12 +253,14 @@ class Foldable t where
 -- 
 --     -- | The largest element of a non-empty structure.
     maximum :: forall a . Ord a => t a -> a
-    maximum = fromMaybe (errorWithoutStackTrace "maximum: empty structure") .
+--     maximum = fromMaybe (errorWithoutStackTrace "maximum: empty structure") .
+    maximum = fromMaybe (errorWithoutStackTrace (map char2char "maximum: empty structure")) .
        getMax . foldMap (Max #. (Just :: a -> Maybe a))
 -- 
 --     -- | The least element of a non-empty structure.
     minimum :: forall a . Ord a => t a -> a
-    minimum = fromMaybe (errorWithoutStackTrace "minimum: empty structure") .
+--     minimum = fromMaybe (errorWithoutStackTrace "minimum: empty structure") .
+    minimum = fromMaybe (errorWithoutStackTrace (map char2char "minimum: empty structure")) .
        getMin . foldMap (Min #. (Just :: a -> Maybe a))
 -- 
 --     -- | The 'sum' function computes the sum of the numbers of a structure.
