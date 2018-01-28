@@ -152,12 +152,8 @@ module Prelude (
 --     -- ** Exception handling in the I\/O monad
 --     IOError, ioError, userError,
 -- 
-    
-    implies, iff,
+    implies, iff
 
-    g2Entry1,
-    g2Entry2,
-    g2Entry3
   ) where
 -- 
 -- import Control.Monad
@@ -181,27 +177,10 @@ import GHC.Float
 
 import GHC.Integer2
 
-g2Entry1 :: [Int]
-g2Entry1 = g2Entry1
--- g2Entry1 :: [a]
--- g2Entry1 :: [a]
--- g2Entry1 = map (+ 1) [fromInteger 1, fromInteger 2, fromInteger 3]
-
-g2Entry2 :: Int -> Int
-g2Entry2 = g2Entry2
--- g2Entry2 a = head $ map (+ (a + 4)) [fromInteger 1, fromInteger 2]
-
-g2Entry3 :: Int -> [Int]
-g2Entry3 = g2Entry3
--- g2Entry3 a = take 4 $ repeat a
-
-
 implies :: Bool -> Bool -> Bool
 implies True False = False
 implies _ _ = True
 
 iff :: Bool -> Bool -> Bool
 iff x y = (implies x y) && (implies y x)
-
-data TestTestFoo = TestFooConstructor [Int] [String]
 
