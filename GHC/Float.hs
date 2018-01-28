@@ -432,6 +432,7 @@ instance  Num Double  where
 --     negate      x       =  negateDouble x
     negate = negateDouble
 --     (*)         x y     =  timesDouble x y
+    (*) = timesDouble
     abs = absDouble
 --     abs x    | x == 0    = 0 -- handles (-0.0)
 --              | x >  0    = x
