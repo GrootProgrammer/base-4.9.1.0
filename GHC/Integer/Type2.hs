@@ -179,15 +179,16 @@ negativeOneInteger = zeroInteger `minusInteger` oneInteger
 --              `plusInteger` wordToInteger mantLow),
 --           exp #)
 -- 
--- {-# NOINLINE doubleFromInteger #-}
--- doubleFromInteger :: Integer -> Double#
+{-# NOINLINE doubleFromInteger #-}
+doubleFromInteger :: Integer -> Double#
+doubleFromInteger (Z# x) = fromIntToDouble x
 -- doubleFromInteger Naught = 0.0##
 -- doubleFromInteger (Positive p) = doubleFromPositive p
 -- doubleFromInteger (Negative p) = negateDouble# (doubleFromPositive p)
 -- 
 {-# NOINLINE floatFromInteger #-}
 floatFromInteger :: Integer -> Float#
-floatFromInteger (Z# x) = fromIntToReal x
+floatFromInteger (Z# x) = fromIntToFloat x
 -- floatFromInteger Naught = 0.0#
 -- floatFromInteger (Positive p) = floatFromPositive p
 -- floatFromInteger (Negative p) = negateFloat# (floatFromPositive p)

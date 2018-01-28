@@ -83,6 +83,18 @@ remInt# = remInt#
 
 -- Double#
 
+(+##) :: Double# -> Double# -> Double#
+(+##) = (+##)
+
+(-##) :: Double# -> Double# -> Double#
+(-##) = (-##)
+
+(*##) :: Double# -> Double# -> Double#
+(*##) = (*##)
+
+(/##) :: Double# -> Double# -> Double#
+(/##) = (/##)
+
 (==##) :: Double# -> Double# -> Bool
 (==##) = (==##)
 
@@ -100,6 +112,9 @@ remInt# = remInt#
 
 (<=##) :: Double# -> Double# -> Bool
 (<=##) = (<=##)
+
+negateDouble# :: Double# -> Double#
+negateDouble# = negateDouble#
 
 -- Float#
 
@@ -228,6 +243,9 @@ seq _ b = b  -- Anton: This is technically wrong.
 
 -- Misc add-ons
 
-fromIntToReal :: Int# -> Float#
-fromIntToReal = fromIntToReal
+fromIntToFloat :: Int# -> Float#
+fromIntToFloat = fromIntToFloat
+
+fromIntToDouble :: Int# -> Double#
+fromIntToDouble = fromIntToDouble
 

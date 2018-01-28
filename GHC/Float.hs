@@ -424,14 +424,19 @@ rationalToFloat = rationalToFloat
 -- -- Double
 -- ------------------------------------------------------------------------
 -- 
--- instance  Num Double  where
+instance  Num Double  where
 --     (+)         x y     =  plusDouble x y
+    (+) = plusDouble
 --     (-)         x y     =  minusDouble x y
+    (-) = minusDouble
 --     negate      x       =  negateDouble x
+    negate = negateDouble
 --     (*)         x y     =  timesDouble x y
+    abs = absDouble
 --     abs x    | x == 0    = 0 -- handles (-0.0)
 --              | x >  0    = x
 --              | otherwise = negateDouble x
+    signum = signumDouble
 --     signum x | x > 0     = 1
 --              | x < 0     = negateDouble 1
 --              | otherwise = x -- handles 0.0, (-0.0), and NaN
@@ -439,9 +444,11 @@ rationalToFloat = rationalToFloat
 -- 
 --     {-# INLINE fromInteger #-}
 --     fromInteger i = D# (doubleFromInteger i)
+    fromInteger = fromIntegerDouble
 -- 
 -- 
--- instance  Real Double  where
+instance  Real Double  where
+    toRational = toRational
 --     toRational (D# x#)  =
 --         case decodeDoubleInteger x# of
 --           (# m, e# #)
@@ -453,14 +460,16 @@ rationalToFloat = rationalToFloat
 --             | otherwise                                            ->
 --                 m :% shiftLInteger 1 (negateInt# e#)
 -- 
--- instance  Fractional Double  where
---     (/) x y             =  divideDouble x y
---     {-# INLINE fromRational #-}
---     fromRational (n:%d) = rationalToDouble n d
+instance  Fractional Double  where
+    (/) x y             =  divideDouble x y
+    {-# INLINE fromRational #-}
+    fromRational (n:%d) = rationalToDouble n d
 --     recip x             =  1.0 / x
+    recip x             =  (fromInteger oneInteger) / x
 -- 
--- rationalToDouble :: Integer -> Integer -> Double
--- {-# NOINLINE [1] rationalToDouble #-}
+rationalToDouble :: Integer -> Integer -> Double
+{-# NOINLINE [1] rationalToDouble #-}
+rationalToDouble  = rationalToDouble
 -- rationalToDouble n 0
 --     | n == 0        = 0/0
 --     | n < 0         = (-1)/0
@@ -1130,20 +1139,48 @@ leFloat     (F# x) (F# y) = isTrue# (leFloat# x y)
 -- -- definitions of the boxed PrimOps; these will be
 -- -- used in the case of partial applications, etc.
 -- 
--- plusDouble, minusDouble, timesDouble, divideDouble :: Double -> Double -> Double
--- plusDouble   (D# x) (D# y) = D# (x +## y)
--- minusDouble  (D# x) (D# y) = D# (x -## y)
--- timesDouble  (D# x) (D# y) = D# (x *## y)
--- divideDouble (D# x) (D# y) = D# (x /## y)
+{-# NOINLINE plusDouble #-}
+plusDouble :: Double -> Double -> Double
+plusDouble   (D# x) (D# y) = D# (x +## y)
+
+{-# NOINLINE minusDouble #-}
+minusDouble :: Double -> Double -> Double
+minusDouble  (D# x) (D# y) = D# (x -## y)
+
+{-# NOINLINE timesDouble #-}
+timesDouble :: Double -> Double -> Double
+timesDouble  (D# x) (D# y) = D# (x *## y)
+
+{-# NOINLINE divideDouble #-}
+divideDouble :: Double -> Double -> Double
+divideDouble (D# x) (D# y) = D# (x /## y)
 -- 
--- negateDouble :: Double -> Double
--- negateDouble (D# x)        = D# (negateDouble# x)
+{-# NOINLINE negateDouble #-}
+negateDouble :: Double -> Double
+negateDouble (D# x)        = D# (negateDouble# x)
+
+{-# NOINLINE absDouble #-}
+absDouble :: Double -> Double
+absDouble x | x == (fromInteger zeroInteger) = fromInteger zeroInteger
+            | x > (fromInteger zeroInteger) = x
+            | otherwise = negateDouble x
+
+{-# NOINLINE signumDouble #-}
+signumDouble :: Double -> Double
+signumDouble x | x > (fromInteger zeroInteger) = fromInteger oneInteger
+               | x < (fromInteger zeroInteger)= negateDouble (fromInteger oneInteger)
+               | otherwise = x -- handles 0.0, (-0.0), and NaN
+
+{-# NOINLINE fromIntegerDouble #-}
+fromIntegerDouble :: Integer -> Double
+fromIntegerDouble i = D# (doubleFromInteger i)
+
 -- 
--- gtDouble, geDouble, leDouble, ltDouble :: Double -> Double -> Bool
--- gtDouble    (D# x) (D# y) = isTrue# (x >##  y)
--- geDouble    (D# x) (D# y) = isTrue# (x >=## y)
--- ltDouble    (D# x) (D# y) = isTrue# (x <##  y)
--- leDouble    (D# x) (D# y) = isTrue# (x <=## y)
+gtDouble, geDouble, leDouble, ltDouble :: Double -> Double -> Bool
+gtDouble    (D# x) (D# y) = isTrue# (x >##  y)
+geDouble    (D# x) (D# y) = isTrue# (x >=## y)
+ltDouble    (D# x) (D# y) = isTrue# (x <##  y)
+leDouble    (D# x) (D# y) = isTrue# (x <=## y)
 -- 
 -- double2Float :: Double -> Float
 -- double2Float (D# x) = F# (double2Float# x)
