@@ -36,7 +36,7 @@ module Prelude (
     Char, String,
 -- 
 --     -- *** Tuples
---     fst, snd, curry, uncurry,
+    fst, snd, curry, uncurry,
 -- 
 --     -- ** Basic type classes
     Eq((==), (/=)),
@@ -165,7 +165,7 @@ import Data.Foldable    ( Foldable(..) )
 import Data.Functor     ( (<$>) )
 import Data.Maybe
 import Data.Traversable ( Traversable(..) )
--- import Data.Tuple
+import Data.Tuple
 -- 
 import GHC.Base hiding ( foldr, mapM, sequence )
 -- import Text.Read

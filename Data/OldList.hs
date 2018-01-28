@@ -156,7 +156,7 @@ module Data.OldList
 -- 
 --    -- ** \"Set\" operations
 -- 
---    , nub
+   , nub
 -- 
 --    , delete
 --    , (\\)
@@ -165,9 +165,9 @@ module Data.OldList
 --    , intersect
 -- 
 --    -- ** Ordered lists
---    , sort
+   , sort
 --    , sortOn
---    , insert
+   , insert
 -- 
 --    -- * Generalized functions
 -- 
@@ -181,7 +181,7 @@ module Data.OldList
 -- 
 --    -- *** User-supplied equality (replacing an @Eq@ context)
 --    -- | The predicate is assumed to define an equivalence.
---    , nubBy
+   , nubBy
 --    , deleteBy
 --    , deleteFirstsBy
 --    , unionBy
@@ -190,8 +190,8 @@ module Data.OldList
 -- 
 --    -- *** User-supplied comparison (replacing an @Ord@ context)
 --    -- | The function is assumed to define a total ordering.
---    , sortBy
---    , insertBy
+   , sortBy
+   , insertBy
 --    , maximumBy
 --    , minimumBy
 -- 
@@ -338,16 +338,16 @@ find p          = listToMaybe . filter p
 -- -- (The name 'nub' means \`essence\'.)
 -- -- It is a special case of 'nubBy', which allows the programmer to supply
 -- -- their own equality test.
--- nub                     :: (Eq a) => [a] -> [a]
--- nub                     =  nubBy (==)
+nub                     :: (Eq a) => [a] -> [a]
+nub                     =  nubBy (==)
 -- 
 -- -- | The 'nubBy' function behaves just like 'nub', except it uses a
 -- -- user-supplied equality predicate instead of the overloaded '=='
 -- -- function.
--- nubBy                   :: (a -> a -> Bool) -> [a] -> [a]
+nubBy                   :: (a -> a -> Bool) -> [a] -> [a]
 -- #ifdef USE_REPORT_PRELUDE
--- nubBy eq []             =  []
--- nubBy eq (x:xs)         =  x : nubBy eq (filter (\ y -> not (eq x y)) xs)
+nubBy eq []             =  []
+nubBy eq (x:xs)         =  x : nubBy eq (filter (\ y -> not (eq x y)) xs)
 -- #else
 -- -- stolen from HBC
 -- nubBy eq l              = nubBy' l []
@@ -378,14 +378,14 @@ find p          = listToMaybe . filter p
 -- -- It is a special case of 'deleteBy', which allows the programmer to
 -- -- supply their own equality test.
 -- 
--- delete                  :: (Eq a) => a -> [a] -> [a]
--- delete                  =  deleteBy (==)
+delete                  :: (Eq a) => a -> [a] -> [a]
+delete                  =  deleteBy (==)
 -- 
 -- -- | The 'deleteBy' function behaves like 'delete', but takes a
 -- -- user-supplied equality predicate.
--- deleteBy                :: (a -> a -> Bool) -> a -> [a] -> [a]
--- deleteBy _  _ []        = []
--- deleteBy eq x (y:ys)    = if x `eq` y then ys else y : deleteBy eq x ys
+deleteBy                :: (a -> a -> Bool) -> a -> [a] -> [a]
+deleteBy _  _ []        = []
+deleteBy eq x (y:ys)    = if x `eq` y then ys else y : deleteBy eq x ys
 -- 
 -- -- | The '\\' function is list difference (non-associative).
 -- -- In the result of @xs@ '\\' @ys@, the first occurrence of each element of
@@ -548,16 +548,16 @@ mapAccumR f s (x:xs)    =  (s'', y:ys)
 -- -- is sorted before the call, the result will also be sorted.
 -- -- It is a special case of 'insertBy', which allows the programmer to
 -- -- supply their own comparison function.
--- insert :: Ord a => a -> [a] -> [a]
--- insert e ls = insertBy (compare) e ls
+insert :: Ord a => a -> [a] -> [a]
+insert e ls = insertBy (compare) e ls
 -- 
 -- -- | The non-overloaded version of 'insert'.
--- insertBy :: (a -> a -> Ordering) -> a -> [a] -> [a]
--- insertBy _   x [] = [x]
--- insertBy cmp x ys@(y:ys')
---  = case cmp x y of
---      GT -> y : insertBy cmp x ys'
---      _  -> x : ys
+insertBy :: (a -> a -> Ordering) -> a -> [a] -> [a]
+insertBy _   x [] = [x]
+insertBy cmp x ys@(y:ys')
+ = case cmp x y of
+     GT -> y : insertBy cmp x ys'
+     _  -> x : ys
 -- 
 -- -- | The 'maximumBy' function takes a comparison function and a list
 -- -- and returns the greatest element of the list by the comparison function.
@@ -815,14 +815,14 @@ mapAccumR f s (x:xs)    =  (s'', y:ys)
 -- -- | The 'sort' function implements a stable sorting algorithm.
 -- -- It is a special case of 'sortBy', which allows the programmer to supply
 -- -- their own comparison function.
--- sort :: (Ord a) => [a] -> [a]
+sort :: (Ord a) => [a] -> [a]
 -- 
 -- -- | The 'sortBy' function is the non-overloaded version of 'sort'.
--- sortBy :: (a -> a -> Ordering) -> [a] -> [a]
+sortBy :: (a -> a -> Ordering) -> [a] -> [a]
 -- 
 -- #ifdef USE_REPORT_PRELUDE
--- sort = sortBy compare
--- sortBy cmp = foldr (insertBy cmp) []
+sort = sortBy compare
+sortBy cmp = foldr (insertBy cmp) []
 -- #else
 -- 
 -- {-

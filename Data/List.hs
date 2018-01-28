@@ -157,7 +157,7 @@ module Data.List
 -- 
 --    -- ** \"Set\" operations
 -- 
---    , nub
+   , nub
 -- 
 --    , delete
 --    , (\\)
@@ -168,7 +168,7 @@ module Data.List
 --    -- ** Ordered lists
 --    , sort
 --    , sortOn
---    , insert
+   , insert
 -- 
 --    -- * Generalized functions
 -- 
@@ -182,7 +182,7 @@ module Data.List
 -- 
 --    -- *** User-supplied equality (replacing an @Eq@ context)
 --    -- | The predicate is assumed to define an equivalence.
---    , nubBy
+   , nubBy
 --    , deleteBy
 --    , deleteFirstsBy
 --    , unionBy
@@ -191,8 +191,8 @@ module Data.List
 -- 
 --    -- *** User-supplied comparison (replacing an @Ord@ context)
 --    -- | The function is assumed to define a total ordering.
---    , sortBy
---    , insertBy
+   , sortBy
+   , insertBy
 --    , maximumBy
 --    , minimumBy
 -- 
