@@ -3,6 +3,6 @@ module G2Prelude
   , module Data.Map
   ) where
 
-import Prelude
-import Data.Map hiding (null)
+import Prelude hiding (lookup)
+import Data.Map hiding (null, foldr)
 
