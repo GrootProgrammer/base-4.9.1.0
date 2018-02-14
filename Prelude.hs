@@ -55,7 +55,7 @@ module Prelude (
 --     -- *** Numeric type classes
     Num((+), (-), (*), negate, abs, signum, fromInteger),
 --     Real(toRational),
---     Integral(quot, rem, div, mod, quotRem, divMod, toInteger),
+    Integral(quot, rem, div, mod, quotRem, divMod, toInteger),
 --     Fractional((/), recip, fromRational),
 --     Floating(pi, exp, log, sqrt, (**), logBase, sin, cos, tan,
 --              asin, acos, atan, sinh, cosh, tanh, asinh, acosh, atanh),
