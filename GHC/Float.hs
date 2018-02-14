@@ -1090,7 +1090,9 @@ timesFloat  (F# x) (F# y) = F# (timesFloat# x y)
 
 {-# NOINLINE divideFloat #-}
 divideFloat :: Float -> Float -> Float
-divideFloat (F# x) (F# y) = F# (divideFloat# x y)
+divideFloat (F# x) fy@(F# y)
+  | fy == fromInteger zeroInteger = divZeroError
+  | otherwise = F# (divideFloat# x y)
 -- 
 {-# NOINLINE negateFloat #-}
 negateFloat :: Float -> Float
@@ -1154,7 +1156,9 @@ timesDouble  (D# x) (D# y) = D# (x *## y)
 
 {-# NOINLINE divideDouble #-}
 divideDouble :: Double -> Double -> Double
-divideDouble (D# x) (D# y) = D# (x /## y)
+divideDouble (D# x) dy@(D# y)
+  | dy == fromInteger zeroInteger = divZeroError
+  | otherwise = D# (x /## y)
 -- 
 {-# NOINLINE negateDouble #-}
 negateDouble :: Double -> Double
