@@ -1092,7 +1092,7 @@ timesFloat  (F# x) (F# y) = F# (timesFloat# x y)
 divideFloat :: Float -> Float -> Float
 divideFloat (F# x) fy@(F# y)
   | fy == fromInteger zeroInteger = divZeroError
-  | otherwise = F# (divideFloat# x y)
+  | True = F# (divideFloat# x y)
 -- 
 {-# NOINLINE negateFloat #-}
 negateFloat :: Float -> Float

@@ -1,6 +1,6 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash #-}
--- {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash #-}
+{-# LANGUAGE StandaloneDeriving #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -16,7 +16,7 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Control.Exception.Base (
+module Control.Exception.Base (
 -- 
 --         -- * The Exception type
 --         SomeException(..),
@@ -92,10 +92,12 @@
 -- 
 --         -- * Calls for GHC runtime
 --         recSelError, recConError, irrefutPatError, runtimeError,
---         nonExhaustiveGuardsError, patError, noMethodBindingError,
+--         nonExhaustiveGuardsError, 
+		   patError
+--		   , noMethodBindingError,
 --         absentError, typeError,
 --         nonTermination, nestedAtomically,
---   ) where
+  ) where
 -- 
 -- import GHC.Base
 -- import GHC.IO hiding (bracket,finally,onException)
@@ -411,6 +413,8 @@
 -- recConError              s = throw (RecConError      (untangle s "Missing field in record construction"))
 -- noMethodBindingError     s = throw (NoMethodError    (untangle s "No instance nor default method for class operation"))
 -- patError                 s = throw (PatternMatchFail (untangle s "Non-exhaustive patterns in"))
+patError :: a -> a
+patError = patError
 -- typeError                s = throw (TypeError        (unpackCStringUtf8# s))
 -- 
 -- -- GHC's RTS calls this
