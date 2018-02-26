@@ -825,17 +825,17 @@ instance  Enum Integer  where
     enumFromThenTo x y lim = enumDeltaToInteger x (y-x) lim
 -- 
 -- -- See Note [How the Enum rules work]
-{-# RULES
-"enumDeltaInteger"      [~1] forall x y.   enumDeltaInteger x y         = build (\c _ -> enumDeltaIntegerFB c x y)
-"efdtInteger"           [~1] forall x d l. enumDeltaToInteger x d l     = build (\c n -> enumDeltaToIntegerFB  c n x d l)
-"efdtInteger1"          [~1] forall x l.   enumDeltaToInteger x 1 l     = build (\c n -> enumDeltaToInteger1FB c n x l)
+-- {-# RULES
+-- "enumDeltaInteger"      [~1] forall x y.   enumDeltaInteger x y         = build (\c _ -> enumDeltaIntegerFB c x y)
+-- "efdtInteger"           [~1] forall x d l. enumDeltaToInteger x d l     = build (\c n -> enumDeltaToIntegerFB  c n x d l)
+-- "efdtInteger1"          [~1] forall x l.   enumDeltaToInteger x 1 l     = build (\c n -> enumDeltaToInteger1FB c n x l)
 
-"enumDeltaToInteger1FB" [1] forall c n x.  enumDeltaToIntegerFB c n x 1 = enumDeltaToInteger1FB c n x
+-- "enumDeltaToInteger1FB" [1] forall c n x.  enumDeltaToIntegerFB c n x 1 = enumDeltaToInteger1FB c n x
 
-"enumDeltaInteger"      [1] enumDeltaIntegerFB    (:)     = enumDeltaInteger
-"enumDeltaToInteger"    [1] enumDeltaToIntegerFB  (:) []  = enumDeltaToInteger
-"enumDeltaToInteger1"   [1] enumDeltaToInteger1FB (:) []  = enumDeltaToInteger1
- #-}
+-- "enumDeltaInteger"      [1] enumDeltaIntegerFB    (:)     = enumDeltaInteger
+-- "enumDeltaToInteger"    [1] enumDeltaToIntegerFB  (:) []  = enumDeltaToInteger
+-- "enumDeltaToInteger1"   [1] enumDeltaToInteger1FB (:) []  = enumDeltaToInteger1
+-- #-}
 -- 
 -- {- Note [Enum Integer rules for literal 1]
 -- The "1" rules above specialise for the common case where delta = 1,
