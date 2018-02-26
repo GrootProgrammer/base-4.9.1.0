@@ -93,8 +93,8 @@ module Control.Exception.Base (
 --         -- * Calls for GHC runtime
 --         recSelError, recConError, irrefutPatError, runtimeError,
 --         nonExhaustiveGuardsError, 
-		   patError
---		   , noMethodBindingError,
+           patError
+--         , noMethodBindingError,
 --         absentError, typeError,
 --         nonTermination, nestedAtomically,
   ) where
