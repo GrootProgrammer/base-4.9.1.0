@@ -70,7 +70,12 @@ overflowError = overflowError
 -- --------------------------------------------------------------
 -- 
 -- -- | Rational numbers, with numerator and denominator of some 'Integral' type.
-data  Ratio a = !a :% !a  deriving (Eq)
+-- data  Ratio a = !a :% !a  deriving (Eq)
+data  Ratio a = !a :% !a
+
+instance (Eq a) => Eq (Ratio a) where
+  (l1 :% r1) == (l2 :% r2) = l1 == l2 && r1 == r2
+  
 -- 
 -- -- | Arbitrary-precision rational numbers, represented as a ratio of
 -- -- two 'Integer' values.  A rational number may be constructed using
