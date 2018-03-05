@@ -234,7 +234,7 @@ module Data.Map (
 -- 
 --     -- * Traversal
 --     -- ** Map
---     , map
+    , map
 --     , mapWithKey
 --     , traverseWithKey
 --     , traverseMaybeWithKey
@@ -386,7 +386,7 @@ module Data.Map (
 -- import qualified Data.Foldable as Foldable
 -- import Data.Typeable
 -- import Prelude hiding (lookup, map, filter, foldr, foldl, null, splitAt, take, drop)
-import Prelude as P
+import Prelude as P hiding (map)
 import qualified Data.List as L
 -- 
 -- import qualified Data.Set.Internal as Set
@@ -3015,7 +3015,9 @@ difference (Assocs kas) (Assocs ((k', _):kas')) =
 -- -- | /O(n)/. Map a function over all values in the map.
 -- --
 -- -- > map (++ "x") (fromList [(5,"a"), (3,"b")]) == fromList [(3, "bx"), (5, "ax")]
--- 
+--
+map :: (a -> b) -> Map k a -> Map k b
+map f (Assocs xs) = Assocs (L.map (\(k, v) -> (k, f v)) xs)
 -- map :: (a -> b) -> Map k a -> Map k b
 -- map f = go where
 --   go Tip = Tip
@@ -3309,7 +3311,7 @@ foldrWithKey f z = P.foldr (uncurry f) z . toList
 -- -- > elems empty == []
 -- 
 elems :: Map k a -> [a]
-elems (Assocs kas) = map snd kas
+elems (Assocs kas) = L.map snd kas
 -- elems = foldr (:) []
 -- 
 -- -- | /O(n)/. Return all keys of the map in ascending order. Subject to list
