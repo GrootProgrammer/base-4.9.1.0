@@ -199,7 +199,7 @@ module Data.OldList
 --    -- | The prefix \`@generic@\' indicates an overloaded function that
 --    -- is a generalized version of a "Prelude" function.
 -- 
---    , genericLength
+   , genericLength
 --    , genericTake
 --    , genericDrop
 --    , genericSplitAt
@@ -214,7 +214,7 @@ import Data.Char        ( isSpace )
 -- import Data.Ord         ( comparing )
 -- import Data.Tuple       ( fst, snd )
 -- 
--- import GHC.Num
+import GHC.Num
 -- import GHC.Real
 import GHC.List
 import GHC.Base
@@ -581,13 +581,13 @@ insertBy cmp x ys@(y:ys')
 --                                        GT -> y
 --                                        _  -> x
 -- 
--- -- | The 'genericLength' function is an overloaded version of 'length'.  In
--- -- particular, instead of returning an 'Int', it returns any type which is
--- -- an instance of 'Num'.  It is, however, less efficient than 'length'.
--- genericLength           :: (Num i) => [a] -> i
--- {-# NOINLINE [1] genericLength #-}
--- genericLength []        =  0
--- genericLength (_:l)     =  1 + genericLength l
+-- | The 'genericLength' function is an overloaded version of 'length'.  In
+-- particular, instead of returning an 'Int', it returns any type which is
+-- an instance of 'Num'.  It is, however, less efficient than 'length'.
+genericLength           :: (Num i) => [a] -> i
+{-# NOINLINE [1] genericLength #-}
+genericLength []        =  fromInteger (Z# 0#)
+genericLength (_:l)     =  fromInteger (Z# 1#) + genericLength l
 -- 
 -- {-# RULES
 --   "genericLengthInt"     genericLength = (strictGenericLength :: [a] -> Int);
