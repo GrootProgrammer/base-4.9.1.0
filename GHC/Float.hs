@@ -59,74 +59,74 @@ import GHC.Real
 -- ------------------------------------------------------------------------
 -- 
 -- -- | Trigonometric and hyperbolic functions and related functions.
--- class  (Fractional a) => Floating a  where
---     pi                  :: a
---     exp, log, sqrt      :: a -> a
---     (**), logBase       :: a -> a -> a
---     sin, cos, tan       :: a -> a
---     asin, acos, atan    :: a -> a
---     sinh, cosh, tanh    :: a -> a
---     asinh, acosh, atanh :: a -> a
--- 
---     -- | @'log1p' x@ computes @'log' (1 + x)@, but provides more precise
---     -- results for small (absolute) values of @x@ if possible.
---     --
---     -- @since 4.9.0.0
---     log1p               :: a -> a
--- 
---     -- | @'expm1' x@ computes @'exp' x - 1@, but provides more precise
---     -- results for small (absolute) values of @x@ if possible.
---     --
---     -- @since 4.9.0.0
---     expm1               :: a -> a
--- 
---     -- | @'log1pexp' x@ computes @'log' (1 + 'exp' x)@, but provides more
---     -- precise results if possible.
---     --
---     -- Examples:
---     --
---     -- * if @x@ is a large negative number, @'log' (1 + 'exp' x)@ will be
---     --   imprecise for the reasons given in 'log1p'.
---     --
---     -- * if @'exp' x@ is close to @-1@, @'log' (1 + 'exp' x)@ will be
---     --   imprecise for the reasons given in 'expm1'.
---     --
---     -- @since 4.9.0.0
---     log1pexp            :: a -> a
--- 
---     -- | @'log1mexp' x@ computes @'log' (1 - 'exp' x)@, but provides more
---     -- precise results if possible.
---     --
---     -- Examples:
---     --
---     -- * if @x@ is a large negative number, @'log' (1 - 'exp' x)@ will be
---     --   imprecise for the reasons given in 'log1p'.
---     --
---     -- * if @'exp' x@ is close to @1@, @'log' (1 - 'exp' x)@ will be
---     --   imprecise for the reasons given in 'expm1'.
---     --
---     -- @since 4.9.0.0
---     log1mexp            :: a -> a
--- 
---     {-# INLINE (**) #-}
---     {-# INLINE logBase #-}
---     {-# INLINE sqrt #-}
---     {-# INLINE tan #-}
---     {-# INLINE tanh #-}
---     x ** y              =  exp (log x * y)
---     logBase x y         =  log y / log x
---     sqrt x              =  x ** 0.5
---     tan  x              =  sin  x / cos  x
---     tanh x              =  sinh x / cosh x
--- 
---     {-# INLINE log1p #-}
---     {-# INLINE expm1 #-}
---     {-# INLINE log1pexp #-}
---     {-# INLINE log1mexp #-}
---     log1p x = log (1 + x)
---     expm1 x = exp x - 1
---     log1pexp x = log1p (exp x)
---     log1mexp x = log1p (negate (exp x))
+class  (Fractional a) => Floating a  where
+    pi                  :: a
+    exp, log, sqrt      :: a -> a
+    (**), logBase       :: a -> a -> a
+    sin, cos, tan       :: a -> a
+    asin, acos, atan    :: a -> a
+    sinh, cosh, tanh    :: a -> a
+    asinh, acosh, atanh :: a -> a
+
+    -- | @'log1p' x@ computes @'log' (1 + x)@, but provides more precise
+    -- results for small (absolute) values of @x@ if possible.
+    --
+    -- @since 4.9.0.0
+    log1p               :: a -> a
+
+    -- | @'expm1' x@ computes @'exp' x - 1@, but provides more precise
+    -- results for small (absolute) values of @x@ if possible.
+    --
+    -- @since 4.9.0.0
+    expm1               :: a -> a
+
+    -- | @'log1pexp' x@ computes @'log' (1 + 'exp' x)@, but provides more
+    -- precise results if possible.
+    --
+    -- Examples:
+    --
+    -- * if @x@ is a large negative number, @'log' (1 + 'exp' x)@ will be
+    --   imprecise for the reasons given in 'log1p'.
+    --
+    -- * if @'exp' x@ is close to @-1@, @'log' (1 + 'exp' x)@ will be
+    --   imprecise for the reasons given in 'expm1'.
+    --
+    -- @since 4.9.0.0
+    log1pexp            :: a -> a
+
+    -- | @'log1mexp' x@ computes @'log' (1 - 'exp' x)@, but provides more
+    -- precise results if possible.
+    --
+    -- Examples:
+    --
+    -- * if @x@ is a large negative number, @'log' (1 - 'exp' x)@ will be
+    --   imprecise for the reasons given in 'log1p'.
+    --
+    -- * if @'exp' x@ is close to @1@, @'log' (1 - 'exp' x)@ will be
+    --   imprecise for the reasons given in 'expm1'.
+    --
+    -- @since 4.9.0.0
+    log1mexp            :: a -> a
+
+    {-# INLINE (**) #-}
+    {-# INLINE logBase #-}
+    {-# INLINE sqrt #-}
+    {-# INLINE tan #-}
+    {-# INLINE tanh #-}
+    x ** y              =  exp (log x * y)
+    logBase x y         =  log y / log x
+    sqrt x              =  x ** (fromRational ((Z# 1#) % (Z# 2#)))
+    tan  x              =  sin  x / cos  x
+    tanh x              =  sinh x / cosh x
+
+    {-# INLINE log1p #-}
+    {-# INLINE expm1 #-}
+    {-# INLINE log1pexp #-}
+    {-# INLINE log1mexp #-}
+    log1p x = log (fromInteger (Z# 1#) + x)
+    expm1 x = exp x - (fromInteger (Z# 1#))
+    log1pexp x = log1p (exp x)
+    log1mexp x = log1p (negate (exp x))
 -- 
 -- -- | Efficient, machine-independent access to the components of a
 -- -- floating-point number.
@@ -483,30 +483,31 @@ rationalToDouble  = rationalToDouble
 --         minEx       = DBL_MIN_EXP
 --         mantDigs    = DBL_MANT_DIG
 -- 
--- instance  Floating Double  where
---     pi                  =  3.141592653589793238
---     exp x               =  expDouble x
---     log x               =  logDouble x
---     sqrt x              =  sqrtDouble x
---     sin  x              =  sinDouble x
---     cos  x              =  cosDouble x
---     tan  x              =  tanDouble x
---     asin x              =  asinDouble x
---     acos x              =  acosDouble x
---     atan x              =  atanDouble x
---     sinh x              =  sinhDouble x
---     cosh x              =  coshDouble x
---     tanh x              =  tanhDouble x
---     (**) x y            =  powerDouble x y
---     logBase x y         =  log y / log x
--- 
---     asinh x = log (x + sqrt (1.0+x*x))
---     acosh x = log (x + (x+1.0) * sqrt ((x-1.0)/(x+1.0)))
---     atanh x = 0.5 * log ((1.0+x) / (1.0-x))
--- 
---     log1p = log1pDouble
---     expm1 = expm1Double
--- 
+instance  Floating Double  where
+    pi                  =  D# 3.141592653589793238##
+    exp x               =  expDouble x
+    log x               =  logDouble x
+    sqrt x              =  sqrtDouble x
+    sin  x              =  undefined -- sinDouble x
+    cos  x              =  undefined -- cosDouble x
+    tan  x              =  undefined -- tanDouble x
+    asin x              =  undefined -- asinDouble x
+    acos x              =  undefined -- acosDouble x
+    atan x              =  undefined -- atanDouble x
+    sinh x              =  undefined -- sinhDouble x
+    cosh x              =  undefined -- coshDouble x
+    tanh x              =  undefined -- tanhDouble x
+    (**) x y            =  undefined -- powerDouble x y
+    logBase x y         =  log y / log x
+
+    asinh x = log (x + sqrt ((D# 1.0##)+x*x))
+    acosh x = log (x + (x+(D# 1.0##)) * sqrt ((x-(D# 1.0##))/(x+(D# 1.0##))))
+    atanh x = (D# 0.5##) * log (((D# 1.0##)+x) / ((D# 1.0##)-x))
+
+    log1p = undefined -- log1pDouble
+    expm1 = undefined -- expm1Double
+
+    log1mexp = undefined
 --     log1mexp a
 --       | a <= log 2 = log (negate (expm1Double a))
 --       | otherwise  = log1pDouble (negate (exp a))
@@ -1190,16 +1191,19 @@ leDouble    (D# x) (D# y) = isTrue# (x <=## y)
 -- double2Float :: Double -> Float
 -- double2Float (D# x) = F# (double2Float# x)
 -- 
--- float2Double :: Float -> Double
--- float2Double (F# x) = D# (float2Double# x)
+float2Double :: Float -> Double
+float2Double (F# x) = D# (float2Double# x)
+
+float2Double# :: Float# -> Double#
+float2Double# = float2Double#
 -- 
--- expDouble, logDouble, sqrtDouble :: Double -> Double
+expDouble, logDouble, sqrtDouble :: Double -> Double
 -- sinDouble, cosDouble, tanDouble  :: Double -> Double
 -- asinDouble, acosDouble, atanDouble  :: Double -> Double
 -- sinhDouble, coshDouble, tanhDouble  :: Double -> Double
--- expDouble    (D# x) = D# (expDouble# x)
--- logDouble    (D# x) = D# (logDouble# x)
--- sqrtDouble   (D# x) = D# (sqrtDouble# x)
+expDouble    (D# x) = D# (expDouble# x)
+logDouble    (D# x) = D# (logDouble# x)
+sqrtDouble   (D# x) = D# (sqrtDouble# x)
 -- sinDouble    (D# x) = D# (sinDouble# x)
 -- cosDouble    (D# x) = D# (cosDouble# x)
 -- tanDouble    (D# x) = D# (tanDouble# x)
@@ -1209,6 +1213,11 @@ leDouble    (D# x) (D# y) = isTrue# (x <=## y)
 -- sinhDouble   (D# x) = D# (sinhDouble# x)
 -- coshDouble   (D# x) = D# (coshDouble# x)
 -- tanhDouble   (D# x) = D# (tanhDouble# x)
+
+expDouble#, logDouble#, sqrtDouble# :: Double# -> Double#
+expDouble# = expDouble#
+logDouble# = logDouble#
+sqrtDouble# = sqrtDouble#
 -- 
 -- powerDouble :: Double -> Double -> Double
 -- powerDouble  (D# x) (D# y) = D# (x **## y)
