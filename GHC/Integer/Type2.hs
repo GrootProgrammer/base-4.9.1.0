@@ -454,8 +454,16 @@ x `remPositive` y = if x `minusInteger` y < zeroInteger
 
 {-# NOINLINE quotInteger #-}
 quotInteger :: Integer -> Integer -> Integer
-x `quotInteger` y = case x `quotRemInteger` y of
-                    (# q, _ #) -> q
+(Z# x) `quotInteger` (Z# y) = Z# (x `quotInteger#` y)
+
+-- We don't use the default definition for Quot
+-- as it introduces a lot of overhead
+{-# NOINLINE quotInteger# #-}
+quotInteger# :: Int# -> Int# -> Int#
+quotInteger# = quotInteger#
+-- quotInteger :: Integer -> Integer -> Integer
+-- x `quotInteger` y = case x `quotRemInteger` y of
+--                     (# q, _ #) -> q
 -- 
 {-# NOINLINE remInteger #-}
 remInteger :: Integer -> Integer -> Integer
