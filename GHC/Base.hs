@@ -1169,17 +1169,26 @@ asTypeOf                =  const
 {-# INLINE remInt #-}
 -- 
 quotInt, remInt, divInt, modInt :: Int -> Int -> Int
+(I# x) `quotInt`  (I# 0#) = error "quotInt: quot by 0"
 (I# x) `quotInt`  (I# y) = I# (x `quotInt#` y)
+
+(I# x) `remInt`   (I# 0#) = error "remInt: div by 0"
 (I# x) `remInt`   (I# y) = I# (x `remInt#`  y)
+
+(I# x) `divInt`   (I# 0#) = error "divInt: div by 0"
 (I# x) `divInt`   (I# y) = I# (x `divInt#`  y)
+
+(I# x) `modInt`   (I# 0#) = error "modInt: div by 0"
 (I# x) `modInt`   (I# y) = I# (x `modInt#`  y)
 -- 
 quotRemInt :: Int -> Int -> (Int, Int)
+(I# x) `quotRemInt` (I# 0#) = error "quotRemInt: div by 0"
 (I# x) `quotRemInt` (I# y) = case x `quotRemInt#` y of
                              (# q, r #) ->
                                  (I# q, I# r)
 -- 
 divModInt :: Int -> Int -> (Int, Int)
+(I# x) `divModInt` (I# 0#) = error "divModInt: div by 0"
 (I# x) `divModInt` (I# y) = case x `divModInt#` y of
                             (# q, r #) -> (I# q, I# r)
 -- 
