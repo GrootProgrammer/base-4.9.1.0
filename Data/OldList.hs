@@ -193,7 +193,7 @@ module Data.OldList
    , sortBy
    , insertBy
 --    , maximumBy
---    , minimumBy
+   , minimumBy
 -- 
 --    -- ** The \"@generic@\" operations
 --    -- | The prefix \`@generic@\' indicates an overloaded function that
@@ -573,13 +573,13 @@ insertBy cmp x ys@(y:ys')
 -- -- | The 'minimumBy' function takes a comparison function and a list
 -- -- and returns the least element of the list by the comparison function.
 -- -- The list must be finite and non-empty.
--- minimumBy               :: (a -> a -> Ordering) -> [a] -> a
--- minimumBy _ []          =  errorWithoutStackTrace "List.minimumBy: empty list"
--- minimumBy cmp xs        =  foldl1 minBy xs
---                         where
---                            minBy x y = case cmp x y of
---                                        GT -> y
---                                        _  -> x
+minimumBy               :: (a -> a -> Ordering) -> [a] -> a
+minimumBy _ []          =  errorWithoutStackTrace "List.minimumBy: empty list"
+minimumBy cmp xs        =  foldl1 minBy xs
+                        where
+                           minBy x y = case cmp x y of
+                                       GT -> y
+                                       _  -> x
 -- 
 -- | The 'genericLength' function is an overloaded version of 'length'.  In
 -- particular, instead of returning an 'Int', it returns any type which is

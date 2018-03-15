@@ -148,10 +148,10 @@ module Data.Map (
 --     , lookup
     , Data.Map.lookup
     , findWithDefault
---     , lookupLT
---     , lookupGT
---     , lookupLE
---     , lookupGE
+    , lookupLT
+    , lookupGT
+    , lookupLE
+    , lookupGE
 -- 
 --     -- * Construction
     , empty
@@ -159,12 +159,12 @@ module Data.Map (
 -- 
 --     -- ** Insertion
     , insert
---     , insertWith
---     , insertWithKey
---     , insertLookupWithKey
+    , insertWith
+    , insertWithKey
+    , insertLookupWithKey
 -- 
 --     -- ** Delete\/Update
---     , delete
+    , delete
 --     , adjust
 --     , adjustWithKey
 --     , update
@@ -176,19 +176,19 @@ module Data.Map (
 --     -- * Combine
 -- 
 --     -- ** Union
---     , union
---     , unionWith
---     , unionWithKey
---     , unions
---     , unionsWith
+    , union
+    , unionWith
+    , unionWithKey
+    , unions
+    , unionsWith
 -- 
 --     -- ** Difference
---     , difference
+    , difference
 --     , differenceWith
 --     , differenceWithKey
 -- 
 --     -- ** Intersection
---     , intersection
+    , intersection
 --     , intersectionWith
 --     , intersectionWithKey
 -- 
@@ -235,60 +235,60 @@ module Data.Map (
 --     -- * Traversal
 --     -- ** Map
     , map
---     , mapWithKey
---     , traverseWithKey
+    , mapWithKey
+    , traverseWithKey
 --     , traverseMaybeWithKey
 --     , mapAccum
 --     , mapAccumWithKey
 --     , mapAccumRWithKey
---     , mapKeys
---     , mapKeysWith
+    , mapKeys
+    , mapKeysWith
 --     , mapKeysMonotonic
 -- 
 --     -- * Folds
 --     , foldr
     , Data.Map.foldr
-    , foldl
+    , Data.Map.foldl
     , foldrWithKey
---     , foldlWithKey
---     , foldMapWithKey
+    , foldlWithKey
+    , foldMapWithKey
 -- 
     , foldr1
 
 --     -- ** Strict folds
---     , foldr'
---     , foldl'
---     , foldrWithKey'
---     , foldlWithKey'
+    , foldr'
+    , foldl'
+    , foldrWithKey'
+    , foldlWithKey'
 -- 
 --     -- * Conversion
     , elems
---     , keys
---     , assocs
+    , keys
+    , assocs
 --     , keysSet
 --     , fromSet
 -- 
 --     -- ** Lists
     , toList
     , fromList
---     , fromListWith
---     , fromListWithKey
+    , fromListWith
+    , fromListWithKey
 -- 
 --     -- ** Ordered lists
---     , toAscList
+    , toAscList
 --     , toDescList
---     , fromAscList
---     , fromAscListWith
---     , fromAscListWithKey
---     , fromDistinctAscList
+    , fromAscList
+    , fromAscListWith
+    , fromAscListWithKey
+    , fromDistinctAscList
 --     , fromDescList
 --     , fromDescListWith
 --     , fromDescListWithKey
 --     , fromDistinctDescList
 -- 
 --     -- * Filter
---     , filter
---     , filterWithKey
+    , filter
+    , filterWithKey
 -- 
 --     , takeWhileAntitone
 --     , dropWhileAntitone
@@ -383,7 +383,7 @@ module Data.Map (
 -- import Control.Applicative (Const (..))
 -- import Control.DeepSeq (NFData(rnf))
 -- import Data.Bits (shiftL, shiftR)
--- import qualified Data.Foldable as Foldable
+import qualified Data.Foldable as Foldable
 -- import Data.Typeable
 -- import Prelude hiding (lookup, map, filter, foldr, foldl, null, splitAt, take, drop)
 import Prelude as P hiding (map)
@@ -667,7 +667,12 @@ findWithDefault a k m = case Data.Map.lookup k m of
 -- --
 -- -- > lookupLT 3 (fromList [(3,'a'), (5,'b')]) == Nothing
 -- -- > lookupLT 4 (fromList [(3,'a'), (5,'b')]) == Just (3, 'a')
--- lookupLT :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupLT :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupLT k (Assocs []) = Nothing
+lookupLT k (Assocs ((k',v):kas)) = if k' < k then
+                                     Just (k', v)
+                                   else
+                                     lookupLT k (Assocs kas)
 -- lookupLT = goNothing
 --   where
 --     goNothing !_ Tip = Nothing
@@ -688,7 +693,12 @@ findWithDefault a k m = case Data.Map.lookup k m of
 -- --
 -- -- > lookupGT 4 (fromList [(3,'a'), (5,'b')]) == Just (5, 'b')
 -- -- > lookupGT 5 (fromList [(3,'a'), (5,'b')]) == Nothing
--- lookupGT :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupGT :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupGT k (Assocs []) = Nothing
+lookupGT k (Assocs ((k',v):kas)) = if k' > k then
+                                     Just (k', v)
+                                   else
+                                     lookupGT k (Assocs kas)
 -- lookupGT = goNothing
 --   where
 --     goNothing !_ Tip = Nothing
@@ -710,7 +720,12 @@ findWithDefault a k m = case Data.Map.lookup k m of
 -- -- > lookupLE 2 (fromList [(3,'a'), (5,'b')]) == Nothing
 -- -- > lookupLE 4 (fromList [(3,'a'), (5,'b')]) == Just (3, 'a')
 -- -- > lookupLE 5 (fromList [(3,'a'), (5,'b')]) == Just (5, 'b')
--- lookupLE :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupLE :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupLE k (Assocs []) = Nothing
+lookupLE k (Assocs ((k',v):kas)) = if k' <= k then
+                                     Just (k', v)
+                                   else
+                                     lookupLE k (Assocs kas)
 -- lookupLE = goNothing
 --   where
 --     goNothing !_ Tip = Nothing
@@ -734,7 +749,12 @@ findWithDefault a k m = case Data.Map.lookup k m of
 -- -- > lookupGE 3 (fromList [(3,'a'), (5,'b')]) == Just (3, 'a')
 -- -- > lookupGE 4 (fromList [(3,'a'), (5,'b')]) == Just (5, 'b')
 -- -- > lookupGE 6 (fromList [(3,'a'), (5,'b')]) == Nothing
--- lookupGE :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupGE :: Ord k => k -> Map k v -> Maybe (k, v)
+lookupGE k (Assocs []) = Nothing
+lookupGE k (Assocs ((k',v):kas)) = if k' >= k then
+                                     Just (k', v)
+                                   else
+                                     lookupGE k (Assocs kas)
 -- lookupGE = goNothing
 --   where
 --     goNothing !_ Tip = Nothing
@@ -872,7 +892,10 @@ insert k a (Assocs kas) = Assocs (L.insertBy keycmp (k, a) kas')
 -- -- > insertWith (++) 7 "xxx" (fromList [(5,"a"), (3,"b")]) == fromList [(3, "b"), (5, "a"), (7, "xxx")]
 -- -- > insertWith (++) 5 "xxx" empty                         == singleton 5 "xxx"
 -- 
--- insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a
+insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a
+insertWith f k a m = case Data.Map.lookup k m of
+    Nothing -> insert k a m
+    Just a' -> insert k (f a a') m
 -- insertWith = go
 --   where
 --     -- We have no hope of making pointer equality tricks work
@@ -927,7 +950,10 @@ insert k a (Assocs kas) = Assocs (L.insertBy keycmp (k, a) kas')
 -- -- > insertWithKey f 5 "xxx" empty                         == singleton 5 "xxx"
 -- 
 -- -- See Note: Type of local 'go' function
--- insertWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a -> Map k a
+insertWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a -> Map k a
+insertWithKey f k a m = case Data.Map.lookup k m of
+  Nothing -> insert k a m
+  Just a' -> insert k (f k a a') m
 -- insertWithKey = go
 --   where
 --     go :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a -> Map k a
@@ -980,8 +1006,11 @@ insert k a (Assocs kas) = Assocs (L.insertBy keycmp (k, a) kas')
 -- -- > insertLookup 7 "x" (fromList [(5,"a"), (3,"b")]) == (Nothing,  fromList [(3, "b"), (5, "a"), (7, "x")])
 -- 
 -- -- See Note: Type of local 'go' function
--- insertLookupWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a
---                     -> (Maybe a, Map k a)
+insertLookupWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a
+                    -> (Maybe a, Map k a)
+insertLookupWithKey f k a m = case Data.Map.lookup k m of
+  Nothing -> (Nothing, insert k a m)
+  Just a' -> (Just a', insert k (f k a a') m)
 -- insertLookupWithKey f0 k0 x0 = toPair . go f0 k0 x0
 --   where
 --     go :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a -> StrictPair (Maybe a) (Map k a)
@@ -1813,7 +1842,8 @@ delete k (Assocs kas) = Assocs (filter ((/= k) . fst) kas)
 -- -- > unions [(fromList [(5, "A3"), (3, "B3")]), (fromList [(5, "A"), (7, "C")]), (fromList [(5, "a"), (3, "b")])]
 -- -- >     == fromList [(3, "B3"), (5, "A3"), (7, "C")]
 -- 
--- unions :: Ord k => [Map k a] -> Map k a
+unions :: Ord k => [Map k a] -> Map k a
+unions ts = L.foldl union empty ts
 -- unions ts
 --   = foldlStrict union empty ts
 -- #if __GLASGOW_HASKELL__
@@ -1826,7 +1856,8 @@ delete k (Assocs kas) = Assocs (filter ((/= k) . fst) kas)
 -- -- > unionsWith (++) [(fromList [(5, "a"), (3, "b")]), (fromList [(5, "A"), (7, "C")]), (fromList [(5, "A3"), (3, "B3")])]
 -- -- >     == fromList [(3, "bB3"), (5, "aAA3"), (7, "C")]
 -- 
--- unionsWith :: Ord k => (a->a->a) -> [Map k a] -> Map k a
+unionsWith :: Ord k => (a->a->a) -> [Map k a] -> Map k a
+unionsWith f = L.foldl (unionWith f) empty
 -- unionsWith f ts
 --   = foldlStrict (unionWith f) empty ts
 -- #if __GLASGOW_HASKELL__
@@ -1840,7 +1871,11 @@ delete k (Assocs kas) = Assocs (filter ((/= k) . fst) kas)
 -- --
 -- -- > union (fromList [(5, "a"), (3, "b")]) (fromList [(5, "A"), (7, "C")]) == fromList [(3, "b"), (5, "a"), (7, "C")]
 -- 
--- union :: Ord k => Map k a -> Map k a -> Map k a
+union :: Ord k => Map k a -> Map k a -> Map k a
+union m1 (Assocs []) = m1
+union m1 (Assocs ((k,a):kas)) = case Data.Map.lookup k m1 of
+  Nothing -> insert k a m1
+  Just a' -> union m1 (Assocs kas)
 -- union t1 Tip  = t1
 -- union t1 (Bin _ k x Tip Tip) = insertR k x t1
 -- union (Bin _ k x Tip Tip) t2 = insert k x t2
@@ -1861,8 +1896,12 @@ delete k (Assocs kas) = Assocs (filter ((/= k) . fst) kas)
 -- --
 -- -- > unionWith (++) (fromList [(5, "a"), (3, "b")]) (fromList [(5, "A"), (7, "C")]) == fromList [(3, "b"), (5, "aA"), (7, "C")]
 -- 
--- unionWith :: Ord k => (a -> a -> a) -> Map k a -> Map k a -> Map k a
+unionWith :: Ord k => (a -> a -> a) -> Map k a -> Map k a -> Map k a
 -- -- QuickCheck says pointer equality never happens here.
+unionWith f m1 (Assocs []) = m1
+unionWith f m1 (Assocs ((k2,a2):kas)) = case Data.Map.lookup k2 m1 of
+  Nothing -> unionWith f (insert k2 a2 m1) (Assocs kas)
+  Just a1 -> unionWith f (insert k2 (f a1 a2) m1) (Assocs kas) -- favor left Map?
 -- unionWith _f t1 Tip = t1
 -- unionWith f t1 (Bin _ k x Tip Tip) = insertWithR f k x t1
 -- unionWith f (Bin _ k x Tip Tip) t2 = insertWith f k x t2
@@ -1883,7 +1922,11 @@ delete k (Assocs kas) = Assocs (filter ((/= k) . fst) kas)
 -- -- > let f key left_value right_value = (show key) ++ ":" ++ left_value ++ "|" ++ right_value
 -- -- > unionWithKey f (fromList [(5, "a"), (3, "b")]) (fromList [(5, "A"), (7, "C")]) == fromList [(3, "b"), (5, "5:a|A"), (7, "C")]
 -- 
--- unionWithKey :: Ord k => (k -> a -> a -> a) -> Map k a -> Map k a -> Map k a
+unionWithKey :: Ord k => (k -> a -> a -> a) -> Map k a -> Map k a -> Map k a
+unionWithKey f m1 (Assocs []) = m1
+unionWithKey f m1 (Assocs ((k2,a2):kas)) = case Data.Map.lookup k2 m1 of
+  Nothing -> unionWithKey f (insert k2 a2 m1) (Assocs kas)
+  Just a1 -> unionWithKey f (insert k2 (f k2 a1 a2) m1) (Assocs kas)
 -- unionWithKey _f t1 Tip = t1
 -- unionWithKey f t1 (Bin _ k x Tip Tip) = insertWithKeyR f k x t1
 -- unionWithKey f (Bin _ k x Tip Tip) t2 = insertWithKey f k x t2
@@ -1995,7 +2038,11 @@ difference (Assocs kas) (Assocs ((k', _):kas')) =
 -- --
 -- -- > intersection (fromList [(5, "a"), (3, "b")]) (fromList [(5, "A"), (7, "C")]) == singleton 5 "a"
 -- 
--- intersection :: Ord k => Map k a -> Map k b -> Map k a
+intersection :: Ord k => Map k a -> Map k b -> Map k a
+intersection (Assocs []) m2 = empty
+intersection (Assocs ((k,a):kas)) m2 = case Data.Map.lookup k m2 of
+  Nothing -> intersection (Assocs kas) m2
+  Just a' -> insert k a (intersection (Assocs kas) m2)
 -- intersection Tip _ = Tip
 -- intersection _ Tip = Tip
 -- intersection t1@(Bin _ k x l1 r1) t2
@@ -2827,6 +2874,8 @@ difference (Assocs kas) (Assocs ((k', _):kas')) =
 -- -- > filterWithKey (\k _ -> k > 4) (fromList [(5,"a"), (3,"b")]) == singleton 5 "a"
 -- 
 -- filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a
+filterWithKey :: Ord k => (k -> a -> Bool) -> Map k a -> Map k a
+filterWithKey f = fromList . filter (\(k, a) -> f k a) . toList
 -- filterWithKey _ Tip = Tip
 -- filterWithKey p t@(Bin _ kx x l r)
 --   | p kx x    = if pl `ptrEq` l && pr `ptrEq` r
@@ -3044,7 +3093,8 @@ map f (Assocs xs) = Assocs (L.map (\(k, v) -> (k, f v)) xs)
 -- -- > let f key x = (show key) ++ ":" ++ x
 -- -- > mapWithKey f (fromList [(5,"a"), (3,"b")]) == fromList [(3, "3:b"), (5, "5:a")]
 -- 
--- mapWithKey :: (k -> a -> b) -> Map k a -> Map k b
+mapWithKey :: (k -> a -> b) -> Map k a -> Map k b
+mapWithKey f (Assocs kas) = Assocs (L.map (\(k, a) -> (k, f k a)) kas)
 -- mapWithKey _ Tip = Tip
 -- mapWithKey f (Bin sx kx x l r) = Bin sx kx (f kx x) (mapWithKey f l) (mapWithKey f r)
 -- 
@@ -3068,6 +3118,8 @@ map f (Assocs xs) = Assocs (L.map (\(k, v) -> (k, f v)) xs)
 -- -- > traverseWithKey (\k v -> if odd k then Just (succ v) else Nothing) (fromList [(1, 'a'), (5, 'e')]) == Just (fromList [(1, 'b'), (5, 'f')])
 -- -- > traverseWithKey (\k v -> if odd k then Just (succ v) else Nothing) (fromList [(2, 'c')])           == Nothing
 -- traverseWithKey :: Applicative t => (k -> a -> t b) -> Map k a -> t (Map k b)
+traverseWithKey :: (Ord k, Applicative t) => (k -> a -> t b) -> Map k a -> t (Map k b)
+traverseWithKey f m = fromList <$> traverse (\(k, v) -> (,) k <$> f k v) (toList m)
 -- traverseWithKey f = go
 --   where
 --     go Tip = pure Tip
@@ -3126,8 +3178,8 @@ map f (Assocs xs) = Assocs (L.map (\(k, v) -> (k, f v)) xs)
 -- -- > mapKeys (\ _ -> 1) (fromList [(1,"b"), (2,"a"), (3,"d"), (4,"c")]) == singleton 1 "c"
 -- -- > mapKeys (\ _ -> 3) (fromList [(1,"b"), (2,"a"), (3,"d"), (4,"c")]) == singleton 3 "c"
 -- 
--- mapKeys :: Ord k2 => (k1->k2) -> Map k1 a -> Map k2 a
--- mapKeys f = fromList . foldrWithKey (\k x xs -> (f k, x) : xs) []
+mapKeys :: Ord k2 => (k1->k2) -> Map k1 a -> Map k2 a
+mapKeys f = fromList . foldrWithKey (\k x xs -> (f k, x) : xs) []
 -- #if __GLASGOW_HASKELL__
 -- {-# INLINABLE mapKeys #-}
 -- #endif
@@ -3143,8 +3195,8 @@ map f (Assocs xs) = Assocs (L.map (\(k, v) -> (k, f v)) xs)
 -- -- > mapKeysWith (++) (\ _ -> 1) (fromList [(1,"b"), (2,"a"), (3,"d"), (4,"c")]) == singleton 1 "cdab"
 -- -- > mapKeysWith (++) (\ _ -> 3) (fromList [(1,"b"), (2,"a"), (3,"d"), (4,"c")]) == singleton 3 "cdab"
 -- 
--- mapKeysWith :: Ord k2 => (a -> a -> a) -> (k1->k2) -> Map k1 a -> Map k2 a
--- mapKeysWith c f = fromListWith c . foldrWithKey (\k x xs -> (f k, x) : xs) []
+mapKeysWith :: Ord k2 => (a -> a -> a) -> (k1->k2) -> Map k1 a -> Map k2 a
+mapKeysWith c f = fromListWith c . foldrWithKey (\k x xs -> (f k, x) : xs) []
 -- #if __GLASGOW_HASKELL__
 -- {-# INLINABLE mapKeysWith #-}
 -- #endif
@@ -3197,7 +3249,8 @@ foldr f z = L.foldr f z . elems
 -- -- | /O(n)/. A strict version of 'foldr'. Each application of the operator is
 -- -- evaluated before using the result in the next application. This
 -- -- function is strict in the starting value.
--- foldr' :: (a -> b -> b) -> b -> Map k a -> b
+foldr' :: (a -> b -> b) -> b -> Map k a -> b
+foldr' f z = Foldable.foldr' f z . elems
 -- foldr' f z = go z
 --   where
 --     go !z' Tip             = z'
@@ -3213,7 +3266,8 @@ foldr f z = L.foldr f z . elems
 -- --
 -- -- > let f len a = len + (length a)
 -- -- > foldl f 0 (fromList [(5,"a"), (3,"bbb")]) == 4
--- foldl :: (a -> b -> a) -> a -> Map k b -> a
+foldl :: (a -> b -> a) -> a -> Map k b -> a
+foldl f z = L.foldl f z . elems
 -- foldl f z = go z
 --   where
 --     go z' Tip             = z'
@@ -3223,7 +3277,8 @@ foldr f z = L.foldr f z . elems
 -- -- | /O(n)/. A strict version of 'foldl'. Each application of the operator is
 -- -- evaluated before using the result in the next application. This
 -- -- function is strict in the starting value.
--- foldl' :: (a -> b -> a) -> a -> Map k b -> a
+foldl' :: (a -> b -> a) -> a -> Map k b -> a
+foldl' f z = L.foldl' f z . elems
 -- foldl' f z = go z
 --   where
 --     go !z' Tip             = z'
@@ -3251,7 +3306,8 @@ foldrWithKey f z = P.foldr (uncurry f) z . toList
 -- -- | /O(n)/. A strict version of 'foldrWithKey'. Each application of the operator is
 -- -- evaluated before using the result in the next application. This
 -- -- function is strict in the starting value.
--- foldrWithKey' :: (k -> a -> b -> b) -> b -> Map k a -> b
+foldrWithKey' :: (k -> a -> b -> b) -> b -> Map k a -> b
+foldrWithKey' f z = Foldable.foldr' (\(k, a) z' -> f k a z') z . toList
 -- foldrWithKey' f z = go z
 --   where
 --     go !z' Tip              = z'
@@ -3268,7 +3324,8 @@ foldrWithKey f z = P.foldr (uncurry f) z . toList
 -- --
 -- -- > let f result k a = result ++ "(" ++ (show k) ++ ":" ++ a ++ ")"
 -- -- > foldlWithKey f "Map: " (fromList [(5,"a"), (3,"b")]) == "Map: (3:b)(5:a)"
--- foldlWithKey :: (a -> k -> b -> a) -> a -> Map k b -> a
+foldlWithKey :: (a -> k -> b -> a) -> a -> Map k b -> a
+foldlWithKey f a = L.foldl (\a1 (k2, a2) -> f a1 k2 a2) a . toList
 -- foldlWithKey f z = go z
 --   where
 --     go z' Tip              = z'
@@ -3278,7 +3335,8 @@ foldrWithKey f z = P.foldr (uncurry f) z . toList
 -- -- | /O(n)/. A strict version of 'foldlWithKey'. Each application of the operator is
 -- -- evaluated before using the result in the next application. This
 -- -- function is strict in the starting value.
--- foldlWithKey' :: (a -> k -> b -> a) -> a -> Map k b -> a
+foldlWithKey' :: (a -> k -> b -> a) -> a -> Map k b -> a
+foldlWithKey' f a = Foldable.foldl' (\z (k, a) -> f z k a) a . toList
 -- foldlWithKey' f z = go z
 --   where
 --     go !z' Tip              = z'
@@ -3292,7 +3350,9 @@ foldrWithKey f z = P.foldr (uncurry f) z . toList
 -- -- This can be an asymptotically faster than 'foldrWithKey' or 'foldlWithKey' for some monoids.
 -- --
 -- -- @since 0.5.4
--- foldMapWithKey :: Monoid m => (k -> a -> m) -> Map k a -> m
+foldMapWithKey :: Monoid m => (k -> a -> m) -> Map k a -> m
+foldMapWithKey _ (Assocs []) = mempty
+foldMapWithKey f (Assocs ((k,a):kas)) = f k a `mappend` foldMapWithKey f (Assocs kas)
 -- foldMapWithKey f = go
 --   where
 --     go Tip             = mempty
@@ -3320,7 +3380,8 @@ elems (Assocs kas) = L.map snd kas
 -- -- > keys (fromList [(5,"a"), (3,"b")]) == [3,5]
 -- -- > keys empty == []
 -- 
--- keys  :: Map k a -> [k]
+keys  :: Map k a -> [k]
+keys (Assocs kas) = L.map fst kas
 -- keys = foldrWithKey (\k _ ks -> k : ks) []
 -- 
 -- -- | /O(n)/. An alias for 'toAscList'. Return all key\/value pairs in the map
@@ -3329,9 +3390,9 @@ elems (Assocs kas) = L.map snd kas
 -- -- > assocs (fromList [(5,"a"), (3,"b")]) == [(3,"b"), (5,"a")]
 -- -- > assocs empty == []
 -- 
--- assocs :: Map k a -> [(k,a)]
--- assocs m
---   = toAscList m
+assocs :: Map k a -> [(k,a)]
+assocs m
+  = toAscList m
 -- 
 -- -- | /O(n)/. The set of all keys of the map.
 -- --
@@ -3339,6 +3400,7 @@ elems (Assocs kas) = L.map snd kas
 -- -- > keysSet empty == Data.Set.empty
 -- 
 -- keysSet :: Map k a -> Set.Set k
+-- keysSet (Assocs kas) = Set.fromList $ map fst kas
 -- keysSet Tip = Set.Tip
 -- keysSet (Bin sz kx _ l r) = Set.Bin sz kx (keysSet l) (keysSet r)
 -- 
@@ -3349,6 +3411,7 @@ elems (Assocs kas) = L.map snd kas
 -- -- > fromSet undefined Data.Set.empty == empty
 -- 
 -- fromSet :: (k -> a) -> Set.Set k -> Map k a
+-- fromSet f = fromList $ map (\k -> (k, f k)) $ Set.toList
 -- fromSet _ Set.Tip = Tip
 -- fromSet f (Set.Bin sz x l r) = Bin sz x (f x) (fromSet f l) (fromSet f r)
 -- 
@@ -3432,9 +3495,9 @@ fromList kas = Assocs (sby keycmp $ L.nubBy (\(k1, _) (k2, _) -> k1 == k2)
 -- -- > fromListWith (++) [(5,"a"), (5,"b"), (3,"b"), (3,"a"), (5,"a")] == fromList [(3, "ab"), (5, "aba")]
 -- -- > fromListWith (++) [] == empty
 -- 
--- fromListWith :: Ord k => (a -> a -> a) -> [(k,a)] -> Map k a
--- fromListWith f xs
---   = fromListWithKey (\_ x y -> f x y) xs
+fromListWith :: Ord k => (a -> a -> a) -> [(k,a)] -> Map k a
+fromListWith f xs
+  = fromListWithKey (\_ x y -> f x y) xs
 -- #if __GLASGOW_HASKELL__
 -- {-# INLINABLE fromListWith #-}
 -- #endif
@@ -3445,11 +3508,12 @@ fromList kas = Assocs (sby keycmp $ L.nubBy (\(k1, _) (k2, _) -> k1 == k2)
 -- -- > fromListWithKey f [(5,"a"), (5,"b"), (3,"b"), (3,"a"), (5,"a")] == fromList [(3, "3ab"), (5, "5a5ba")]
 -- -- > fromListWithKey f [] == empty
 -- 
--- fromListWithKey :: Ord k => (k -> a -> a -> a) -> [(k,a)] -> Map k a
--- fromListWithKey f xs
---   = foldlStrict ins empty xs
---   where
---     ins t (k,x) = insertWithKey f k x t
+fromListWithKey :: Ord k => (k -> a -> a -> a) -> [(k,a)] -> Map k a
+fromListWithKey f xs
+  = L.foldl ins empty xs
+  -- = foldlStrict ins empty xs
+  where
+    ins t (k,x) = insertWithKey f k x t
 -- #if __GLASGOW_HASKELL__
 -- {-# INLINABLE fromListWithKey #-}
 -- #endif
@@ -3460,8 +3524,7 @@ fromList kas = Assocs (sby keycmp $ L.nubBy (\(k1, _) (k2, _) -> k1 == k2)
 -- -- > toList empty == []
 -- 
 toList :: Map k a -> [(k,a)]
-toList (Assocs kas) = kas
--- toList = toAscList
+toList = toAscList
 
 -- 
 -- -- | /O(n)/. Convert the map to a list of key\/value pairs where the keys are
@@ -3469,7 +3532,8 @@ toList (Assocs kas) = kas
 -- --
 -- -- > toAscList (fromList [(5,"a"), (3,"b")]) == [(3,"b"), (5,"a")]
 -- 
--- toAscList :: Map k a -> [(k,a)]
+toAscList :: Map k a -> [(k,a)]
+toAscList (Assocs kas) = kas
 -- toAscList = foldrWithKey (\k x xs -> (k,x):xs) []
 -- 
 -- -- | /O(n)/. Convert the map to a list of key\/value pairs where the keys
@@ -3531,6 +3595,8 @@ toList (Assocs kas) = kas
 -- -- > valid (fromAscList [(5,"a"), (3,"b"), (5,"b")]) == False
 -- 
 -- fromAscList :: Eq k => [(k,a)] -> Map k a
+fromAscList :: (Ord k, Eq k) => [(k,a)] -> Map k a
+fromAscList = fromList
 -- fromAscList xs
 --   = fromDistinctAscList (combineEq xs)
 --   where
@@ -3584,9 +3650,9 @@ toList (Assocs kas) = kas
 -- -- > valid (fromAscListWith (++) [(3,"b"), (5,"a"), (5,"b")]) == True
 -- -- > valid (fromAscListWith (++) [(5,"a"), (3,"b"), (5,"b")]) == False
 -- 
--- fromAscListWith :: Eq k => (a -> a -> a) -> [(k,a)] -> Map k a
--- fromAscListWith f xs
---   = fromAscListWithKey (\_ x y -> f x y) xs
+fromAscListWith :: Eq k => (a -> a -> a) -> [(k,a)] -> Map k a
+fromAscListWith f xs
+  = fromAscListWithKey (\_ x y -> f x y) xs
 -- #if __GLASGOW_HASKELL__
 -- {-# INLINABLE fromAscListWith #-}
 -- #endif
@@ -3616,21 +3682,21 @@ toList (Assocs kas) = kas
 -- -- > valid (fromAscListWithKey f [(3,"b"), (5,"a"), (5,"b"), (5,"b")]) == True
 -- -- > valid (fromAscListWithKey f [(5,"a"), (3,"b"), (5,"b"), (5,"b")]) == False
 -- 
--- fromAscListWithKey :: Eq k => (k -> a -> a -> a) -> [(k,a)] -> Map k a
--- fromAscListWithKey f xs
---   = fromDistinctAscList (combineEq f xs)
---   where
+fromAscListWithKey :: Eq k => (k -> a -> a -> a) -> [(k,a)] -> Map k a
+fromAscListWithKey f xs
+  = fromDistinctAscList (combineEq f xs)
+  where
 --   -- [combineEq f xs] combines equal elements with function [f] in an ordered list [xs]
---   combineEq _ xs'
---     = case xs' of
---         []     -> []
---         [x]    -> [x]
---         (x:xx) -> combineEq' x xx
+  combineEq _ xs'
+    = case xs' of
+        []     -> []
+        [x]    -> [x]
+        (x:xx) -> combineEq' x xx
 -- 
---   combineEq' z [] = [z]
---   combineEq' z@(kz,zz) (x@(kx,xx):xs')
---     | kx==kz    = let yy = f kx xx zz in combineEq' (kx,yy) xs'
---     | otherwise = z:combineEq' x xs'
+  combineEq' z [] = [z]
+  combineEq' z@(kz,zz) (x@(kx,xx):xs')
+    | kx==kz    = let yy = f kx xx zz in combineEq' (kx,yy) xs'
+    | otherwise = z:combineEq' x xs'
 -- #if __GLASGOW_HASKELL__
 -- {-# INLINABLE fromAscListWithKey #-}
 -- #endif
@@ -3672,7 +3738,8 @@ toList (Assocs kas) = kas
 -- 
 -- -- For some reason, when 'singleton' is used in fromDistinctAscList or in
 -- -- create, it is not inlined, so we inline it manually.
--- fromDistinctAscList :: [(k,a)] -> Map k a
+fromDistinctAscList :: [(k,a)] -> Map k a
+fromDistinctAscList kas = Assocs kas
 -- fromDistinctAscList [] = Tip
 -- fromDistinctAscList ((kx0, x0) : xs0) = go (1::Int) (Bin 1 kx0 x0 Tip Tip) xs0
 --   where
@@ -4111,15 +4178,15 @@ toList (Assocs kas) = kas
 --   actually seems one of the faster methods to compare two trees
 --   and it is certainly the simplest :-)
 -- --------------------------------------------------------------------}
--- instance (Eq k,Eq a) => Eq (Map k a) where
---   t1 == t2  = (size t1 == size t2) && (toAscList t1 == toAscList t2)
+instance (Eq k,Eq a) => Eq (Map k a) where
+  t1 == t2  = (size t1 == size t2) && (toAscList t1 == toAscList t2)
 -- 
 -- {--------------------------------------------------------------------
 --   Ord
 -- --------------------------------------------------------------------}
 -- 
--- instance (Ord k, Ord v) => Ord (Map k v) where
---     compare m1 m2 = compare (toAscList m1) (toAscList m2)
+instance (Ord k, Ord v) => Ord (Map k v) where
+    compare m1 m2 = compare (toAscList m1) (toAscList m2)
 -- 
 -- #if MIN_VERSION_base(4,9,0)
 -- {--------------------------------------------------------------------
@@ -4169,23 +4236,26 @@ toList (Assocs kas) = kas
 --   Functor
 -- --------------------------------------------------------------------}
 -- instance Functor (Map k) where
---   fmap f m  = map f m
+instance (Ord k) => Functor (Map k) where
+  fmap f m  = map f m
 -- #ifdef __GLASGOW_HASKELL__
 --   _ <$ Tip = Tip
 --   a <$ (Bin sx kx _ l r) = Bin sx kx a (a <$ l) (a <$ r)
 -- #endif
 -- 
 -- instance Traversable (Map k) where
---   traverse f = traverseWithKey (\_ -> f)
+instance (Ord k) => Traversable (Map k) where
+  traverse f = traverseWithKey (\_ -> f)
 --   {-# INLINE traverse #-}
 -- 
 -- instance Foldable.Foldable (Map k) where
+instance (Ord k) => Foldable.Foldable (Map k) where
 --   fold = go
 --     where go Tip = mempty
 --           go (Bin 1 _ v _ _) = v
 --           go (Bin _ _ v l r) = go l `mappend` (v `mappend` go r)
 --   {-# INLINABLE fold #-}
---   foldr = foldr
+  foldr = Data.Map.foldr
 --   {-# INLINE foldr #-}
 --   foldl = foldl
 --   {-# INLINE foldl #-}
