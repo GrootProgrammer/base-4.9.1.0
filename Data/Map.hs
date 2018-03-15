@@ -262,7 +262,7 @@ module Data.Map (
 --     , foldlWithKey'
 -- 
 --     -- * Conversion
---     , elems
+    , elems
 --     , keys
 --     , assocs
 --     , keysSet
