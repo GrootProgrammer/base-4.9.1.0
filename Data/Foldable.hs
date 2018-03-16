@@ -41,9 +41,9 @@ module Data.Foldable (
 --     concat,
 --     concatMap,
 --     and,
---     or,
---     any,
---     all,
+    or,
+    any,
+    all,
 --     maximumBy,
 --     minimumBy,
 --     -- ** Searches
@@ -559,16 +559,16 @@ instance Ord a => Monoid (Min a) where
 -- -- | 'or' returns the disjunction of a container of Bools.  For the
 -- -- result to be 'False', the container must be finite; 'True', however,
 -- -- results from a 'True' value finitely far from the left end.
--- or :: Foldable t => t Bool -> Bool
--- or = getAny #. foldMap Any
+or :: Foldable t => t Bool -> Bool
+or = getAny #. foldMap Any
 -- 
 -- -- | Determines whether any element of the structure satisfies the predicate.
 any :: Foldable t => (a -> Bool) -> t a -> Bool
 any p = getAny #. foldMap (Any #. p)
 -- 
 -- -- | Determines whether all elements of the structure satisfy the predicate.
--- all :: Foldable t => (a -> Bool) -> t a -> Bool
--- all p = getAll #. foldMap (All #. p)
+all :: Foldable t => (a -> Bool) -> t a -> Bool
+all p = getAll #. foldMap (All #. p)
 -- 
 -- -- | The largest element of a non-empty structure with respect to the
 -- -- given comparison function.

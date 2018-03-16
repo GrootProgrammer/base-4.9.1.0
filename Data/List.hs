@@ -213,9 +213,9 @@ import Data.Foldable
 import Data.Traversable
 -- 
 import Data.OldList hiding (
---     all,
+    all,
 --     and,
---     any,
+    any,
 --     concat,
 --     concatMap,
     elem,
@@ -234,7 +234,7 @@ import Data.OldList hiding (
     length,
     notElem,
     null,
---     or,
+    or,
     product,
     sum
     )
