@@ -52,7 +52,11 @@ class  Eq a  where
     {-# MINIMAL (==) | (/=) #-}
 
 -- deriving instance Eq ()
+instance Eq () where
+    _ == _ = True
 -- deriving instance (Eq  a, Eq  b) => Eq  (a, b)
+instance (Eq  a, Eq  b) => Eq  (a, b) where
+    (a1, b1) == (a2, b2) = a1 == a2 && b1 == b2
 -- deriving instance (Eq  a, Eq  b, Eq  c) => Eq  (a, b, c)
 -- deriving instance (Eq  a, Eq  b, Eq  c, Eq  d) => Eq  (a, b, c, d)
 -- deriving instance (Eq  a, Eq  b, Eq  c, Eq  d, Eq  e) => Eq  (a, b, c, d, e)

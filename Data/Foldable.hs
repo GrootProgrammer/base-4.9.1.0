@@ -38,8 +38,8 @@ module Data.Foldable (
 --     sequence_,
 --     msum,
 --     -- ** Specialized folds
---     concat,
---     concatMap,
+    concat,
+    concatMap,
 --     and,
     or,
     any,
@@ -538,14 +538,14 @@ instance Ord a => Monoid (Min a) where
 -- msum = asum
 -- 
 -- -- | The concatenation of all the elements of a container of lists.
--- concat :: Foldable t => t [a] -> [a]
--- concat xs = build (\c n -> foldr (\x y -> foldr c y x) n xs)
+concat :: Foldable t => t [a] -> [a]
+concat xs = build (\c n -> foldr (\x y -> foldr c y x) n xs)
 -- {-# INLINE concat #-}
 -- 
 -- -- | Map a function over all the elements of a container and concatenate
 -- -- the resulting lists.
--- concatMap :: Foldable t => (a -> [b]) -> t a -> [b]
--- concatMap f xs = build (\c n -> foldr (\x b -> foldr c b (f x)) n xs)
+concatMap :: Foldable t => (a -> [b]) -> t a -> [b]
+concatMap f xs = build (\c n -> foldr (\x b -> foldr c b (f x)) n xs)
 -- {-# INLINE concatMap #-}
 -- 
 -- -- These use foldr rather than foldMap to avoid repeated concatenation.
