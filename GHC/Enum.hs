@@ -511,14 +511,14 @@ instance  Enum Int  where
 -- 
 {-# NOINLINE [1] eftInt #-}
 eftInt :: Int# -> Int# -> [Int]
-eftInt = eftInt
+-- eftInt = eftInt
 -- -- [x1..x2]
--- eftInt x0 y | isTrue# (x0 ># y) = []
---             | otherwise         = go x0
---                where
---                  go x = I# x : if isTrue# (x ==# y)
---                                then []
---                                else go (x +# 1#)
+eftInt x0 y | (x0 ># y) = []
+            | otherwise         = go x0
+               where
+                 go x = I# x : if (x ==# y)
+                               then []
+                               else go (x +# 1#)
 -- 
 {-# INLINE [0] eftIntFB #-}
 eftIntFB :: (Int -> r -> r) -> r -> Int# -> Int# -> r

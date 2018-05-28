@@ -352,26 +352,26 @@ rationalToFloat = rationalToFloat
 --     floor x     = case properFraction x of
 --                     (n,r) -> if r < 0.0 then n - 1 else n
 -- 
--- instance  Floating Float  where
---     pi                  =  3.141592653589793238
---     exp x               =  expFloat x
---     log x               =  logFloat x
---     sqrt x              =  sqrtFloat x
---     sin x               =  sinFloat x
---     cos x               =  cosFloat x
---     tan x               =  tanFloat x
---     asin x              =  asinFloat x
---     acos x              =  acosFloat x
---     atan x              =  atanFloat x
---     sinh x              =  sinhFloat x
---     cosh x              =  coshFloat x
---     tanh x              =  tanhFloat x
---     (**) x y            =  powerFloat x y
---     logBase x y         =  log y / log x
--- 
---     asinh x = log (x + sqrt (1.0+x*x))
---     acosh x = log (x + (x+1.0) * sqrt ((x-1.0)/(x+1.0)))
---     atanh x = 0.5 * log ((1.0+x) / (1.0-x))
+instance  Floating Float  where
+    pi                  =  F# 3.141592653589793238#
+    exp x               =  expFloat x
+    log x               =  logFloat x
+    sqrt x              =  sqrtFloat x
+    sin x               =  undefined -- sinFloat x
+    cos x               =  undefined -- cosFloat x
+    tan x               =  undefined -- tanFloat x
+    asin x              =  undefined -- asinFloat x
+    acos x              =  undefined -- acosFloat x
+    atan x              =  undefined -- atanFloat x
+    sinh x              =  undefined -- sinhFloat x
+    cosh x              =  undefined -- coshFloat x
+    tanh x              =  undefined -- tanhFloat x
+    (**) x y            =  undefined -- powerFloat x y
+    logBase x y         =  log y / log x
+
+    asinh x = log (x + sqrt (F# 1.0#+x*x))
+    acosh x = log (x + (x+F# 1.0#) * sqrt ((x-F# 1.0#)/(x+F# 1.0#)))
+    atanh x = F# 0.5# * log ((F# 1.0#+x) / (F# 1.0#-x))
 -- 
 --     log1p = log1pFloat
 --     expm1 = expm1Float
@@ -622,15 +622,15 @@ instance  Floating Double  where
 -- for these (@numericEnumFromTo@ and @numericEnumFromThenTo@ below.)
 -- -}
 -- 
--- instance  Enum Float  where
---     succ x         = x + 1
---     pred x         = x - 1
---     toEnum         = int2Float
---     fromEnum       = fromInteger . truncate   -- may overflow
---     enumFrom       = numericEnumFrom
---     enumFromTo     = numericEnumFromTo
---     enumFromThen   = numericEnumFromThen
---     enumFromThenTo = numericEnumFromThenTo
+instance  Enum Float  where
+    succ x         = x + F# 1.0#
+    pred x         = x - F# 1.0#
+    toEnum         = undefined -- int2Float
+    fromEnum       = undefined -- fromInteger . truncate   -- may overflow
+    enumFrom       = undefined -- numericEnumFrom
+    enumFromTo     = undefined -- numericEnumFromTo
+    enumFromThen   = undefined -- numericEnumFromThen
+    enumFromThenTo = undefined -- numericEnumFromThenTo
 -- 
 -- instance  Enum Double  where
 --     succ x         = x + 1
@@ -1120,13 +1120,13 @@ geFloat     (F# x) (F# y) = isTrue# (geFloat# x y)
 ltFloat     (F# x) (F# y) = isTrue# (ltFloat# x y)
 leFloat     (F# x) (F# y) = isTrue# (leFloat# x y)
 -- 
--- expFloat, logFloat, sqrtFloat :: Float -> Float
+expFloat, logFloat, sqrtFloat :: Float -> Float
 -- sinFloat, cosFloat, tanFloat  :: Float -> Float
 -- asinFloat, acosFloat, atanFloat  :: Float -> Float
 -- sinhFloat, coshFloat, tanhFloat  :: Float -> Float
--- expFloat    (F# x) = F# (expFloat# x)
--- logFloat    (F# x) = F# (logFloat# x)
--- sqrtFloat   (F# x) = F# (sqrtFloat# x)
+expFloat    (F# x) = F# (expFloat# x)
+logFloat    (F# x) = F# (logFloat# x)
+sqrtFloat   (F# x) = F# (sqrtFloat# x)
 -- sinFloat    (F# x) = F# (sinFloat# x)
 -- cosFloat    (F# x) = F# (cosFloat# x)
 -- tanFloat    (F# x) = F# (tanFloat# x)
@@ -1143,6 +1143,13 @@ leFloat     (F# x) (F# y) = isTrue# (leFloat# x y)
 -- -- definitions of the boxed PrimOps; these will be
 -- -- used in the case of partial applications, etc.
 -- 
+
+expFloat#, logFloat#, sqrtFloat# :: Float# -> Float#
+expFloat# = expFloat#
+logFloat# = logFloat#
+sqrtFloat# = sqrtFloat#
+
+
 {-# NOINLINE plusDouble #-}
 plusDouble :: Double -> Double -> Double
 plusDouble   (D# x) (D# y) = D# (x +## y)
