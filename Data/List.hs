@@ -166,7 +166,7 @@ module Data.List
 --    , intersect
 -- 
 --    -- ** Ordered lists
---    , sort
+   , sort
 --    , sortOn
    , insert
 -- 

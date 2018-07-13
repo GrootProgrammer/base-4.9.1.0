@@ -219,6 +219,8 @@ class  (Eq a) => Ord a  where
 -- 
 -- deriving instance Ord ()
 -- deriving instance (Ord a, Ord b) => Ord (a, b)
+instance (Ord a, Ord b) => Ord (a, b) where
+    (x1, y1) <= (x2, y2) = x1 <= x2 || (x1 == x2 && y1 <= y2)
 -- deriving instance (Ord a, Ord b, Ord c) => Ord (a, b, c)
 -- deriving instance (Ord a, Ord b, Ord c, Ord d) => Ord (a, b, c, d)
 -- deriving instance (Ord a, Ord b, Ord c, Ord d, Ord e) => Ord (a, b, c, d, e)
