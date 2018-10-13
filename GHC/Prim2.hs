@@ -8,12 +8,12 @@
 module GHC.Prim2
   ( module GHC.Prim2
 --   , module GHC.Prim
-  , Int#, Double#, Char#, Float#, Word#
+  , Int#, Double#, Char#, Float#, Word#, TYPE
   , coerce
   ) where
 
 import GHC.Prim
-  ( Int#, Double#, Char#, Float#, Word#
+  ( Int#, Double#, Char#, Float#, Word#, TYPE
   , coerce)
 
 import GHC.Types

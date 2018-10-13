@@ -84,6 +84,10 @@
            , UnboxedTuples
            , ExistentialQuantification
            , RankNTypes
+           , KindSignatures
+           , PolyKinds
+           , DataKinds
+           , TypeInType
   #-}
 -- -- -Wno-orphans is needed for things like:
 -- -- Orphan rule: "x# -# x#" ALWAYS forall x# :: Int# -# x# x# = 0
@@ -1079,8 +1083,9 @@ flip f x y              =  f y x
 -- -- It is also useful in higher-order situations, such as @'map' ('$' 0) xs@,
 -- -- or @'Data.List.zipWith' ('$') fs xs@.
 {-# INLINE ($) #-}
-($)                     :: (a -> b) -> a -> b
-f $ x                   =  f x
+($) :: forall r a (b :: TYPE r). (a -> b) -> a -> b
+f $ x =  f x
+
 -- 
 -- -- | Strict (call-by-value) application operator. It takes a function and an
 -- -- argument, evaluates the argument to weak head normal form (WHNF), then calls
