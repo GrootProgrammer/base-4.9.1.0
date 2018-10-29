@@ -3118,8 +3118,8 @@ mapWithKey f (Assocs kas) = Assocs (L.map (\(k, a) -> (k, f k a)) kas)
 -- -- > traverseWithKey (\k v -> if odd k then Just (succ v) else Nothing) (fromList [(1, 'a'), (5, 'e')]) == Just (fromList [(1, 'b'), (5, 'f')])
 -- -- > traverseWithKey (\k v -> if odd k then Just (succ v) else Nothing) (fromList [(2, 'c')])           == Nothing
 -- traverseWithKey :: Applicative t => (k -> a -> t b) -> Map k a -> t (Map k b)
-traverseWithKey :: (Ord k, Applicative t) => (k -> a -> t b) -> Map k a -> t (Map k b)
-traverseWithKey f m = fromList <$> traverse (\(k, v) -> (,) k <$> f k v) (toList m)
+traverseWithKey :: Applicative t => (k -> a -> t b) -> Map k a -> t (Map k b)
+traverseWithKey f m = fromListUnsafe <$> traverse (\(k, v) -> (,) k <$> f k v) (toList m)
 -- traverseWithKey f = go
 --   where
 --     go Tip = pure Tip
@@ -3452,6 +3452,10 @@ fromList kas = Assocs (sby keycmp $ L.nubBy (\(k1, _) (k2, _) -> k1 == k2)
         _ -> x : ys
     sby cmp = L.foldr (iby cmp) []
     
+-- Requires that the keys be in order
+fromListUnsafe :: [(k, a)] -> Map k a
+fromListUnsafe = Assocs
+
 -- fromList [] = Tip
 -- fromList [(kx, x)] = Bin 1 kx x Tip Tip
 -- fromList ((kx0, x0) : xs0) | not_ordered kx0 xs0 = fromList' (Bin 1 kx0 x0 Tip Tip) xs0
@@ -3594,9 +3598,8 @@ toAscList (Assocs kas) = kas
 -- -- > valid (fromAscList [(3,"b"), (5,"a"), (5,"b")]) == True
 -- -- > valid (fromAscList [(5,"a"), (3,"b"), (5,"b")]) == False
 -- 
--- fromAscList :: Eq k => [(k,a)] -> Map k a
-fromAscList :: (Ord k, Eq k) => [(k,a)] -> Map k a
-fromAscList = fromList
+fromAscList :: Eq k => [(k,a)] -> Map k a
+fromAscList = fromListUnsafe
 -- fromAscList xs
 --   = fromDistinctAscList (combineEq xs)
 --   where
@@ -4236,7 +4239,7 @@ instance (Ord k, Ord v) => Ord (Map k v) where
 --   Functor
 -- --------------------------------------------------------------------}
 -- instance Functor (Map k) where
-instance (Ord k) => Functor (Map k) where
+instance Functor (Map k) where
   fmap f m  = map f m
 -- #ifdef __GLASGOW_HASKELL__
 --   _ <$ Tip = Tip
@@ -4244,12 +4247,12 @@ instance (Ord k) => Functor (Map k) where
 -- #endif
 -- 
 -- instance Traversable (Map k) where
-instance (Ord k) => Traversable (Map k) where
+instance Traversable (Map k) where
   traverse f = traverseWithKey (\_ -> f)
 --   {-# INLINE traverse #-}
 -- 
 -- instance Foldable.Foldable (Map k) where
-instance (Ord k) => Foldable.Foldable (Map k) where
+instance Foldable.Foldable (Map k) where
 --   fold = go
 --     where go Tip = mempty
 --           go (Bin 1 _ v _ _) = v
