@@ -193,8 +193,8 @@ module Data.List
 --    -- | The function is assumed to define a total ordering.
    , sortBy
    , insertBy
---    , maximumBy
---    , minimumBy
+   , maximumBy
+   , minimumBy
 -- 
 --    -- ** The \"@generic@\" operations
 --    -- | The prefix \`@generic@\' indicates an overloaded function that

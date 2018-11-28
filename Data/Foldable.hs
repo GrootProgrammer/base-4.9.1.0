@@ -44,8 +44,8 @@ module Data.Foldable (
     or,
     any,
     all,
---     maximumBy,
---     minimumBy,
+    maximumBy,
+    minimumBy,
 --     -- ** Searches
     notElem,
 --     find
@@ -572,19 +572,19 @@ all p = getAll #. foldMap (All #. p)
 -- 
 -- -- | The largest element of a non-empty structure with respect to the
 -- -- given comparison function.
--- maximumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a
--- maximumBy cmp = foldr1 max'
---   where max' x y = case cmp x y of
---                         GT -> x
---                         _  -> y
+maximumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a
+maximumBy cmp = foldr1 max'
+  where max' x y = case cmp x y of
+                        GT -> x
+                        _  -> y
 -- 
 -- -- | The least element of a non-empty structure with respect to the
 -- -- given comparison function.
--- minimumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a
--- minimumBy cmp = foldr1 min'
---   where min' x y = case cmp x y of
---                         GT -> y
---                         _  -> x
+minimumBy :: Foldable t => (a -> a -> Ordering) -> t a -> a
+minimumBy cmp = foldr1 min'
+  where min' x y = case cmp x y of
+                        GT -> y
+                        _  -> x
 -- 
 -- -- | 'notElem' is the negation of 'elem'.
 notElem :: (Foldable t, Eq a) => a -> t a -> Bool

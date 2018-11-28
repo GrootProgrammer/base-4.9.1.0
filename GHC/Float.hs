@@ -30,7 +30,7 @@
 module GHC.Float
    ( module GHC.Float
    , Float(..), Double(..), Float#, Double#
---    , double2Int, int2Double, float2Int, int2Float
+   , double2Int, int2Double, float2Int, int2Float
 -- 
 --     -- * Monomorphic equality operators
 --     -- | See GHC.Classes#matching_overloaded_methods_in_rules
@@ -47,7 +47,7 @@ import GHC.Enum
 import GHC.Num
 import GHC.Real
 -- import GHC.Arr
--- import GHC.Float.RealFracMethods
+import GHC.Float.RealFracMethods
 -- import GHC.Float.ConversionUtils
 -- import GHC.Integer.Logarithms ( integerLogBase# )
 -- import GHC.Integer.Logarithms.Internals
@@ -625,22 +625,22 @@ instance  Floating Double  where
 instance  Enum Float  where
     succ x         = x + F# 1.0#
     pred x         = x - F# 1.0#
-    toEnum         = undefined -- int2Float
+    toEnum         = int2Float
     fromEnum       = undefined -- fromInteger . truncate   -- may overflow
     enumFrom       = undefined -- numericEnumFrom
     enumFromTo     = undefined -- numericEnumFromTo
     enumFromThen   = undefined -- numericEnumFromThen
     enumFromThenTo = undefined -- numericEnumFromThenTo
 -- 
--- instance  Enum Double  where
---     succ x         = x + 1
---     pred x         = x - 1
---     toEnum         =  int2Double
---     fromEnum       =  fromInteger . truncate   -- may overflow
---     enumFrom       =  numericEnumFrom
---     enumFromTo     =  numericEnumFromTo
---     enumFromThen   =  numericEnumFromThen
---     enumFromThenTo =  numericEnumFromThenTo
+instance  Enum Double  where
+    succ x         = x + D# 1.0##
+    pred x         = x - D# 1.0##
+    toEnum         =  int2Double
+    fromEnum       =  undefined -- fromInteger . truncate   -- may overflow
+    enumFrom       =  undefined -- numericEnumFrom
+    enumFromTo     =  undefined -- numericEnumFromTo
+    enumFromThen   =  undefined -- numericEnumFromThen
+    enumFromThenTo =  undefined -- numericEnumFromThenTo
 -- 
 -- ------------------------------------------------------------------------
 -- -- Printing floating point

@@ -1,6 +1,6 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, MagicHash, UnboxedTuples, NoImplicitPrelude #-}
--- {-# OPTIONS_HADDOCK hide #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, MagicHash, UnboxedTuples, NoImplicitPrelude #-}
+{-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -21,22 +21,22 @@
 -- 
 -- #include "MachDeps.h"
 -- 
--- module GHC.Float.RealFracMethods
---     ( -- * Double methods
---       -- ** Integer results
+module GHC.Float.RealFracMethods
+    ( -- * Double methods
+      -- ** Integer results
 --       properFractionDoubleInteger
 --     , truncateDoubleInteger
 --     , floorDoubleInteger
 --     , ceilingDoubleInteger
 --     , roundDoubleInteger
---       -- ** Int results
+      -- ** Int results
 --     , properFractionDoubleInt
 --     , floorDoubleInt
 --     , ceilingDoubleInt
 --     , roundDoubleInt
---       -- * Double/Int conversions, wrapped primops
---     , double2Int
---     , int2Double
+      -- * Double/Int conversions, wrapped primops
+     double2Int
+    , int2Double
 --       -- * Float methods
 --       -- ** Integer results
 --     , properFractionFloatInteger
@@ -50,14 +50,14 @@
 --     , ceilingFloatInt
 --     , roundFloatInt
 --       -- * Float/Int conversions, wrapped primops
---     , float2Int
---     , int2Float
---     ) where
+    , float2Int
+    , int2Float
+    ) where
 -- 
--- import GHC.Integer
--- 
--- import GHC.Base
--- import GHC.Num ()
+import GHC.Integer
+
+import GHC.Base
+import GHC.Num ()
 -- 
 -- #if WORD_SIZE_IN_BITS < 64
 -- 
@@ -287,18 +287,31 @@
 -- -- Wrappers around double2Int#, int2Double#, float2Int# and int2Float#,
 -- -- we need them here, so we move them from GHC.Float and re-export them
 -- -- explicitly from there.
--- 
--- double2Int :: Double -> Int
--- double2Int (D# x) = I# (double2Int# x)
--- 
--- int2Double :: Int -> Double
--- int2Double (I# i) = D# (int2Double# i)
--- 
--- float2Int :: Float -> Int
--- float2Int (F# x) = I# (float2Int# x)
--- 
--- int2Float :: Int -> Float
--- int2Float (I# i) = F# (int2Float# i)
+
+double2Int :: Double -> Int
+double2Int (D# x) = I# (double2Int# x)
+
+double2Int# :: Double# -> Int#
+double2Int# = double2Int#
+
+int2Double :: Int -> Double
+int2Double (I# i) = D# (int2Double# i)
+
+int2Double#  :: Int# -> Double#
+int2Double#  = int2Double# 
+
+float2Int :: Float -> Int
+float2Int (F# x) = I# (float2Int# x)
+
+float2Int# :: Float# -> Int#
+float2Int# = float2Int#
+
+int2Float :: Int -> Float
+int2Float (I# i) = F# (int2Float# i)
+
+int2Float#  :: Int# -> Float#
+int2Float#  = int2Float# 
+
 -- 
 -- -- Quicker conversions from 'Double' and 'Float' to 'Integer',
 -- -- assuming the floating point value is integral.
