@@ -160,7 +160,7 @@ module Data.List
    , nub
 -- 
 --    , delete
---    , (\\)
+   , (\\)
 -- 
 --    , union
 --    , intersect

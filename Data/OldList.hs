@@ -159,7 +159,7 @@ module Data.OldList
    , nub
 -- 
 --    , delete
---    , (\\)
+   , (\\)
 -- 
 --    , union
 --    , intersect
@@ -219,7 +219,7 @@ import GHC.Num
 import GHC.List
 import GHC.Base
 -- 
--- infix 5 \\ -- comment to fool cpp: https://www.haskell.org/ghc/docs/latest/html/users_guide/options-phases.html#cpp-string-gaps
+infix 5 \\ -- comment to fool cpp: https://www.haskell.org/ghc/docs/latest/html/users_guide/options-phases.html#cpp-string-gaps
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- List functions
@@ -387,17 +387,17 @@ deleteBy                :: (a -> a -> Bool) -> a -> [a] -> [a]
 deleteBy _  _ []        = []
 deleteBy eq x (y:ys)    = if x `eq` y then ys else y : deleteBy eq x ys
 -- 
--- -- | The '\\' function is list difference (non-associative).
--- -- In the result of @xs@ '\\' @ys@, the first occurrence of each element of
--- -- @ys@ in turn (if any) has been removed from @xs@.  Thus
--- --
--- -- > (xs ++ ys) \\ xs == ys.
--- --
--- -- It is a special case of 'deleteFirstsBy', which allows the programmer
--- -- to supply their own equality test.
--- 
--- (\\)                    :: (Eq a) => [a] -> [a] -> [a]
--- (\\)                    =  foldl (flip delete)
+-- | The '\\' function is list difference (non-associative).
+-- In the result of @xs@ '\\' @ys@, the first occurrence of each element of
+-- @ys@ in turn (if any) has been removed from @xs@.  Thus
+--
+-- > (xs ++ ys) \\ xs == ys.
+--
+-- It is a special case of 'deleteFirstsBy', which allows the programmer
+-- to supply their own equality test.
+
+(\\)                    :: (Eq a) => [a] -> [a] -> [a]
+(\\)                    =  foldl (flip delete)
 -- 
 -- -- | The 'union' function returns the list union of the two lists.
 -- -- For example,
