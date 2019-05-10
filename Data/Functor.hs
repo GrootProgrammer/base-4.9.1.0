@@ -20,7 +20,7 @@ module Data.Functor
       (<$),
       ($>),
       (<$>),
---       void,
+      void,
     ) where
 -- 
 import GHC.Base ( Functor(..), flip )
@@ -148,5 +148,5 @@ infixl 4 $>
 -- -- 1
 -- -- 2
 -- --
--- void :: Functor f => f a -> f ()
--- void x = () <$ x
+void :: Functor f => f a -> f ()
+void x = () <$ x
