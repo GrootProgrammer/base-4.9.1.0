@@ -100,8 +100,8 @@ module Data.List
 -- 
 --    , group
 -- 
---    , inits
---    , tails
+   -- , inits
+   , tails
 -- 
 --    -- ** Predicates
 --    , isPrefixOf

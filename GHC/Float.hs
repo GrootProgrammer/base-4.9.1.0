@@ -282,13 +282,16 @@ instance  Fractional Float  where
     recip x             =  (fromInteger oneInteger) / x
 -- 
 rationalToFloat :: Integer -> Integer -> Float
-rationalToFloat = rationalToFloat
 -- {-# NOINLINE [1] rationalToFloat #-}
--- rationalToFloat n 0
---     | n == 0        = 0/0
---     | n < 0         = (-1)/0
---     | otherwise     = 1/0
--- rationalToFloat n d
+rationalToFloat n@(Z# n') d@(Z# d')
+    | n == fromInteger zeroInteger && d == fromInteger zeroInteger       = (fromInteger zeroInteger)/(fromInteger zeroInteger)
+    | n < fromInteger zeroInteger && d == fromInteger zeroInteger         = (negateFloat (fromInteger oneInteger))/(fromInteger zeroInteger)
+    | d == fromInteger zeroInteger     = (fromInteger oneInteger)/(fromInteger zeroInteger)
+    | otherwise = F# (rationalToFloat# n' d')
+
+rationalToFloat# :: Int# -> Int#  -> Float#
+rationalToFloat# n d = rationalToFloat# n d
+
 --     | n == 0        = encodeFloat 0 0
 --     | n < 0         = -(fromRat'' minEx mantDigs (-n) d)
 --     | otherwise     = fromRat'' minEx mantDigs n d
@@ -470,19 +473,21 @@ instance  Fractional Double  where
 -- 
 rationalToDouble :: Integer -> Integer -> Double
 {-# NOINLINE [1] rationalToDouble #-}
-rationalToDouble  = rationalToDouble
--- rationalToDouble n 0
---     | n == 0        = 0/0
---     | n < 0         = (-1)/0
---     | otherwise     = 1/0
--- rationalToDouble n d
+rationalToDouble n@(Z# n') d@(Z# d')
+    | n == fromInteger zeroInteger && d == fromInteger zeroInteger       = (fromInteger zeroInteger)/(fromInteger zeroInteger)
+    | n < fromInteger zeroInteger && d == fromInteger zeroInteger         = (negateDouble (fromInteger oneInteger))/(fromInteger zeroInteger)
+    | d == fromInteger zeroInteger     = (fromInteger oneInteger) /(fromInteger zeroInteger)
+    | otherwise = D# (rationalToDouble# n' d')
 --     | n == 0        = encodeFloat 0 0
 --     | n < 0         = -(fromRat'' minEx mantDigs (-n) d)
 --     | otherwise     = fromRat'' minEx mantDigs n d
 --       where
 --         minEx       = DBL_MIN_EXP
 --         mantDigs    = DBL_MANT_DIG
--- 
+
+rationalToDouble#  :: Int# -> Int# -> Double#
+rationalToDouble# n d = rationalToDouble# n d
+
 instance  Floating Double  where
     pi                  =  D# 3.141592653589793238##
     exp x               =  expDouble x
