@@ -14,12 +14,12 @@
 -- -- The 'Functor', 'Monad' and 'MonadPlus' classes,
 -- -- with some useful operations on monads.
 -- 
--- module Control.Monad
---     (
---     -- * Functor and monad classes
--- 
---       Functor(fmap)
---     , Monad((>>=), (>>), return, fail)
+module Control.Monad
+    (
+    -- * Functor and monad classes
+
+      Functor(fmap)
+    , Monad((>>=), (>>), return, fail)
 --     , MonadPlus(mzero, mplus)
 --     -- * Functions
 -- 
@@ -49,7 +49,7 @@
 --     , mapAndUnzipM
 --     , zipWithM
 --     , zipWithM_
---     , foldM
+    , foldM
 --     , foldM_
 --     , replicateM
 --     , replicateM_
@@ -73,10 +73,10 @@
 --     -- ** Strict monadic functions
 -- 
 --     , (<$!>)
---     ) where
+    ) where
 -- 
--- import Data.Foldable ( Foldable, sequence_, sequenceA_, msum, mapM_, foldlM, forM_ )
--- import Data.Functor ( void, (<$>) )
+import Data.Foldable ( Foldable, sequence_, sequenceA_, msum, mapM_, foldlM, forM_ )
+import Data.Functor ( void, (<$>) )
 -- import Data.Traversable ( forM, mapM, traverse, sequence, sequenceA )
 -- 
 -- import GHC.Base hiding ( mapM, sequence )
@@ -161,11 +161,11 @@
 -- Note: 'foldM' is the same as 'foldlM'
 -- -}
 -- 
--- foldM          :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m b
--- {-# INLINEABLE foldM #-}
+foldM          :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m b
+{-# INLINEABLE foldM #-}
 -- {-# SPECIALISE foldM :: (a -> b -> IO a) -> a -> [b] -> IO a #-}
 -- {-# SPECIALISE foldM :: (a -> b -> Maybe a) -> a -> [b] -> Maybe a #-}
--- foldM          = foldlM
+foldM          = foldlM
 -- 
 -- -- | Like 'foldM', but discards the result.
 -- foldM_         :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m ()

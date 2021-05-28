@@ -100,8 +100,8 @@ module Data.OldList
 -- 
 --    , group
 -- 
---    , inits
---    , tails
+   -- , inits
+   , tails
 -- 
 --    -- ** Predicates
 --    , isPrefixOf
@@ -159,7 +159,7 @@ module Data.OldList
    , nub
 -- 
 --    , delete
---    , (\\)
+   , (\\)
 -- 
 --    , union
 --    , intersect
@@ -219,7 +219,7 @@ import GHC.Num
 import GHC.List
 import GHC.Base
 -- 
--- infix 5 \\ -- comment to fool cpp: https://www.haskell.org/ghc/docs/latest/html/users_guide/options-phases.html#cpp-string-gaps
+infix 5 \\ -- comment to fool cpp: https://www.haskell.org/ghc/docs/latest/html/users_guide/options-phases.html#cpp-string-gaps
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- List functions
@@ -387,17 +387,17 @@ deleteBy                :: (a -> a -> Bool) -> a -> [a] -> [a]
 deleteBy _  _ []        = []
 deleteBy eq x (y:ys)    = if x `eq` y then ys else y : deleteBy eq x ys
 -- 
--- -- | The '\\' function is list difference (non-associative).
--- -- In the result of @xs@ '\\' @ys@, the first occurrence of each element of
--- -- @ys@ in turn (if any) has been removed from @xs@.  Thus
--- --
--- -- > (xs ++ ys) \\ xs == ys.
--- --
--- -- It is a special case of 'deleteFirstsBy', which allows the programmer
--- -- to supply their own equality test.
--- 
--- (\\)                    :: (Eq a) => [a] -> [a] -> [a]
--- (\\)                    =  foldl (flip delete)
+-- | The '\\' function is list difference (non-associative).
+-- In the result of @xs@ '\\' @ys@, the first occurrence of each element of
+-- @ys@ in turn (if any) has been removed from @xs@.  Thus
+--
+-- > (xs ++ ys) \\ xs == ys.
+--
+-- It is a special case of 'deleteFirstsBy', which allows the programmer
+-- to supply their own equality test.
+
+(\\)                    :: (Eq a) => [a] -> [a] -> [a]
+(\\)                    =  foldl (flip delete)
 -- 
 -- -- | The 'union' function returns the list union of the two lists.
 -- -- For example,
@@ -746,38 +746,38 @@ genericLength (_:l)     =  fromInteger (Z# 1#) + genericLength l
 -- groupBy eq (x:xs)       =  (x:ys) : groupBy eq zs
 --                            where (ys,zs) = span (eq x) xs
 -- 
--- -- | The 'inits' function returns all initial segments of the argument,
--- -- shortest first.  For example,
--- --
--- -- > inits "abc" == ["","a","ab","abc"]
--- --
--- -- Note that 'inits' has the following strictness property:
--- -- @inits (xs ++ _|_) = inits xs ++ _|_@
--- --
--- -- In particular,
--- -- @inits _|_ = [] : _|_@
+-- | The 'inits' function returns all initial segments of the argument,
+-- shortest first.  For example,
+--
+-- > inits "abc" == ["","a","ab","abc"]
+--
+-- Note that 'inits' has the following strictness property:
+-- @inits (xs ++ _|_) = inits xs ++ _|_@
+--
+-- In particular,
+-- @inits _|_ = [] : _|_@
 -- inits                   :: [a] -> [[a]]
 -- inits                   = map toListSB . scanl' snocSB emptySB
 -- {-# NOINLINE inits #-}
--- 
--- -- We do not allow inits to inline, because it plays havoc with Call Arity
--- -- if it fuses with a consumer, and it would generally lead to serious
--- -- loss of sharing if allowed to fuse with a producer.
--- 
--- -- | The 'tails' function returns all final segments of the argument,
--- -- longest first.  For example,
--- --
--- -- > tails "abc" == ["abc", "bc", "c",""]
--- --
--- -- Note that 'tails' has the following strictness property:
--- -- @tails _|_ = _|_ : _|_@
--- tails                   :: [a] -> [[a]]
--- {-# INLINABLE tails #-}
--- tails lst               =  build (\c n ->
---   let tailsGo xs = xs `c` case xs of
---                              []      -> n
---                              _ : xs' -> tailsGo xs'
---   in tailsGo lst)
+
+-- We do not allow inits to inline, because it plays havoc with Call Arity
+-- if it fuses with a consumer, and it would generally lead to serious
+-- loss of sharing if allowed to fuse with a producer.
+
+-- | The 'tails' function returns all final segments of the argument,
+-- longest first.  For example,
+--
+-- > tails "abc" == ["abc", "bc", "c",""]
+--
+-- Note that 'tails' has the following strictness property:
+-- @tails _|_ = _|_ : _|_@
+tails                   :: [a] -> [[a]]
+{-# INLINABLE tails #-}
+tails lst               =  build (\c n ->
+  let tailsGo xs = xs `c` case xs of
+                             []      -> n
+                             _ : xs' -> tailsGo xs'
+  in tailsGo lst)
 -- 
 -- -- | The 'subsequences' function returns the list of all subsequences of the argument.
 -- --

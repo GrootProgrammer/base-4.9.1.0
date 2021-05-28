@@ -24,19 +24,19 @@ module Data.Foldable (
 --     -- * Folds
     Foldable(..),
 --     -- ** Special biased folds
---     foldrM,
---     foldlM,
+    foldrM,
+    foldlM,
 --     -- ** Folding actions
 --     -- *** Applicative actions
 --     traverse_,
 --     for_,
---     sequenceA_,
---     asum,
+    sequenceA_,
+    asum,
 --     -- *** Monadic actions
---     mapM_,
---     forM_,
---     sequence_,
---     msum,
+    mapM_,
+    forM_,
+    sequence_,
+    msum,
 --     -- ** Specialized folds
     concat,
     concatMap,
@@ -465,15 +465,15 @@ instance Ord a => Monoid (Min a) where
 -- 
 -- -- | Monadic fold over the elements of a structure,
 -- -- associating to the right, i.e. from right to left.
--- foldrM :: (Foldable t, Monad m) => (a -> b -> m b) -> b -> t a -> m b
--- foldrM f z0 xs = foldl f' return xs z0
---   where f' k x z = f x z >>= k
+foldrM :: (Foldable t, Monad m) => (a -> b -> m b) -> b -> t a -> m b
+foldrM f z0 xs = foldl f' return xs z0
+  where f' k x z = f x z >>= k
 -- 
 -- -- | Monadic fold over the elements of a structure,
 -- -- associating to the left, i.e. from left to right.
--- foldlM :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m b
--- foldlM f z0 xs = foldr f' return xs z0
---   where f' x k z = f z x >>= k
+foldlM :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m b
+foldlM f z0 xs = foldr f' return xs z0
+  where f' x k z = f z x >>= k
 -- 
 -- -- | Map each element of a structure to an action, evaluate these
 -- -- actions from left to right, and ignore the results. For a version
@@ -498,44 +498,44 @@ instance Ord a => Monoid (Min a) where
 -- -- version that doesn't ignore the results see
 -- -- 'Data.Traversable.mapM'.
 -- --
--- -- As of base 4.8.0.0, 'mapM_' is just 'traverse_', specialized to
--- -- 'Monad'.
--- mapM_ :: (Foldable t, Monad m) => (a -> m b) -> t a -> m ()
--- mapM_ f= foldr ((>>) . f) (return ())
--- 
--- -- | 'forM_' is 'mapM_' with its arguments flipped. For a version that
--- -- doesn't ignore the results see 'Data.Traversable.forM'.
--- --
--- -- As of base 4.8.0.0, 'forM_' is just 'for_', specialized to 'Monad'.
--- forM_ :: (Foldable t, Monad m) => t a -> (a -> m b) -> m ()
--- {-# INLINE forM_ #-}
--- forM_ = flip mapM_
--- 
--- -- | Evaluate each action in the structure from left to right, and
--- -- ignore the results. For a version that doesn't ignore the results
--- -- see 'Data.Traversable.sequenceA'.
--- sequenceA_ :: (Foldable t, Applicative f) => t (f a) -> f ()
--- sequenceA_ = foldr (*>) (pure ())
--- 
--- -- | Evaluate each monadic action in the structure from left to right,
--- -- and ignore the results. For a version that doesn't ignore the
--- -- results see 'Data.Traversable.sequence'.
--- --
--- -- As of base 4.8.0.0, 'sequence_' is just 'sequenceA_', specialized
--- -- to 'Monad'.
--- sequence_ :: (Foldable t, Monad m) => t (m a) -> m ()
--- sequence_ = foldr (>>) (return ())
+-- As of base 4.8.0.0, 'mapM_' is just 'traverse_', specialized to
+-- 'Monad'.
+mapM_ :: (Foldable t, Monad m) => (a -> m b) -> t a -> m ()
+mapM_ f= foldr ((>>) . f) (return ())
+
+-- | 'forM_' is 'mapM_' with its arguments flipped. For a version that
+-- doesn't ignore the results see 'Data.Traversable.forM'.
+--
+-- As of base 4.8.0.0, 'forM_' is just 'for_', specialized to 'Monad'.
+forM_ :: (Foldable t, Monad m) => t a -> (a -> m b) -> m ()
+{-# INLINE forM_ #-}
+forM_ = flip mapM_
+
+-- | Evaluate each action in the structure from left to right, and
+-- ignore the results. For a version that doesn't ignore the results
+-- see 'Data.Traversable.sequenceA'.
+sequenceA_ :: (Foldable t, Applicative f) => t (f a) -> f ()
+sequenceA_ = foldr (*>) (pure ())
+
+-- | Evaluate each monadic action in the structure from left to right,
+-- and ignore the results. For a version that doesn't ignore the
+-- results see 'Data.Traversable.sequence'.
+--
+-- As of base 4.8.0.0, 'sequence_' is just 'sequenceA_', specialized
+-- to 'Monad'.
+sequence_ :: (Foldable t, Monad m) => t (m a) -> m ()
+sequence_ = foldr (>>) (return ())
 -- 
 -- -- | The sum of a collection of actions, generalizing 'concat'.
--- asum :: (Foldable t, Alternative f) => t (f a) -> f a
--- {-# INLINE asum #-}
--- asum = foldr (<|>) empty
+asum :: (Foldable t, Alternative f) => t (f a) -> f a
+{-# INLINE asum #-}
+asum = foldr (<|>) empty
 -- 
 -- -- | The sum of a collection of actions, generalizing 'concat'.
 -- -- As of base 4.8.0.0, 'msum' is just 'asum', specialized to 'MonadPlus'.
--- msum :: (Foldable t, MonadPlus m) => t (m a) -> m a
--- {-# INLINE msum #-}
--- msum = asum
+msum :: (Foldable t, MonadPlus m) => t (m a) -> m a
+{-# INLINE msum #-}
+msum = asum
 -- 
 -- -- | The concatenation of all the elements of a container of lists.
 concat :: Foldable t => t [a] -> [a]

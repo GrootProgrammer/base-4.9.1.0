@@ -100,8 +100,8 @@ module Data.List
 -- 
 --    , group
 -- 
---    , inits
---    , tails
+   -- , inits
+   , tails
 -- 
 --    -- ** Predicates
 --    , isPrefixOf
@@ -160,7 +160,7 @@ module Data.List
    , nub
 -- 
 --    , delete
---    , (\\)
+   , (\\)
 -- 
 --    , union
 --    , intersect
