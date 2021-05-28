@@ -108,7 +108,7 @@ module Data.Set (
 --             -- * Combine
 --             , union
 --             , unions
---             , difference
+            , difference
 --             , (\\)
             , intersection
 --             , cartesianProduct

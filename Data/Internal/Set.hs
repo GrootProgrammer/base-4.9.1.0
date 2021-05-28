@@ -133,7 +133,7 @@ module Data.Set.Internal (
             -- -- * Query
             -- , null
             -- , size
-            -- , member
+            , member
             -- , notMember
             -- , lookupLT
             -- , lookupGT
@@ -152,9 +152,9 @@ module Data.Set.Internal (
             -- , powerSet
 
             -- -- * Combine
-            -- , union
+            , union
             -- , unions
-            -- , difference
+            , difference
             , intersection
             -- , cartesianProduct
             -- , disjointUnion
@@ -400,6 +400,15 @@ type Size     = Int
 -- {-# INLINE size #-}
 
 -- -- | /O(log n)/. Is the element in the set?
+member :: Ord a => a -> Set a -> Bool
+member x (Set s1) = member' x s1
+
+member' :: Ord a => a -> [a] -> Bool
+member' x [] = False
+member' x (x':xs)
+      | x == x' = True
+      | otherwise = member' x xs
+
 -- member :: Ord a => a -> Set a -> Bool
 -- member = go
 --   where
@@ -842,6 +851,16 @@ insert a (Set kas) = Set (L.insertBy compare a kas')
 
 -- -- | /O(m*log(n\/m + 1)), m <= n/. The union of two sets, preferring the first set when
 -- -- equal elements are encountered.
+union :: Ord a => Set a -> Set a -> Set a
+union (Set s1) (Set s2) = Set $ union' s1 s2
+
+union' :: Ord a => [a] -> [a] -> [a]
+union' [] x2 = x2
+union' x1 [] = x1
+union' xss1@(x1:xs1) xss2@(x2:xs2)
+      | x1 < x2 = x1:union' xs1 xss2
+      | otherwise = x2:union' xss2 xs2
+
 -- union :: Ord a => Set a -> Set a -> Set a
 -- union t1 Tip  = t1
 -- union t1 (Bin 1 x _ _) = insertR x t1
@@ -861,6 +880,19 @@ insert a (Set kas) = Set (L.insertBy compare a kas')
 --   Difference
 -- --------------------------------------------------------------------}
 -- -- | /O(m*log(n\/m + 1)), m <= n/. Difference of two sets.
+difference :: Ord a => Set a -> Set a -> Set a
+difference (Set s1) (Set s2) = Set (difference' s1 s2)
+
+difference' :: Ord a => [a] -> [a] -> [a]
+difference' [] _ = []
+difference' xs [] = xs
+difference' xss@(x:xs) (y:ys)
+      | c == LT = x:difference' xs ys
+      | c == GT = difference' xss ys
+      | c == EQ = difference' xs ys
+      where
+            c = x `compare` y
+
 -- difference :: Ord a => Set a -> Set a -> Set a
 -- difference Tip _   = Tip
 -- difference t1 Tip  = t1
