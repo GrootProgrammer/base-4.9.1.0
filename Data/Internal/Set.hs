@@ -14,7 +14,7 @@
 
 {-# OPTIONS_HADDOCK not-home #-}
 
-#include "containers.h"
+-- #include "containers.h"
 
 -----------------------------------------------------------------------------
 -- |
@@ -155,7 +155,7 @@ module Data.Set.Internal (
             -- , union
             -- , unions
             -- , difference
-            -- , intersection
+            , intersection
             -- , cartesianProduct
             -- , disjointUnion
 
@@ -269,6 +269,8 @@ module Data.Set.Internal (
 --                  , lexP, readListPrecDefault )
 -- import Data.Data
 -- #endif
+
+import qualified Data.List as L
 
 
 -- {--------------------------------------------------------------------
@@ -533,10 +535,9 @@ singleton x = Set [x]
 -- -- See Note: Type of local 'go' function
 -- -- See Note: Avoiding worker/wrapper (in Data.Map.Internal)
 insert :: Ord a => a -> Set a -> Set a
-insert a (Set kas) = Assocs (L.insertBy keycmp a kas')
+insert a (Set kas) = Set (L.insertBy compare a kas')
   where
     kas' = L.filter (/= a) kas
-    cmp k1 k2 = k1 `compare` k2
 
 -- insert :: Ord a => a -> Set a -> Set a
 -- insert x0 = go x0 x0
@@ -887,6 +888,8 @@ insert a (Set kas) = Assocs (L.insertBy keycmp a kas')
 -- -- >               S.singleton B `S.intersection` S.singleton A)
 -- --
 -- -- prints @(fromList [A],fromList [B])@.
+intersection :: Ord a => Set a -> Set a -> Set a
+intersection (Set s1) (Set s2) = Set [ x1 | x1 <- s1, x2 <- s2, x1 == x2]
 -- intersection :: Ord a => Set a -> Set a -> Set a
 -- intersection Tip _ = Tip
 -- intersection _ Tip = Tip
@@ -1219,6 +1222,8 @@ insert a (Set kas) = Assocs (L.insertBy keycmp a kas')
 --   actually seems one of the faster methods to compare two trees
 --   and it is certainly the simplest :-)
 -- --------------------------------------------------------------------}
+instance Eq a => Eq (Set a) where
+      Set s1 == Set s2 = s1 == s2
 -- instance Eq a => Eq (Set a) where
 --   t1 == t2  = (size t1 == size t2) && (toAscList t1 == toAscList t2)
 

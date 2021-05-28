@@ -110,7 +110,7 @@ module Data.Set (
 --             , unions
 --             , difference
 --             , (\\)
---             , intersection
+            , intersection
 --             , cartesianProduct
 --             , disjointUnion
 
