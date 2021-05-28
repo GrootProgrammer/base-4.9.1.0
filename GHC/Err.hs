@@ -75,14 +75,26 @@ module GHC.Err( absentErr, error, errorWithoutStackTrace, undefined ) where
 -- -- It is expected that compilers will recognize this and insert error
 -- -- messages which are more appropriate to the context in which 'undefined'
 -- -- appears.
-undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r).
-             HasCallStack => a
-undefined =  error "Prelude.undefined"
--- 
--- -- | Used for compiler-generated error message;
--- -- encoding saves bytes of string junk.
+-- undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r).
+--              HasCallStack => a
+-- undefined =  error "Prelude.undefined"
+-- -- 
+-- -- -- | Used for compiler-generated error message;
+-- -- -- encoding saves bytes of string junk.
+-- -- absentErr :: a
+-- -- absentErr = errorWithoutStackTrace "Oops! The program has entered an `absent' argument!\n"
+
+-- error :: a
+-- error = error
+
+-- errorWithoutStackTrace :: a
+-- errorWithoutStackTrace = errorWithoutStackTrace
+
+-- -- undefined :: a
+-- -- undefined = undefined
+
 -- absentErr :: a
--- absentErr = errorWithoutStackTrace "Oops! The program has entered an `absent' argument!\n"
+-- absentErr = absentErr
 
 error :: a
 error = error
@@ -90,9 +102,8 @@ error = error
 errorWithoutStackTrace :: a
 errorWithoutStackTrace = errorWithoutStackTrace
 
--- undefined :: a
--- undefined = undefined
+undefined :: a
+undefined = undefined
 
 absentErr :: a
 absentErr = absentErr
-
