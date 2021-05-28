@@ -16,13 +16,13 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.ST (
---         ST(..), STret(..), STRep,
+module GHC.ST (
+        ST(..), STret(..), STRep,
 --         fixST, runST,
 -- 
 --         -- * Unsafe functions
 --         liftST, unsafeInterleaveST
---     ) where
+    ) where
 -- 
 -- import GHC.Base
 -- import GHC.Show
@@ -48,9 +48,9 @@
 -- -- The '>>=' and '>>' operations are strict in the state (though not in
 -- -- values stored in the state).  For example,
 -- --
--- -- @'runST' (writeSTRef _|_ v >>= f) = _|_@
--- newtype ST s a = ST (STRep s a)
--- type STRep s a = State# s -> (# State# s, a #)
+-- @'runST' (writeSTRef _|_ v >>= f) = _|_@
+newtype ST s a = ST (STRep s a)
+type STRep s a = State# s -> (# State# s, a #)
 -- 
 -- instance Functor (ST s) where
 --     fmap f (ST m) = ST $ \ s ->
@@ -73,7 +73,7 @@
 --         case (k r) of { ST k2 ->
 --         (k2 new_s) }})
 -- 
--- data STret s a = STret (State# s) a
+data STret s a = STret (State# s) a
 -- 
 -- -- liftST is useful when we want a lifted result from an ST computation.  See
 -- -- fixST below.

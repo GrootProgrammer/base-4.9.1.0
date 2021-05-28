@@ -249,3 +249,4 @@ fromIntToFloat = fromIntToFloat
 fromIntToDouble :: Int# -> Double#
 fromIntToDouble = fromIntToDouble
 
+data State# s
