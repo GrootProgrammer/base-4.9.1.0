@@ -131,7 +131,7 @@ module Data.Set.Internal (
             -- , (\\)
 
             -- -- * Query
-            -- , null
+            , null
             -- , size
             , member
             -- , notMember
@@ -388,6 +388,9 @@ type Size     = Int
 --   Query
 -- --------------------------------------------------------------------}
 -- -- | /O(1)/. Is this the empty set?
+null :: Set a -> Bool
+null (Set []) = True
+null _ = False
 -- null :: Set a -> Bool
 -- null Tip      = True
 -- null (Bin {}) = False

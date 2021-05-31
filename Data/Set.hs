@@ -99,7 +99,7 @@ module Data.Set (
 --             , lookupGT
 --             , lookupLE
 --             , lookupGE
---             , S.null
+            , S.null
 --             , size
 --             , isSubsetOf
 --             , isProperSubsetOf
