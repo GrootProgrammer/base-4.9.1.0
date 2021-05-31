@@ -101,7 +101,7 @@ module Data.Set (
 --             , lookupGE
             , S.null
 --             , size
---             , isSubsetOf
+            , isSubsetOf
 --             , isProperSubsetOf
 --             , disjoint
 

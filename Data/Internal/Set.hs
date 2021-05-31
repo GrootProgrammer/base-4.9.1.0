@@ -139,7 +139,7 @@ module Data.Set.Internal (
             -- , lookupGT
             -- , lookupLE
             -- , lookupGE
-            -- , isSubsetOf
+            , isSubsetOf
             -- , isProperSubsetOf
             -- , disjoint
 
@@ -715,6 +715,19 @@ insert a (Set kas) = Set (L.insertBy compare a kas')
 -- -- s1 \`isSubsetOf\` s2 = s1 ``union`` s2 == s2
 -- -- s1 \`isSubsetOf\` s2 = s1 ``intersection`` s2 == s1
 -- -- @
+isSubsetOf :: Ord a => Set a -> Set a -> Bool
+isSubsetOf (Set xs) (Set ys) = isSubsetOf' xs ys
+
+isSubsetOf' :: Ord a => [a] -> [a] -> Bool
+isSubsetOf' [] _ = True
+isSubsetOf' (_:_) [] = False
+isSubsetOf' xss@(x:xs) yss@(y:ys)
+      | cmp == EQ = isSubsetOf' xs ys
+      | cmp == LT = isSubsetOf' xss ys
+      | cmp == GT = False
+      where
+            cmp = x `compare` y
+
 -- isSubsetOf :: Ord a => Set a -> Set a -> Bool
 -- isSubsetOf t1 t2
 --   = size t1 <= size t2 && isSubsetOfX t1 t2
