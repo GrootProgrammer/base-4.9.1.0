@@ -875,7 +875,8 @@ union' [] x2 = x2
 union' x1 [] = x1
 union' xss1@(x1:xs1) xss2@(x2:xs2)
       | x1 < x2 = x1:union' xs1 xss2
-      | otherwise = x2:union' xss2 xs2
+      | x1 == x2 = x1:union' xs1 xs2
+      | otherwise = x2:union' xss1 xs2
 
 -- union :: Ord a => Set a -> Set a -> Set a
 -- union t1 Tip  = t1
