@@ -723,8 +723,8 @@ isSubsetOf' [] _ = True
 isSubsetOf' (_:_) [] = False
 isSubsetOf' xss@(x:xs) yss@(y:ys)
       | cmp == EQ = isSubsetOf' xs ys
-      | cmp == LT = isSubsetOf' xss ys
-      | cmp == GT = False
+      | cmp == GT = isSubsetOf' xss ys
+      | cmp == LT = False
       where
             cmp = x `compare` y
 
