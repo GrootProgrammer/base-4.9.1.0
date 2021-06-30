@@ -146,7 +146,7 @@ module Data.Set.Internal (
             -- -- * Construction
             , empty
             , singleton
-            -- , insert
+            , insert
             -- , delete
             -- , alterF
             -- , powerSet

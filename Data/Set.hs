@@ -83,7 +83,7 @@ module Data.Set (
 --             , powerSet
 
 --             -- * Insertion
---             , insert
+            , insert
 
 --             -- * Deletion
 --             , delete
