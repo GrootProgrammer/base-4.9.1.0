@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE RebindableSyntax #-}
 -- {-
 -- 
 -- NOTA BENE: Do NOT use ($) anywhere in this module! The type of ($) is
@@ -654,8 +655,8 @@ f =<< x         = x >>= f
 -- 
 -- -}
 -- 
--- ap                :: (Monad m) => m (a -> b) -> m a -> m b
--- ap m1 m2          = do { x1 <- m1; x2 <- m2; return (x1 x2) }
+ap                :: (Monad m) => m (a -> b) -> m a -> m b
+ap m1 m2          = do { x1 <- m1; x2 <- m2; return (x1 x2) }
 -- -- Since many Applicative instances define (<*>) = ap, we
 -- -- cannot define ap = (<*>)
 -- {-# INLINEABLE ap #-}
@@ -1113,22 +1114,22 @@ asTypeOf                =  const
 -- -- Functor/Applicative/Monad instances for IO
 -- ----------------------------------------------
 -- 
--- instance  Functor IO where
---    fmap f x = x >>= (pure . f)
+instance  Functor IO where
+   fmap f x = x >>= (pure . f)
+
+instance Applicative IO where
+    {-# INLINE pure #-}
+    {-# INLINE (*>) #-}
+    pure   = returnIO
+    m *> k = m >>= \ _ -> k
+    (<*>)  = ap
 -- 
--- instance Applicative IO where
---     {-# INLINE pure #-}
---     {-# INLINE (*>) #-}
---     pure   = returnIO
---     m *> k = m >>= \ _ -> k
---     (<*>)  = ap
--- 
--- instance  Monad IO  where
---     {-# INLINE (>>)   #-}
---     {-# INLINE (>>=)  #-}
---     (>>)      = (*>)
---     (>>=)     = bindIO
---     fail s    = failIO s
+instance  Monad IO  where
+    -- {-# INLINE (>>)   #-}
+    -- {-# INLINE (>>=)  #-}
+    -- (>>)      = (*>)
+    (>>=)     = bindIO
+    -- fail s    = failIO s
 -- 
 -- instance Alternative IO where
 --     empty = failIO "mzero"
@@ -1136,17 +1137,17 @@ asTypeOf                =  const
 -- 
 -- instance MonadPlus IO
 -- 
--- returnIO :: a -> IO a
--- returnIO x = IO (\ s -> (# s, x #))
+returnIO :: a -> IO a
+returnIO x = IO (\ s -> (# s, x #))
 -- 
--- bindIO :: IO a -> (a -> IO b) -> IO b
--- bindIO (IO m) k = IO (\ s -> case m s of (# new_s, a #) -> unIO (k a) new_s)
+bindIO :: IO a -> (a -> IO b) -> IO b
+bindIO (IO m) k = IO (\ s -> case m s of (# new_s, a #) -> unIO (k a) new_s)
 -- 
 -- thenIO :: IO a -> IO b -> IO b
 -- thenIO (IO m) k = IO (\ s -> case m s of (# new_s, _ #) -> unIO k new_s)
 -- 
--- unIO :: IO a -> (State# RealWorld -> (# State# RealWorld, a #))
--- unIO (IO a) = a
+unIO :: IO a -> (State# RealWorld -> (# State# RealWorld, a #))
+unIO (IO a) = a
 -- 
 -- {- |
 -- Returns the 'tag' of a constructor application; this function is used

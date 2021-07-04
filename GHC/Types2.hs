@@ -1,5 +1,6 @@
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE UnboxedTuples #-}
 
 module GHC.Types2
   ( module GHC.Types2
@@ -30,3 +31,7 @@ isTrue# b = b
 char2char :: T.Char -> Char
 char2char = char2char
 
+newtype IO a = IO (State# RealWorld -> (# State# RealWorld, a #))
+
+data RealWorld = RealWorld
+data LiftedRep = LiftedRep
