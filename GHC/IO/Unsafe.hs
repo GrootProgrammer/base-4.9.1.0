@@ -1,8 +1,8 @@
 -- {-# LANGUAGE Unsafe #-}
--- {-# LANGUAGE NoImplicitPrelude
---            , MagicHash
---            , UnboxedTuples
---   #-}
+{-# LANGUAGE NoImplicitPrelude
+           , MagicHash
+           , UnboxedTuples
+  #-}
 -- {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
@@ -19,13 +19,14 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.IO.Unsafe (
---     unsafePerformIO, unsafeInterleaveIO,
+module GHC.IO.Unsafe (
+    unsafePerformIO
+--     , unsafeInterleaveIO,
 --     unsafeDupablePerformIO, unsafeDupableInterleaveIO,
 --     noDuplicate,
---   ) where
+  ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- 
 -- 
 -- {-|
@@ -86,6 +87,10 @@
 -- -}
 -- unsafePerformIO :: IO a -> a
 -- unsafePerformIO m = unsafeDupablePerformIO (noDuplicate >> m)
+unsafePerformIO :: IO a -> a
+unsafePerformIO (IO f) =
+    case f (State# RealWorld) of
+        (# State# RealWorld, a #) -> a
 -- 
 -- {-|
 -- This version of 'unsafePerformIO' is more efficient
