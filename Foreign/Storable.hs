@@ -1,5 +1,6 @@
 -- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, ScopedTypeVariables, BangPatterns #-}
+{-# LANGUAGE MagicHash #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, ScopedTypeVariables, BangPatterns #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -18,29 +19,29 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.Storable
---         ( Storable(
+module Foreign.Storable
+        ( Storable(
 --              sizeOf,
 --              alignment,
---              peekElemOff,
---              pokeElemOff,
---              peekByteOff,
---              pokeByteOff,
---              peek,
---              poke)
---         ) where
+             peekElemOff,
+             pokeElemOff,
+             peekByteOff,
+             pokeByteOff,
+             peek,
+             poke)
+        ) where
 -- 
 -- 
 -- #include "MachDeps.h"
 -- #include "HsBaseConfig.h"
 -- 
--- import GHC.Storable
+import GHC.Storable
 -- import GHC.Stable       ( StablePtr )
--- import GHC.Num
+import GHC.Num
 -- import GHC.Int
 -- import GHC.Word
--- import GHC.Ptr
--- import GHC.Base
+import GHC.Ptr
+import GHC.Base
 -- import GHC.Fingerprint.Type
 -- import Data.Bits
 -- import GHC.Real
@@ -72,7 +73,7 @@
 -- as well as 'Ptr'.
 -- -}
 -- 
--- class Storable a where
+class Storable a where
 --    {-# MINIMAL sizeOf, alignment,
 --                (peek | peekElemOff | peekByteOff),
 --                (poke | pokeElemOff | pokeByteOff) #-}
@@ -86,7 +87,7 @@
 --    -- alignment constraint @x@ is fulfilled by any address divisible
 --    -- by @x@.  The value of the argument is not used.
 -- 
---    peekElemOff :: Ptr a -> Int      -> IO a
+   peekElemOff :: Ptr a -> Int      -> IO a
 --    -- ^       Read a value from a memory area regarded as an array
 --    --         of values of the same kind.  The first argument specifies
 --    --         the start address of the array and the second the index into
@@ -100,26 +101,26 @@
 --    --         necessarily the concrete implementation of the
 --    --         function.
 -- 
---    pokeElemOff :: Ptr a -> Int -> a -> IO ()
+   pokeElemOff :: Ptr a -> Int -> a -> IO ()
 --    -- ^       Write a value to a memory area regarded as an array of
 --    --         values of the same kind.  The following equality holds:
 --    -- 
 --    -- > pokeElemOff addr idx x = 
 --    -- >   poke (addr `plusPtr` (idx * sizeOf x)) x
 -- 
---    peekByteOff :: Ptr b -> Int      -> IO a
+   peekByteOff :: Ptr b -> Int      -> IO a
 --    -- ^       Read a value from a memory location given by a base
 --    --         address and offset.  The following equality holds:
 --    --
---    -- > peekByteOff addr off = peek (addr `plusPtr` off)
+   peekByteOff addr off = peek (addr `plusPtr` off)
 -- 
---    pokeByteOff :: Ptr b -> Int -> a -> IO ()
+   pokeByteOff :: Ptr b -> Int -> a -> IO ()
 --    -- ^       Write a value to a memory location given by a base
 --    --         address and offset.  The following equality holds:
 --    --
---    -- > pokeByteOff addr off x = poke (addr `plusPtr` off) x
+   pokeByteOff addr off x = poke (addr `plusPtr` off) x
 --   
---    peek        :: Ptr a      -> IO a
+   peek        :: Ptr a      -> IO a
 --    -- ^ Read a value from the given memory location.
 --    --
 --    --  Note that the peek and poke functions might require properly
@@ -129,7 +130,7 @@
 --    --  constraint for @a@, as given by the function
 --    --  'alignment' is fulfilled.
 -- 
---    poke        :: Ptr a -> a -> IO ()
+   poke        :: Ptr a -> a -> IO ()
 --    -- ^ Write the given value to the given memory location.  Alignment
 --    -- restrictions might apply; see 'peek'.
 --  
@@ -142,8 +143,8 @@
 --    peekByteOff ptr off = peek (ptr `plusPtr` off)
 --    pokeByteOff ptr off = poke (ptr `plusPtr` off)
 -- 
---    peek ptr = peekElemOff ptr 0
---    poke ptr = pokeElemOff ptr 0
+   peek ptr = peekElemOff ptr (I# 0#)
+   poke ptr = pokeElemOff ptr (I# 0#)
 -- 
 -- instance Storable () where
 --   sizeOf _ = 0
@@ -165,12 +166,18 @@
 --     alignment _ = align;                        \
 --     peekElemOff = read;                         \
 --     pokeElemOff = write }
+#define STORABLE(T,size,align,read,write)       \
+instance Storable (T) where {                   \
+    peekElemOff = read;                         \
+    pokeElemOff = write }
 -- 
 -- STORABLE(Char,SIZEOF_INT32,ALIGNMENT_INT32,
 --          readWideCharOffPtr,writeWideCharOffPtr)
 -- 
 -- STORABLE(Int,SIZEOF_HSINT,ALIGNMENT_HSINT,
 --          readIntOffPtr,writeIntOffPtr)
+STORABLE(Int,0,0,
+         readIntOffPtr,writeIntOffPtr)
 -- 
 -- STORABLE(Word,SIZEOF_HSWORD,ALIGNMENT_HSWORD,
 --          readWordOffPtr,writeWordOffPtr)

@@ -17,6 +17,8 @@ data Char = C# Char#
 
 data Int = I# Int#
 
+type Word8 = Int
+
 data Word = W# Word#
 
 data Float = F# Float#

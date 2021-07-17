@@ -1,9 +1,9 @@
 -- {-# LANGUAGE Unsafe #-}
--- {-# LANGUAGE NoImplicitPrelude
---            , BangPatterns
---            , MagicHash
---            , UnboxedTuples
---   #-}
+{-# LANGUAGE NoImplicitPrelude
+           , BangPatterns
+           , MagicHash
+           , UnboxedTuples
+  #-}
 -- {-# OPTIONS_HADDOCK hide #-}
 -- {-# LANGUAGE StandaloneDeriving #-}
 -- 
@@ -21,37 +21,38 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.ForeignPtr
---   (
---         ForeignPtr(..),
+module GHC.ForeignPtr
+  (
+        ForeignPtr(..),
 --         ForeignPtrContents(..),
 --         FinalizerPtr,
 --         FinalizerEnvPtr,
---         newForeignPtr_,
+        newForeignPtr_,
 --         mallocForeignPtr,
 --         mallocPlainForeignPtr,
---         mallocForeignPtrBytes,
+        mallocForeignPtrBytes,
 --         mallocPlainForeignPtrBytes,
 --         mallocForeignPtrAlignedBytes,
 --         mallocPlainForeignPtrAlignedBytes,
 --         addForeignPtrFinalizer,
 --         addForeignPtrFinalizerEnv,
---         touchForeignPtr,
---         unsafeForeignPtrToPtr,
+        touchForeignPtr,
+        unsafeForeignPtrToPtr,
 --         castForeignPtr,
 --         newConcForeignPtr,
 --         addForeignPtrConcFinalizer,
 --         finalizeForeignPtr
---   ) where
+        plusForeignPtr
+  ) where
 -- 
 -- import Foreign.Storable
 -- import Data.Foldable    ( sequence_ )
 -- 
 -- import GHC.Show
--- import GHC.Base
+import GHC.Base
 -- import GHC.IORef
 -- import GHC.STRef        ( STRef(..) )
--- import GHC.Ptr          ( Ptr(..), FunPtr(..) )
+import GHC.Ptr          ( Ptr(..), FunPtr(..) )
 -- 
 -- -- |The type 'ForeignPtr' represents references to objects that are
 -- -- maintained in a foreign language, i.e., that are not part of the
@@ -69,7 +70,7 @@
 -- -- type argument of 'ForeignPtr' should normally be an instance of
 -- -- class 'Storable'.
 -- --
--- data ForeignPtr a = ForeignPtr Addr# ForeignPtrContents
+data ForeignPtr a = ForeignPtr Addr# ForeignPtrContents
 --         -- we cache the Addr# in the ForeignPtr object, but attach
 --         -- the finalizer to the IORef (or the MutableByteArray# in
 --         -- the case of a MallocPtr).  The aim of the representation
@@ -85,6 +86,7 @@
 --   | CFinalizers (Weak# ())
 --   | HaskellFinalizers [IO ()]
 -- 
+data ForeignPtrContents = ForeignPtrContents
 -- data ForeignPtrContents
 --   = PlainForeignPtr !(IORef Finalizers)
 --   | MallocPtr      (MutableByteArray# RealWorld) !(IORef Finalizers)
@@ -176,6 +178,11 @@
 --        (# s', ForeignPtr (byteArrayContents# (unsafeCoerce# mbarr#))
 --                          (MallocPtr mbarr# r) #)
 --      }
+mallocForeignPtrBytes :: Int -> IO (ForeignPtr a)
+mallocForeignPtrBytes size | size < (I# 0#) =
+  errorWithoutStackTrace "mallocForeignPtrBytes: size must be >= 0"
+mallocForeignPtrBytes (I# size) = do
+    return (ForeignPtr (Addr# size) ForeignPtrContents)
 -- 
 -- -- | This function is similar to 'mallocForeignPtrBytes', except that the
 -- -- size and alignment of the memory required is given explicitly as numbers of
@@ -378,6 +385,8 @@
 -- newForeignPtr_ (Ptr obj) =  do
 --   r <- newIORef NoFinalizers
 --   return (ForeignPtr obj (PlainForeignPtr r))
+newForeignPtr_ :: Ptr a -> IO (ForeignPtr a)
+newForeignPtr_ (Ptr addr) = return (ForeignPtr addr ForeignPtrContents)
 -- 
 -- touchForeignPtr :: ForeignPtr a -> IO ()
 -- -- ^This function ensures that the foreign object in
@@ -405,6 +414,8 @@
 -- -- explicit reference counting.
 -- --
 -- touchForeignPtr (ForeignPtr _ r) = touch r
+touchForeignPtr :: ForeignPtr a -> IO ()
+touchForeignPtr _ = return ()
 -- 
 -- touch :: ForeignPtrContents -> IO ()
 -- touch r = IO $ \s -> case touch# r s of s' -> (# s', () #)
@@ -424,7 +435,23 @@
 -- -- than combinations of 'unsafeForeignPtrToPtr' and
 -- -- 'touchForeignPtr'.  However, the latter routines
 -- -- are occasionally preferred in tool generated marshalling code.
--- unsafeForeignPtrToPtr (ForeignPtr fo _) = Ptr fo
+unsafeForeignPtrToPtr (ForeignPtr fo _) = Ptr fo
+
+
+plusForeignPtr :: ForeignPtr a -> Int -> ForeignPtr b
+-- ^Advances the given address by the given offset in bytes.
+--
+-- The new 'ForeignPtr' shares the finalizer of the original,
+-- equivalent from a finalization standpoint to just creating another
+-- reference to the original. That is, the finalizer will not be
+-- called before the new 'ForeignPtr' is unreachable, nor will it be
+-- called an additional time due to this call, and the finalizer will
+-- be called with the same address that it would have had this call
+-- not happened, *not* the new address.
+--
+-- @since 4.10.0.0
+plusForeignPtr (ForeignPtr addr c) (I# d) = ForeignPtr (plusAddr# addr d) c
+
 -- 
 -- castForeignPtr :: ForeignPtr a -> ForeignPtr b
 -- -- ^This function casts a 'ForeignPtr'

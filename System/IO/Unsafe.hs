@@ -15,16 +15,16 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module System.IO.Unsafe (
+module System.IO.Unsafe (
 --    -- * Unsafe 'System.IO.IO' operations
---    unsafePerformIO,
+   unsafePerformIO,
 --    unsafeDupablePerformIO,
 --    unsafeInterleaveIO,
 --    unsafeFixIO,
---   ) where
+  ) where
 -- 
 -- import GHC.Base
--- import GHC.IO
+import GHC.IO
 -- import GHC.IORef
 -- import GHC.Exception
 -- import Control.Exception

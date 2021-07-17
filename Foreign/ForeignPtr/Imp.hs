@@ -1,5 +1,7 @@
 -- {-# LANGUAGE Unsafe #-}
 -- {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE RebindableSyntax #-}
+
 -- {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
@@ -18,16 +20,16 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.ForeignPtr.Imp
---         ( 
+module Foreign.ForeignPtr.Imp
+        ( 
 --         -- * Finalised data pointers
---           ForeignPtr
+          ForeignPtr
 --         , FinalizerPtr
 --         , FinalizerEnvPtr
 -- 
 --         -- ** Basic operations
 --         , newForeignPtr
---         , newForeignPtr_
+        , newForeignPtr_
 --         , addForeignPtrFinalizer
 --         , newForeignPtrEnv
 --         , addForeignPtrFinalizerEnv
@@ -35,24 +37,24 @@
 --         , finalizeForeignPtr
 -- 
 --         -- ** Low-level operations
---         , unsafeForeignPtrToPtr
---         , touchForeignPtr
+        , unsafeForeignPtrToPtr
+        , touchForeignPtr
 --         , castForeignPtr
 -- 
 --         -- ** Allocating managed memory
 --         , mallocForeignPtr
---         , mallocForeignPtrBytes
+        , mallocForeignPtrBytes
 --         , mallocForeignPtrArray
 --         , mallocForeignPtrArray0
---         ) 
---         where
+        ) 
+        where
 -- 
--- import Foreign.Ptr
+import Foreign.Ptr
 -- import Foreign.Storable ( Storable(sizeOf) )
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.Num
--- import GHC.ForeignPtr
+import GHC.ForeignPtr
 -- 
 -- newForeignPtr :: FinalizerPtr a -> Ptr a -> IO (ForeignPtr a)
 -- -- ^Turns a plain memory reference into a foreign pointer, and
@@ -65,7 +67,7 @@
 --        addForeignPtrFinalizer finalizer fObj
 --        return fObj
 -- 
--- withForeignPtr :: ForeignPtr a -> (Ptr a -> IO b) -> IO b
+withForeignPtr :: ForeignPtr a -> (Ptr a -> IO b) -> IO b
 -- -- ^This is a way to look at the pointer living inside a
 -- -- foreign object.  This function takes a function which is
 -- -- applied to that pointer. The resulting 'IO' action is then
@@ -85,10 +87,10 @@
 -- -- or from the object pointed to by the
 -- -- 'ForeignPtr', using the operations from the
 -- -- 'Storable' class.
--- withForeignPtr fo io
---   = do r <- io (unsafeForeignPtrToPtr fo)
---        touchForeignPtr fo
---        return r
+withForeignPtr fo io
+  = do r <- io (unsafeForeignPtrToPtr fo)
+       touchForeignPtr fo
+       return r
 -- 
 -- -- | This variant of 'newForeignPtr' adds a finalizer that expects an
 -- -- environment in addition to the finalized pointer.  The environment

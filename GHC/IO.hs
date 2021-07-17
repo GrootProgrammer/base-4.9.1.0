@@ -22,9 +22,11 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.IO (
---         IO(..), unIO, failIO, liftIO, mplusIO,
---         unsafePerformIO, unsafeInterleaveIO,
+module GHC.IO (
+        IO(..),
+--         unIO, failIO, liftIO, mplusIO,
+        unsafePerformIO,
+--         unsafeInterleaveIO,
 --         unsafeDupablePerformIO, unsafeDupableInterleaveIO,
 --         noDuplicate,
 -- 
@@ -38,13 +40,13 @@
 --         MaskingState(..), getMaskingState,
 --         unsafeUnmask, interruptible,
 --         onException, bracket, finally, evaluate
---     ) where
+    ) where
 -- 
 -- import GHC.Base
 -- import GHC.ST
 -- import GHC.Exception
 -- import GHC.Show
--- import GHC.IO.Unsafe
+import GHC.IO.Unsafe
 -- 
 -- import {-# SOURCE #-} GHC.IO.Exception ( userError, IOError )
 -- 

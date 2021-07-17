@@ -1,5 +1,5 @@
 -- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples #-}
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -38,11 +38,11 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.Marshal.Alloc (
+module Foreign.Marshal.Alloc (
 --   -- * Memory allocation
 --   -- ** Local allocation
 --   alloca,
---   allocaBytes,
+  allocaBytes,
 --   allocaBytesAligned,
 -- 
 --   -- ** Dynamic allocation
@@ -57,7 +57,7 @@
 -- 
 --   free,
 --   finalizerFree
--- ) where
+) where
 -- 
 -- import Data.Maybe
 -- import Foreign.C.Types          ( CSize(..) )
@@ -65,8 +65,10 @@
 -- import Foreign.ForeignPtr       ( FinalizerPtr )
 -- import GHC.IO.Exception
 -- import GHC.Real
--- import GHC.Ptr
--- import GHC.Base
+import GHC.Ptr
+import GHC.Base
+
+import GHC.Prim2
 -- 
 -- -- exported functions
 -- -- ------------------
@@ -141,6 +143,9 @@
 --      case touch# barr# s3 of { s4 ->
 --      (# s4, r #)
 --   }}}}}
+allocaBytes :: Int -> (Ptr a -> IO b) -> IO b
+allocaBytes (I# size) action = IO $ \ s0 -> (# s0, symgen #)
+
 -- 
 -- allocaBytesAligned :: Int -> Int -> (Ptr a -> IO b) -> IO b
 -- allocaBytesAligned (I# size) (I# align) action = IO $ \ s0 ->

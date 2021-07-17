@@ -18,16 +18,16 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.Ptr (
+module Foreign.Ptr (
 -- 
 --     -- * Data pointers
 -- 
---     Ptr,
---     nullPtr,
---     castPtr,
---     plusPtr,
+    Ptr,
+    nullPtr,
+    castPtr,
+    plusPtr,
 --     alignPtr,
---     minusPtr,
+    minusPtr,
 -- 
 --     -- * Function pointers
 -- 
@@ -47,10 +47,10 @@
 --     WordPtr,
 --     ptrToWordPtr,
 --     wordPtrToPtr
---  ) where
+ ) where
 -- 
--- import GHC.Ptr
--- import GHC.Base
+import GHC.Ptr
+import GHC.Base
 -- import GHC.Num
 -- import GHC.Read
 -- import GHC.Real

@@ -17,7 +17,7 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.ForeignPtr ( 
+module Foreign.ForeignPtr ( 
 --         -- * Finalised data pointers
 --           ForeignPtr
 --         , FinalizerPtr
@@ -41,7 +41,7 @@
 --         , mallocForeignPtrBytes
 --         , mallocForeignPtrArray
 --         , mallocForeignPtrArray0
---     ) where
+    ) where
 -- 
--- import Foreign.ForeignPtr.Imp
+import Foreign.ForeignPtr.Imp
 -- 

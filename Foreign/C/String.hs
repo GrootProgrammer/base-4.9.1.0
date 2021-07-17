@@ -23,7 +23,7 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.C.String (   -- representation of strings in C
+module Foreign.C.String (   -- representation of strings in C
 --   -- * C strings
 -- 
 --   CString,
@@ -93,7 +93,7 @@
 --   withCWString,
 --   withCWStringLen,
 -- 
---   ) where
+  ) where
 -- 
 -- import Foreign.Marshal.Array
 -- import Foreign.C.Types

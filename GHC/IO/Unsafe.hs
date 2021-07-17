@@ -20,9 +20,10 @@
 -- -----------------------------------------------------------------------------
 -- 
 module GHC.IO.Unsafe (
-    unsafePerformIO
+      unsafePerformIO
 --     , unsafeInterleaveIO,
---     unsafeDupablePerformIO, unsafeDupableInterleaveIO,
+    , unsafeDupablePerformIO
+    -- , unsafeDupableInterleaveIO,
 --     noDuplicate,
   ) where
 -- 
@@ -107,6 +108,12 @@ unsafePerformIO (IO f) =
 -- -}
 -- unsafeDupablePerformIO  :: IO a -> a
 -- unsafeDupablePerformIO (IO m) = case runRW# m of (# _, a #) -> a
+unsafeDupablePerformIO :: IO a -> a
+unsafeDupablePerformIO (IO f) =
+    case f (State# RealWorld) of
+        (# State# RealWorld, a #) -> a
+-- 
+
 -- 
 -- -- Note [unsafeDupablePerformIO is NOINLINE]
 -- -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

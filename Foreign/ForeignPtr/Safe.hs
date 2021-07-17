@@ -19,7 +19,7 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Foreign.ForeignPtr.Safe {-# DEPRECATED "Safe is now the default, please use Foreign.ForeignPtr instead" #-} (
+module Foreign.ForeignPtr.Safe {-# DEPRECATED "Safe is now the default, please use Foreign.ForeignPtr instead" #-} (
 --         -- * Finalised data pointers
 --           ForeignPtr
 --         , FinalizerPtr
@@ -40,10 +40,10 @@
 -- 
 --         -- ** Allocating managed memory
 --         , mallocForeignPtr
---         , mallocForeignPtrBytes
+        , mallocForeignPtrBytes
 --         , mallocForeignPtrArray
 --         , mallocForeignPtrArray0
---     ) where
+    ) where
 -- 
--- import Foreign.ForeignPtr.Imp
+import Foreign.ForeignPtr.Imp
 -- 

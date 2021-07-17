@@ -1,5 +1,5 @@
 -- {-# LANGUAGE Unsafe #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, MagicHash, RoleAnnotations #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, MagicHash, RoleAnnotations #-}
 -- {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
@@ -16,16 +16,18 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Ptr (
---         Ptr(..), FunPtr(..),
---         nullPtr, castPtr, plusPtr, alignPtr, minusPtr,
+module GHC.Ptr (
+        Ptr(..), FunPtr(..),
+        nullPtr, castPtr, plusPtr,
+        -- , alignPtr
+        minusPtr,
 --         nullFunPtr, castFunPtr,
 -- 
 --         -- * Unsafe functions
 --         castFunPtrToPtr, castPtrToFunPtr
---     ) where
+    ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.Show
 -- import GHC.Num
 -- import GHC.List ( length, replicate )
@@ -42,7 +44,7 @@
 -- 
 -- -- redundant role annotation checks that this doesn't change
 -- type role Ptr phantom
--- data Ptr a = Ptr Addr# deriving (Eq, Ord)
+data Ptr a = Ptr Addr# -- deriving (Eq, Ord)
 -- -- ^ A value of type @'Ptr' a@ represents a pointer to an object, or an
 -- -- array of objects, which may be marshalled to or from Haskell values
 -- -- of type @a@.
@@ -55,16 +57,16 @@
 -- 
 -- -- |The constant 'nullPtr' contains a distinguished value of 'Ptr'
 -- -- that is not associated with a valid memory location.
--- nullPtr :: Ptr a
--- nullPtr = Ptr nullAddr#
--- 
+nullPtr :: Ptr a
+nullPtr = Ptr nullAddr#
+
 -- -- |The 'castPtr' function casts a pointer from one type to another.
--- castPtr :: Ptr a -> Ptr b
--- castPtr = coerce
+castPtr :: Ptr a -> Ptr b
+castPtr = coerce
 -- 
 -- -- |Advances the given address by the given offset in bytes.
--- plusPtr :: Ptr a -> Int -> Ptr b
--- plusPtr (Ptr addr) (I# d) = Ptr (plusAddr# addr d)
+plusPtr :: Ptr a -> Int -> Ptr b
+plusPtr (Ptr addr) (I# d) = Ptr (plusAddr# addr d)
 -- 
 -- -- |Given an arbitrary address and an alignment constraint,
 -- -- 'alignPtr' yields the next higher address that fulfills the
@@ -80,8 +82,8 @@
 -- -- argument.  We have
 -- --
 -- -- > p2 == p1 `plusPtr` (p2 `minusPtr` p1)
--- minusPtr :: Ptr a -> Ptr b -> Int
--- minusPtr (Ptr a1) (Ptr a2) = I# (minusAddr# a1 a2)
+minusPtr :: Ptr a -> Ptr b -> Int
+minusPtr (Ptr a1) (Ptr a2) = I# (minusAddr# a1 a2)
 -- 
 -- ------------------------------------------------------------------------
 -- -- Function pointers for the default calling convention.
@@ -90,7 +92,7 @@
 -- -- that 'FunPtr's role cannot become nominal without changes elsewhere
 -- -- in GHC. See Note [FFI type roles] in TcForeign.
 -- type role FunPtr phantom
--- data FunPtr a = FunPtr Addr# deriving (Eq, Ord)
+data FunPtr a = FunPtr Addr# -- deriving (Eq, Ord)
 -- -- ^ A value of type @'FunPtr' a@ is a pointer to a function callable
 -- -- from foreign code.  The type @a@ will normally be a /foreign type/,
 -- -- a function type with zero or more arguments where

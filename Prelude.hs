@@ -1,6 +1,8 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE MagicHash #-}
+{-# LANGUAGE RebindableSyntax #-}
+
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -133,7 +135,7 @@ module Prelude (
 --     reads, readParen, read, lex,
 -- 
 --     -- * Basic Input and output
---     IO,
+    IO,
 --     -- ** Simple I\/O operations
 --     -- All I/O functions defined here are character oriented.  The
 --     -- treatment of the newline character will vary on different systems.

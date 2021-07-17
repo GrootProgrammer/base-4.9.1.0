@@ -13,7 +13,7 @@ module GHC.Prim2
   ) where
 
 import GHC.Prim
-  ( Int#, Double#, Char#, Float#, Word#, TYPE
+  ( Int#, Double#, Char#, Float#, Word#, TYPE -- , Addr#
   , coerce)
 
 import GHC.Types
@@ -241,6 +241,10 @@ int2Word# = int2Word#
 seq :: a -> b -> b
 seq _ b = b  -- Anton: This is technically wrong.
 
+-- Hack to get a SymGen somewhere in base
+symgen :: a
+symgen = symgen
+
 -- Misc add-ons
 
 fromIntToFloat :: Int# -> Float#
@@ -250,3 +254,14 @@ fromIntToDouble :: Int# -> Double#
 fromIntToDouble = fromIntToDouble
 
 data State# s = State# s
+
+data Addr# = Addr# Int#
+
+nullAddr# :: Addr#
+nullAddr# = Addr# 0#
+
+plusAddr# :: Addr# -> Int# -> Addr# 
+plusAddr# (Addr# x) y= Addr# (x +# y)
+
+minusAddr# :: Addr# -> Addr# -> Int# 
+minusAddr# (Addr# x) (Addr# y) = (x -# y)
