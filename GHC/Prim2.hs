@@ -255,6 +255,11 @@ fromIntToDouble = fromIntToDouble
 
 data State# s = State# s
 
+data Void# = Void#
+
+void# :: Void#
+void# = Void#
+
 data Addr# = Addr# Int#
 
 nullAddr# :: Addr#
