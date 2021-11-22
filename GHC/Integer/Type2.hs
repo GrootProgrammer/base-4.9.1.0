@@ -443,14 +443,10 @@ x `quotRemInteger` y =
 -- 
 
 quotPositive :: Integer -> Integer -> Integer
-x `quotPositive` y = if x < zeroInteger
-                     then zeroInteger
-                     else oneInteger `plusInteger`
-                          ((x `minusInteger` y) `quotPositive` y)
+quotPositive = quotInteger
 
 remPositive :: Integer -> Integer -> Integer
-x `remPositive` y = if x `minusInteger` y < zeroInteger
-                    then x else (x `minusInteger` y) `remPositive` y
+remPositive = remInteger
 
 {-# NOINLINE quotInteger #-}
 quotInteger :: Integer -> Integer -> Integer
@@ -467,9 +463,12 @@ quotInteger# = quotInteger#
 -- 
 {-# NOINLINE remInteger #-}
 remInteger :: Integer -> Integer -> Integer
-x `remInteger` y = case x `quotRemInteger` y of
-                   (# _, r #) -> r
--- 
+(Z# x) `remInteger` (Z# y) = Z# (x `remInteger#` y)
+
+{-# NOINLINE remInteger# #-}
+remInteger# :: Int# -> Int# -> Int#
+remInteger# = remInteger#
+
 {-# NOINLINE compareInteger #-}
 compareInteger :: Integer -> Integer -> Ordering
 x `compareInteger` y =
