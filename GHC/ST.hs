@@ -1,5 +1,5 @@
 -- {-# LANGUAGE Unsafe #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples, RankNTypes #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples, RankNTypes #-}
 -- {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
@@ -24,7 +24,7 @@ module GHC.ST (
 --         liftST, unsafeInterleaveST
     ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.Show
 -- 
 -- default ()
