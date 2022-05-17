@@ -207,6 +207,9 @@ ltChar# = ltChar#
 leChar# :: Char# -> Char# -> Bool
 leChar# = leChar#
 
+chr# :: Int# -> Char#
+chr# = chr#
+
 ord# :: Char# -> Int#
 ord# = ord#
 
