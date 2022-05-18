@@ -91,7 +91,9 @@ module Control.Exception.Base (
 --         finally,
 -- 
 --         -- * Calls for GHC runtime
---         recSelError, recConError, irrefutPatError, runtimeError,
+--         recSelError, recConError,
+           irrefutPatError,
+--         runtimeError,
 --         nonExhaustiveGuardsError, 
            patError
 --         , noMethodBindingError,
@@ -410,6 +412,7 @@ module Control.Exception.Base (
 -- 
 -- nonExhaustiveGuardsError s = throw (PatternMatchFail (untangle s "Non-exhaustive guards in"))
 -- irrefutPatError          s = throw (PatternMatchFail (untangle s "Irrefutable pattern failed for pattern"))
+irrefutPatError = patError
 -- recConError              s = throw (RecConError      (untangle s "Missing field in record construction"))
 -- noMethodBindingError     s = throw (NoMethodError    (untangle s "No instance nor default method for class operation"))
 -- patError                 s = throw (PatternMatchFail (untangle s "Non-exhaustive patterns in"))

@@ -125,7 +125,8 @@ module GHC.Base
 --         module GHC.Prim,        -- Re-export GHC.Prim and [boot] GHC.Err,
         module GHC.Prim2,        -- Re-export GHC.Prim and [boot] GHC.Err,
 --                                 -- to avoid lots of people having to
-        module GHC.Err          -- import it explicitly
+        module GHC.Err,          -- import it explicitly
+        Maybe (..)
   )
         where
 -- 
@@ -148,6 +149,10 @@ import GHC.Tuple2 ()     -- Note [Depend on GHC.Tuple]
 -- import GHC.Integer ()   -- Note [Depend on GHC.Integer]
 -- import GHC.Integer2 ()
 -- 
+#if __GLASGOW_HASKELL__ >= 806
+import GHC.Maybe
+#endif
+
 infixr 9  .
 infixr 5  ++
 infixl 4  <$
@@ -220,6 +225,7 @@ default ()              -- Double isn't available yet
 -- -- monad, where all errors are represented by 'Nothing'.  A richer
 -- -- error monad can be built using the 'Data.Either.Either' type.
 -- --
+#if __GLASGOW_HASKELL__ < 806
 data  Maybe a  =  Nothing | Just a
 --   deriving (Eq, Ord)
 
@@ -232,6 +238,7 @@ instance (Ord a) => Ord (Maybe a) where
     Nothing <= Just _  = True
     Just _  <= Nothing = False
     Just x  <= Just y  = x <= y
+#endif
 
 -- 
 -- -- | The class of monoids (types with an associative binary operation that
@@ -984,8 +991,7 @@ type String = [Char]
 -- 
 -- -- | The 'Prelude.fromEnum' method restricted to the type 'Data.Char.Char'.
 ord :: Char -> Int
--- ord (C# c#) = I# (ord# c#)
-ord = ord
+ord (C# c#) = I# (ord# c#)
 -- 
 -- -- | This 'String' equality predicate is used when desugaring
 -- -- pattern-matches against strings.
