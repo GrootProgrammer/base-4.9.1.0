@@ -297,8 +297,9 @@ double2Int# = double2Int#
 int2Double :: Int -> Double
 int2Double (I# i) = D# (int2Double# i)
 
+{-# NOINLINE int2Double# #-}
 int2Double#  :: Int# -> Double#
-int2Double#  = int2Double# 
+int2Double#  = undefined
 
 float2Int :: Float -> Int
 float2Int (F# x) = I# (float2Int# x)
@@ -309,8 +310,9 @@ float2Int# = float2Int#
 int2Float :: Int -> Float
 int2Float (I# i) = F# (int2Float# i)
 
+{-# NOINLINE int2Float# #-}
 int2Float#  :: Int# -> Float#
-int2Float#  = int2Float# 
+int2Float#  = undefined
 
 -- 
 -- -- Quicker conversions from 'Double' and 'Float' to 'Integer',
