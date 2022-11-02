@@ -1,6 +1,6 @@
 -- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, BangPatterns, StandaloneDeriving,
---              MagicHash, UnboxedTuples #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, BangPatterns, StandaloneDeriving,
+             MagicHash, UnboxedTuples #-}
 -- {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- #include "MachDeps.h"
@@ -31,9 +31,10 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module GHC.Show
---         (
---         Show(..), ShowS,
+module GHC.Show
+        (
+--         Show(..),
+           ShowS
 -- 
 --         -- Instances for Show: (), [], Bool, Ordering, Int, Char
 -- 
@@ -46,10 +47,10 @@
 -- 
 --         -- Character operations
 --         asciiTab,
---   )
---         where
+  )
+        where
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.List ((!!), foldr1, break)
 -- import GHC.Num
 -- import GHC.Stack.Types
@@ -57,7 +58,7 @@
 -- -- | The @shows@ functions return a function that prepends the
 -- -- output 'String' to an existing 'String'.  This allows constant-time
 -- -- concatenation of results using function composition.
--- type ShowS = String -> String
+type ShowS = String -> String
 -- 
 -- -- | Conversion of values to readable 'String's.
 -- --

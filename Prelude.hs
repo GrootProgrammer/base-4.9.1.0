@@ -125,7 +125,7 @@ module Prelude (
 -- 
 --     -- * Converting to and from @String@
 --     -- ** Converting to @String@
---     ShowS,
+    ShowS,
 --     Show(showsPrec, showList, show),
 --     shows,
 --     showChar, showString, showParen,
@@ -175,7 +175,7 @@ import GHC.Enum
 import GHC.Num
 import GHC.Real
 import GHC.Float
--- import GHC.Show
+import GHC.Show
 
 import GHC.Integer2
 
