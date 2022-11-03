@@ -1,4 +1,5 @@
 {-# LANGUAGE Unsafe #-}
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -273,3 +274,14 @@ plusAddr# (Addr# x) y= Addr# (x +# y)
 
 minusAddr# :: Addr# -> Addr# -> Int# 
 minusAddr# (Addr# x) (Addr# y) = (x -# y)
+
+dataToTag# :: a -> Int#
+dataToTag# !x = dataToTag## x
+
+{-# NOINLINE dataToTag## #-}
+dataToTag## :: a -> Int#
+dataToTag## _ = 0#
+
+{-# NOINLINE tagToEnum# #-}
+tagToEnum# :: Int# -> a
+tagToEnum# _ = let x = x in x
