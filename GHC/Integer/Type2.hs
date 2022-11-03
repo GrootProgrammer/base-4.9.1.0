@@ -452,11 +452,14 @@ remPositive = remInteger
 quotInteger :: Integer -> Integer -> Integer
 (Z# x) `quotInteger` (Z# y) = Z# (x `quotInteger#` y)
 
+
 -- We don't use the default definition for Quot
 -- as it introduces a lot of overhead
+-- G2 is going to replace the definition of quotInteger# with a primitive, so
+-- it doesn't matter if the definition is actually correct or not here.
 {-# NOINLINE quotInteger# #-}
 quotInteger# :: Int# -> Int# -> Int#
-quotInteger# = quotInteger#
+quotInteger# _ _ = 0#
 -- quotInteger :: Integer -> Integer -> Integer
 -- x `quotInteger` y = case x `quotRemInteger` y of
 --                     (# q, _ #) -> q
@@ -465,9 +468,11 @@ quotInteger# = quotInteger#
 remInteger :: Integer -> Integer -> Integer
 (Z# x) `remInteger` (Z# y) = Z# (x `remInteger#` y)
 
+-- G2 is going to replace the definition of remInteger# with a primitive, so
+-- it doesn't matter if the definition is actually correct or not here.
 {-# NOINLINE remInteger# #-}
 remInteger# :: Int# -> Int# -> Int#
-remInteger# = remInteger#
+remInteger# _ _ = 0#
 
 {-# NOINLINE compareInteger #-}
 compareInteger :: Integer -> Integer -> Ordering
