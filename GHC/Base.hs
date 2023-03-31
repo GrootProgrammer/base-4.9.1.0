@@ -995,12 +995,12 @@ ord (C# c#) = I# (ord# c#)
 -- 
 -- -- | This 'String' equality predicate is used when desugaring
 -- -- pattern-matches against strings.
--- eqString :: String -> String -> Bool
--- eqString []       []       = True
--- eqString (c1:cs1) (c2:cs2) = c1 == c2 && cs1 `eqString` cs2
--- eqString _        _        = False
--- 
--- {-# RULES "eqString" (==) = eqString #-}
+eqString :: String -> String -> Bool
+eqString []       []       = True
+eqString (c1:cs1) (c2:cs2) = c1 == c2 && cs1 `eqString` cs2
+eqString _        _        = False
+
+{-# RULES "eqString" (==) = eqString #-}
 -- -- eqString also has a BuiltInRule in PrelRules.lhs:
 -- --      eqString (unpackCString# (Lit s1)) (unpackCString# (Lit s2) = s1==s2
 -- 
