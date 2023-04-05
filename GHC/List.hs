@@ -93,9 +93,9 @@ tail []                 = errorEmptyList (map char2char "tail")
 -- 
 -- -- | Extract the last element of a list, which must be finite and non-empty.
 #if MIN_VERSION_GLASGOW_HASKELL(9,4,0,0)
-last                    :: [a] -> a
-#else
 last                    :: HasCallStack => [a] -> a
+#else
+last                    :: [a] -> a
 #endif
 -- #ifdef USE_REPORT_PRELUDE
 last [x]                =  x
