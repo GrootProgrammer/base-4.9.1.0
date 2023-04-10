@@ -1,6 +1,6 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude, MagicHash, ImplicitParams #-}
-{-# LANGUAGE RankNTypes, TypeInType #-}
+{-# LANGUAGE RankNTypes #-}
 {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
