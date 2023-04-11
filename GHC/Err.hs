@@ -1,6 +1,11 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude, MagicHash, ImplicitParams #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE CPP #-}
+#if MIN_VERSION_GLASGOW_HASKELL(9,6,0,0)
+#else
+{-# LANGUAGE TypeInType #-}
+#endif
 {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------

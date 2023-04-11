@@ -89,6 +89,10 @@
            , PolyKinds
            , DataKinds
   #-}
+#if MIN_VERSION_GLASGOW_HASKELL(9,6,0,0)
+#else
+{-# LANGUAGE TypeInType #-}
+#endif
 -- -- -Wno-orphans is needed for things like:
 -- -- Orphan rule: "x# -# x#" ALWAYS forall x# :: Int# -# x# x# = 0
 {-# OPTIONS_GHC -Wno-orphans #-}
