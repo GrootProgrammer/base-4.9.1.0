@@ -1,29 +1,29 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, StandaloneDeriving, ScopedTypeVariables #-}
--- {-# OPTIONS_HADDOCK hide #-}
--- 
--- -----------------------------------------------------------------------------
--- -- |
--- -- Module      :  GHC.Read
--- -- Copyright   :  (c) The University of Glasgow, 1994-2002
--- -- License     :  see libraries/base/LICENSE
--- --
--- -- Maintainer  :  cvs-ghc@haskell.org
--- -- Stability   :  internal
--- -- Portability :  non-portable (GHC Extensions)
--- --
--- -- The 'Read' class and instances for basic data types.
--- --
--- -----------------------------------------------------------------------------
--- 
--- module GHC.Read
---   ( Read(..)   -- class
--- 
---   -- ReadS type
---   , ReadS
--- 
---   -- H2010 compatibility
---   , lex
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude, StandaloneDeriving, ScopedTypeVariables, MagicHash, QualifiedDo #-}
+{-# OPTIONS_HADDOCK hide #-}
+
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  GHC.Read
+-- Copyright   :  (c) The University of Glasgow, 1994-2002
+-- License     :  see libraries/base/LICENSE
+--
+-- Maintainer  :  cvs-ghc@haskell.org
+-- Stability   :  internal
+-- Portability :  non-portable (GHC Extensions)
+--
+-- The 'Read' class and instances for basic data types.
+--
+-----------------------------------------------------------------------------
+
+module GHC.Read
+  ( Read(..)   -- class
+
+  -- ReadS type
+  , ReadS
+
+  -- H2010 compatibility
+  , lex
 --   , lexLitChar
 --   , readLitChar
 --   , lexDigits
@@ -37,305 +37,312 @@
 --   , readListDefault, readListPrecDefault
 --   , readNumber
 -- 
---   -- Temporary
---   , readParen
---   )
---  where
+  -- Temporary
+  , readParen
+  )
+ where
+
+import qualified Text.ParserCombinators.ReadP as P
+
+import Text.ParserCombinators.ReadP
+  ( ReadS
+  , readP_to_S
+  )
 -- 
--- import qualified Text.ParserCombinators.ReadP as P
--- 
--- import Text.ParserCombinators.ReadP
---   ( ReadS
---   , readP_to_S
---   )
--- 
--- import qualified Text.Read.Lex as L
+import qualified Text.Read.Lex as L
 -- -- Lex exports 'lex', which is also defined here,
 -- -- hence the qualified import.
 -- -- We can't import *anything* unqualified, because that
 -- -- confuses Haddock.
 -- 
--- import Text.ParserCombinators.ReadPrec
+import Text.ParserCombinators.ReadPrec
 -- 
--- import Data.Maybe
+import Data.Maybe
 -- 
--- import GHC.Unicode
--- import GHC.Num
--- import GHC.Real
--- import GHC.Float
--- import GHC.Show
--- import GHC.Base
+import GHC.Unicode
+import GHC.Num
+import GHC.Real
+import GHC.Float
+import GHC.Show
+import GHC.Base
 -- import GHC.Arr
+
+
+-- | @'readParen' 'True' p@ parses what @p@ parses, but surrounded with
+-- parentheses.
+--
+-- @'readParen' 'False' p@ parses what @p@ parses, but optionally
+-- surrounded with parentheses.
+readParen       :: Bool -> ReadS a -> ReadS a
+-- A Haskell 2010 function
+readParen b g   =  if b then mandatory else optional
+                   where optional r  = g r ++ mandatory r
+                         mandatory r = do
+                                ([C# '('#],s) <- lex r
+                                (x,t)   <- optional s
+                                ([C# ')'#],u) <- lex t
+                                return (x,u)
+
+-- | Parsing of 'String's, producing values.
+--
+-- Derived instances of 'Read' make the following assumptions, which
+-- derived instances of 'Text.Show.Show' obey:
+--
+-- * If the constructor is defined to be an infix operator, then the
+--   derived 'Read' instance will parse only infix applications of
+--   the constructor (not the prefix form).
+--
+-- * Associativity is not used to reduce the occurrence of parentheses,
+--   although precedence may be.
+--
+-- * If the constructor is defined using record syntax, the derived 'Read'
+--   will parse only the record-syntax form, and furthermore, the fields
+--   must be given in the same order as the original declaration.
+--
+-- * The derived 'Read' instance allows arbitrary Haskell whitespace
+--   between tokens of the input string.  Extra parentheses are also
+--   allowed.
+--
+-- For example, given the declarations
+--
+-- > infixr 5 :^:
+-- > data Tree a =  Leaf a  |  Tree a :^: Tree a
+--
+-- the derived instance of 'Read' in Haskell 2010 is equivalent to
+--
+-- > instance (Read a) => Read (Tree a) where
+-- >
+-- >         readsPrec d r =  readParen (d > app_prec)
+-- >                          (\r -> [(Leaf m,t) |
+-- >                                  ("Leaf",s) <- lex r,
+-- >                                  (m,t) <- readsPrec (app_prec+1) s]) r
+-- >
+-- >                       ++ readParen (d > up_prec)
+-- >                          (\r -> [(u:^:v,w) |
+-- >                                  (u,s) <- readsPrec (up_prec+1) r,
+-- >                                  (":^:",t) <- lex s,
+-- >                                  (v,w) <- readsPrec (up_prec+1) t]) r
+-- >
+-- >           where app_prec = 10
+-- >                 up_prec = 5
+--
+-- Note that right-associativity of @:^:@ is unused.
+--
+-- The derived instance in GHC is equivalent to
+--
+-- > instance (Read a) => Read (Tree a) where
+-- >
+-- >         readPrec = parens $ (prec app_prec $ do
+-- >                                  Ident "Leaf" <- lexP
+-- >                                  m <- step readPrec
+-- >                                  return (Leaf m))
+-- >
+-- >                      +++ (prec up_prec $ do
+-- >                                  u <- step readPrec
+-- >                                  Symbol ":^:" <- lexP
+-- >                                  v <- step readPrec
+-- >                                  return (u :^: v))
+-- >
+-- >           where app_prec = 10
+-- >                 up_prec = 5
+-- >
+-- >         readListPrec = readListPrecDefault
+
+class Read a where
+  {-# MINIMAL readsPrec | readPrec #-}
+
+  -- | attempts to parse a value from the front of the string, returning
+  -- a list of (parsed value, remaining string) pairs.  If there is no
+  -- successful parse, the returned list is empty.
+  --
+  -- Derived instances of 'Read' and 'Text.Show.Show' satisfy the following:
+  --
+  -- * @(x,\"\")@ is an element of
+  --   @('readsPrec' d ('Text.Show.showsPrec' d x \"\"))@.
+  --
+  -- That is, 'readsPrec' parses the string produced by
+  -- 'Text.Show.showsPrec', and delivers the value that
+  -- 'Text.Show.showsPrec' started with.
+
+  readsPrec    :: Int   -- ^ the operator precedence of the enclosing
+                        -- context (a number from @0@ to @11@).
+                        -- Function application has precedence @10@.
+                -> ReadS a
+
+  -- | The method 'readList' is provided to allow the programmer to
+  -- give a specialised way of parsing lists of values.
+  -- For example, this is used by the predefined 'Read' instance of
+  -- the 'Char' type, where values of type 'String' should be are
+  -- expected to use double quotes, rather than square brackets.
+  readList     :: ReadS [a]
+
+  -- | Proposed replacement for 'readsPrec' using new-style parsers (GHC only).
+  readPrec     :: ReadPrec a
+
+  -- | Proposed replacement for 'readList' using new-style parsers (GHC only).
+  -- The default definition uses 'readList'.  Instances that define 'readPrec'
+  -- should also define 'readListPrec' as 'readListPrecDefault'.
+  readListPrec :: ReadPrec [a]
+
+  -- default definitions
+  readsPrec    = readPrec_to_S readPrec
+  readList     = readPrec_to_S (list readPrec) (I# 0#)
+  readPrec     = readS_to_Prec readsPrec
+  readListPrec = readS_to_Prec (\_ -> readList)
+
+readListDefault :: Read a => ReadS [a]
+-- ^ A possible replacement definition for the 'readList' method (GHC only).
+--   This is only needed for GHC, and even then only for 'Read' instances
+--   where 'readListPrec' isn't defined as 'readListPrecDefault'.
+readListDefault = readPrec_to_S readListPrec (I# 0#)
+
+readListPrecDefault :: Read a => ReadPrec [a]
+-- ^ A possible replacement definition for the 'readListPrec' method,
+--   defined using 'readPrec' (GHC only).
+readListPrecDefault = list readPrec
+
+------------------------------------------------------------------------
+-- H2010 compatibility
+
+-- | The 'lex' function reads a single lexeme from the input, discarding
+-- initial white space, and returning the characters that constitute the
+-- lexeme.  If the input string contains only white space, 'lex' returns a
+-- single successful \`lexeme\' consisting of the empty string.  (Thus
+-- @'lex' \"\" = [(\"\",\"\")]@.)  If there is no legal lexeme at the
+-- beginning of the input string, 'lex' fails (i.e. returns @[]@).
+--
+-- This lexer is not completely faithful to the Haskell lexical syntax
+-- in the following respects:
+--
+-- * Qualified names are not handled properly
+--
+-- * Octal and hexadecimal numerics are not recognized as a single token
+--
+-- * Comments are not treated properly
+lex :: ReadS String             -- As defined by H2010
+lex s  = readP_to_S L.hsLex s
+
+-- | Read a string representation of a character, using Haskell
+-- source-language escape conventions.  For example:
+--
+-- > lexLitChar  "\\nHello"  =  [("\\n", "Hello")]
+--
+lexLitChar :: ReadS String      -- As defined by H2010
+lexLitChar = readP_to_S (GHC.Base.do { (s, _) <- P.gather L.lexChar ;
+                                        let s' = removeNulls s in
+                                        return s' })
+    where
+    -- remove nulls from end of the character if they exist
+    removeNulls [] = []
+    removeNulls (C# '\\'#:C# '&'#:xs) = removeNulls xs
+    removeNulls (first:rest) = first : removeNulls rest
+        -- There was a skipSpaces before the P.gather L.lexChar,
+        -- but that seems inconsistent with readLitChar
+
+-- | Read a string representation of a character, using Haskell
+-- source-language escape conventions, and convert it to the character
+-- that it encodes.  For example:
+--
+-- > readLitChar "\\nHello"  =  [('\n', "Hello")]
+--
+readLitChar :: ReadS Char       -- As defined by H2010
+readLitChar = readP_to_S L.lexChar
+
+-- | Reads a non-empty string of decimal digits.
+lexDigits :: ReadS String
+lexDigits = readP_to_S (P.munch1 isDigit)
+
+------------------------------------------------------------------------
+-- utility parsers
+
+lexP :: ReadPrec L.Lexeme
+-- ^ Parse a single lexeme
+lexP = lift L.lex
 -- 
--- 
--- -- | @'readParen' 'True' p@ parses what @p@ parses, but surrounded with
--- -- parentheses.
--- --
--- -- @'readParen' 'False' p@ parses what @p@ parses, but optionally
--- -- surrounded with parentheses.
--- readParen       :: Bool -> ReadS a -> ReadS a
--- -- A Haskell 2010 function
--- readParen b g   =  if b then mandatory else optional
---                    where optional r  = g r ++ mandatory r
---                          mandatory r = do
---                                 ("(",s) <- lex r
---                                 (x,t)   <- optional s
---                                 (")",u) <- lex t
---                                 return (x,u)
--- 
--- -- | Parsing of 'String's, producing values.
--- --
--- -- Derived instances of 'Read' make the following assumptions, which
--- -- derived instances of 'Text.Show.Show' obey:
--- --
--- -- * If the constructor is defined to be an infix operator, then the
--- --   derived 'Read' instance will parse only infix applications of
--- --   the constructor (not the prefix form).
--- --
--- -- * Associativity is not used to reduce the occurrence of parentheses,
--- --   although precedence may be.
--- --
--- -- * If the constructor is defined using record syntax, the derived 'Read'
--- --   will parse only the record-syntax form, and furthermore, the fields
--- --   must be given in the same order as the original declaration.
--- --
--- -- * The derived 'Read' instance allows arbitrary Haskell whitespace
--- --   between tokens of the input string.  Extra parentheses are also
--- --   allowed.
--- --
--- -- For example, given the declarations
--- --
--- -- > infixr 5 :^:
--- -- > data Tree a =  Leaf a  |  Tree a :^: Tree a
--- --
--- -- the derived instance of 'Read' in Haskell 2010 is equivalent to
--- --
--- -- > instance (Read a) => Read (Tree a) where
--- -- >
--- -- >         readsPrec d r =  readParen (d > app_prec)
--- -- >                          (\r -> [(Leaf m,t) |
--- -- >                                  ("Leaf",s) <- lex r,
--- -- >                                  (m,t) <- readsPrec (app_prec+1) s]) r
--- -- >
--- -- >                       ++ readParen (d > up_prec)
--- -- >                          (\r -> [(u:^:v,w) |
--- -- >                                  (u,s) <- readsPrec (up_prec+1) r,
--- -- >                                  (":^:",t) <- lex s,
--- -- >                                  (v,w) <- readsPrec (up_prec+1) t]) r
--- -- >
--- -- >           where app_prec = 10
--- -- >                 up_prec = 5
--- --
--- -- Note that right-associativity of @:^:@ is unused.
--- --
--- -- The derived instance in GHC is equivalent to
--- --
--- -- > instance (Read a) => Read (Tree a) where
--- -- >
--- -- >         readPrec = parens $ (prec app_prec $ do
--- -- >                                  Ident "Leaf" <- lexP
--- -- >                                  m <- step readPrec
--- -- >                                  return (Leaf m))
--- -- >
--- -- >                      +++ (prec up_prec $ do
--- -- >                                  u <- step readPrec
--- -- >                                  Symbol ":^:" <- lexP
--- -- >                                  v <- step readPrec
--- -- >                                  return (u :^: v))
--- -- >
--- -- >           where app_prec = 10
--- -- >                 up_prec = 5
--- -- >
--- -- >         readListPrec = readListPrecDefault
--- 
--- class Read a where
---   {-# MINIMAL readsPrec | readPrec #-}
--- 
---   -- | attempts to parse a value from the front of the string, returning
---   -- a list of (parsed value, remaining string) pairs.  If there is no
---   -- successful parse, the returned list is empty.
---   --
---   -- Derived instances of 'Read' and 'Text.Show.Show' satisfy the following:
---   --
---   -- * @(x,\"\")@ is an element of
---   --   @('readsPrec' d ('Text.Show.showsPrec' d x \"\"))@.
---   --
---   -- That is, 'readsPrec' parses the string produced by
---   -- 'Text.Show.showsPrec', and delivers the value that
---   -- 'Text.Show.showsPrec' started with.
--- 
---   readsPrec    :: Int   -- ^ the operator precedence of the enclosing
---                         -- context (a number from @0@ to @11@).
---                         -- Function application has precedence @10@.
---                 -> ReadS a
--- 
---   -- | The method 'readList' is provided to allow the programmer to
---   -- give a specialised way of parsing lists of values.
---   -- For example, this is used by the predefined 'Read' instance of
---   -- the 'Char' type, where values of type 'String' should be are
---   -- expected to use double quotes, rather than square brackets.
---   readList     :: ReadS [a]
--- 
---   -- | Proposed replacement for 'readsPrec' using new-style parsers (GHC only).
---   readPrec     :: ReadPrec a
--- 
---   -- | Proposed replacement for 'readList' using new-style parsers (GHC only).
---   -- The default definition uses 'readList'.  Instances that define 'readPrec'
---   -- should also define 'readListPrec' as 'readListPrecDefault'.
---   readListPrec :: ReadPrec [a]
--- 
---   -- default definitions
---   readsPrec    = readPrec_to_S readPrec
---   readList     = readPrec_to_S (list readPrec) 0
---   readPrec     = readS_to_Prec readsPrec
---   readListPrec = readS_to_Prec (\_ -> readList)
--- 
--- readListDefault :: Read a => ReadS [a]
--- -- ^ A possible replacement definition for the 'readList' method (GHC only).
--- --   This is only needed for GHC, and even then only for 'Read' instances
--- --   where 'readListPrec' isn't defined as 'readListPrecDefault'.
--- readListDefault = readPrec_to_S readListPrec 0
--- 
--- readListPrecDefault :: Read a => ReadPrec [a]
--- -- ^ A possible replacement definition for the 'readListPrec' method,
--- --   defined using 'readPrec' (GHC only).
--- readListPrecDefault = list readPrec
--- 
--- ------------------------------------------------------------------------
--- -- H2010 compatibility
--- 
--- -- | The 'lex' function reads a single lexeme from the input, discarding
--- -- initial white space, and returning the characters that constitute the
--- -- lexeme.  If the input string contains only white space, 'lex' returns a
--- -- single successful \`lexeme\' consisting of the empty string.  (Thus
--- -- @'lex' \"\" = [(\"\",\"\")]@.)  If there is no legal lexeme at the
--- -- beginning of the input string, 'lex' fails (i.e. returns @[]@).
--- --
--- -- This lexer is not completely faithful to the Haskell lexical syntax
--- -- in the following respects:
--- --
--- -- * Qualified names are not handled properly
--- --
--- -- * Octal and hexadecimal numerics are not recognized as a single token
--- --
--- -- * Comments are not treated properly
--- lex :: ReadS String             -- As defined by H2010
--- lex s  = readP_to_S L.hsLex s
--- 
--- -- | Read a string representation of a character, using Haskell
--- -- source-language escape conventions.  For example:
--- --
--- -- > lexLitChar  "\\nHello"  =  [("\\n", "Hello")]
--- --
--- lexLitChar :: ReadS String      -- As defined by H2010
--- lexLitChar = readP_to_S (do { (s, _) <- P.gather L.lexChar ;
---                               let s' = removeNulls s in
---                               return s' })
---     where
---     -- remove nulls from end of the character if they exist
---     removeNulls [] = []
---     removeNulls ('\\':'&':xs) = removeNulls xs
---     removeNulls (first:rest) = first : removeNulls rest
---         -- There was a skipSpaces before the P.gather L.lexChar,
---         -- but that seems inconsistent with readLitChar
--- 
--- -- | Read a string representation of a character, using Haskell
--- -- source-language escape conventions, and convert it to the character
--- -- that it encodes.  For example:
--- --
--- -- > readLitChar "\\nHello"  =  [('\n', "Hello")]
--- --
--- readLitChar :: ReadS Char       -- As defined by H2010
--- readLitChar = readP_to_S L.lexChar
--- 
--- -- | Reads a non-empty string of decimal digits.
--- lexDigits :: ReadS String
--- lexDigits = readP_to_S (P.munch1 isDigit)
--- 
--- ------------------------------------------------------------------------
--- -- utility parsers
--- 
--- lexP :: ReadPrec L.Lexeme
--- -- ^ Parse a single lexeme
--- lexP = lift L.lex
--- 
--- expectP :: L.Lexeme -> ReadPrec ()
--- expectP lexeme = lift (L.expect lexeme)
--- 
--- expectCharP :: Char -> ReadPrec a -> ReadPrec a
--- expectCharP c a = do
---   q <- get
---   if q == c
---     then a
---     else pfail
--- {-# INLINE expectCharP #-}
--- 
--- -- A version of skipSpaces that takes the next
--- -- parser as an argument. That is,
--- --
--- -- skipSpacesThenP m = lift skipSpaces >> m
--- --
--- -- Since skipSpaces is recursive, it appears that we get
--- -- cleaner code by providing the continuation explicitly.
--- -- In particular, we avoid passing an extra continuation
--- -- of the form
--- --
--- -- \ () -> ...
--- skipSpacesThenP :: ReadPrec a -> ReadPrec a
--- skipSpacesThenP m =
---   do s <- look
---      skip s
---  where
---    skip (c:s) | isSpace c = get *> skip s
---    skip _ = m
--- 
--- paren :: ReadPrec a -> ReadPrec a
--- -- ^ @(paren p)@ parses \"(P0)\"
--- --      where @p@ parses \"P0\" in precedence context zero
--- paren p = skipSpacesThenP (paren' p)
--- 
--- -- We try very hard to make paren' efficient, because parens is ubiquitous.
--- -- Earlier code used `expectP` to look for the parentheses. The problem is that
--- -- this lexes a (potentially long) token just to check if it's a parenthesis or
--- -- not. So the first token of pretty much every value would be fully lexed
--- -- twice. Now, we look for the '(' by hand instead. Since there's no reason not
--- -- to, and it allows for faster failure, we do the same for ')'. This strategy
--- -- works particularly well here because neither '(' nor ')' can begin any other
--- -- lexeme.
--- paren' :: ReadPrec a -> ReadPrec a
--- paren' p = expectCharP '(' $ reset p >>= \x ->
---               skipSpacesThenP (expectCharP ')' (pure x))
--- 
--- parens :: ReadPrec a -> ReadPrec a
--- -- ^ @(parens p)@ parses \"P\", \"(P0)\", \"((P0))\", etc,
--- --      where @p@ parses \"P\"  in the current precedence context
--- --          and parses \"P0\" in precedence context zero
--- parens p = optional
---  where
---   optional  = p +++ mandatory
---   mandatory = paren optional
--- 
--- list :: ReadPrec a -> ReadPrec [a]
--- -- ^ @(list p)@ parses a list of things parsed by @p@,
--- -- using the usual square-bracket syntax.
--- list readx =
---   parens
---   ( do expectP (L.Punc "[")
---        (listRest False +++ listNext)
---   )
---  where
---   listRest started =
---     do L.Punc c <- lexP
---        case c of
---          "]"           -> return []
---          "," | started -> listNext
---          _             -> pfail
--- 
---   listNext =
---     do x  <- reset readx
---        xs <- listRest True
---        return (x:xs)
--- 
+expectP :: L.Lexeme -> ReadPrec ()
+expectP lexeme = lift (L.expect lexeme)
+
+expectCharP :: Char -> ReadPrec a -> ReadPrec a
+expectCharP c a = GHC.Base.do
+  q <- get
+  if q == c
+    then a
+    else pfail
+{-# INLINE expectCharP #-}
+
+-- A version of skipSpaces that takes the next
+-- parser as an argument. That is,
+--
+-- skipSpacesThenP m = lift skipSpaces >> m
+--
+-- Since skipSpaces is recursive, it appears that we get
+-- cleaner code by providing the continuation explicitly.
+-- In particular, we avoid passing an extra continuation
+-- of the form
+--
+-- \ () -> ...
+skipSpacesThenP :: ReadPrec a -> ReadPrec a
+skipSpacesThenP m =
+  GHC.Base.do
+     s <- look
+     skip s
+ where
+   skip (c:s) | isSpace c = get *> skip s
+   skip _ = m
+
+paren :: ReadPrec a -> ReadPrec a
+-- ^ @(paren p)@ parses \"(P0)\"
+--      where @p@ parses \"P0\" in precedence context zero
+paren p = skipSpacesThenP (paren' p)
+
+-- We try very hard to make paren' efficient, because parens is ubiquitous.
+-- Earlier code used `expectP` to look for the parentheses. The problem is that
+-- this lexes a (potentially long) token just to check if it's a parenthesis or
+-- not. So the first token of pretty much every value would be fully lexed
+-- twice. Now, we look for the '(' by hand instead. Since there's no reason not
+-- to, and it allows for faster failure, we do the same for ')'. This strategy
+-- works particularly well here because neither '(' nor ')' can begin any other
+-- lexeme.
+paren' :: ReadPrec a -> ReadPrec a
+paren' p = expectCharP (char2char '(') $ reset p >>= \x ->
+              skipSpacesThenP (expectCharP (char2char ')') (pure x))
+
+parens :: ReadPrec a -> ReadPrec a
+-- ^ @(parens p)@ parses \"P\", \"(P0)\", \"((P0))\", etc,
+--      where @p@ parses \"P\"  in the current precedence context
+--          and parses \"P0\" in precedence context zero
+parens p = optional
+ where
+  optional  = p +++ mandatory
+  mandatory = paren optional
+
+list :: ReadPrec a -> ReadPrec [a]
+-- ^ @(list p)@ parses a list of things parsed by @p@,
+-- using the usual square-bracket syntax.
+list readx =
+  parens
+  ( GHC.Base.do
+       expectP (L.Punc (map char2char "["))
+       (listRest False +++ listNext)
+  )
+ where
+  listRest started =
+    GHC.Base.do
+       lr <- lexP
+       case lr of
+        L.Punc c ->
+            case c of
+                _ | c == map char2char "]"           -> return []
+                _ | c == map char2char ",", started -> listNext
+                _             -> pfail
+        _ -> error "invalid pattern"
+
+  listNext =
+    GHC.Base.do
+       x  <- reset readx
+       xs <- listRest True
+       return (x:xs)
+ 
 -- choose :: [(String, ReadPrec a)] -> ReadPrec a
 -- -- ^ Parse the specified lexeme and continue as specified.
 -- -- Esp useful for nullary constructors; e.g.
@@ -465,29 +472,31 @@
 --   readListPrec = readListPrecDefault
 --   readList     = readListDefault
 -- 
--- --------------------------------------------------------------
--- -- Numeric instances of Read
--- --------------------------------------------------------------
--- 
--- readNumber :: Num a => (L.Lexeme -> ReadPrec a) -> ReadPrec a
--- -- Read a signed number
--- readNumber convert =
---   parens
---   ( do x <- lexP
---        case x of
---          L.Symbol "-" -> do y <- lexP
---                             n <- convert y
---                             return (negate n)
--- 
---          _   -> convert x
---   )
--- 
--- 
--- convertInt :: Num a => L.Lexeme -> ReadPrec a
--- convertInt (L.Number n)
---  | Just i <- L.numberToInteger n = return (fromInteger i)
--- convertInt _ = pfail
--- 
+--------------------------------------------------------------
+-- Numeric instances of Read
+--------------------------------------------------------------
+
+readNumber :: Num a => (L.Lexeme -> ReadPrec a) -> ReadPrec a
+-- Read a signed number
+readNumber convert =
+  parens
+  ( GHC.Base.do
+       x <- lexP
+       case x of
+         L.Symbol [C# '-'#] -> GHC.Base.do
+                                    y <- lexP
+                                    n <- convert y
+                                    return (negate n)
+
+         _   -> convert x
+  )
+
+
+convertInt :: Num a => L.Lexeme -> ReadPrec a
+convertInt (L.Number n)
+ | Just i <- L.numberToInteger n = return (fromInteger i)
+convertInt _ = pfail
+
 -- convertFrac :: forall a . RealFloat a => L.Lexeme -> ReadPrec a
 -- convertFrac (L.Ident "NaN")      = return (0 / 0)
 -- convertFrac (L.Ident "Infinity") = return (1 / 0)
@@ -496,20 +505,20 @@
 --                               Nothing -> return (1 / 0)
 --                               Just rat -> return $ fromRational rat
 -- convertFrac _            = pfail
--- 
--- instance Read Int where
---   readPrec     = readNumber convertInt
---   readListPrec = readListPrecDefault
---   readList     = readListDefault
+
+instance Read Int where
+  readPrec     = readNumber convertInt
+  readListPrec = readListPrecDefault
+  readList     = readListDefault
 -- 
 -- instance Read Word where
 --     readsPrec p s = [(fromInteger x, r) | (x, r) <- readsPrec p s]
--- 
--- instance Read Integer where
---   readPrec     = readNumber convertInt
---   readListPrec = readListPrecDefault
---   readList     = readListDefault
--- 
+
+instance Read Integer where
+  readPrec     = readNumber convertInt
+  readListPrec = readListPrecDefault
+  readList     = readListDefault
+
 -- instance Read Float where
 --   readPrec     = readNumber convertFrac
 --   readListPrec = readListPrecDefault

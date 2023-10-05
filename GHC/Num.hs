@@ -22,6 +22,7 @@ module GHC.Num (module GHC.Num, module GHC.Integer2) where
 import GHC.Base
 -- import GHC.Integer
 import GHC.Integer2
+import GHC.Prim2
 -- 
 infixl 7  *
 infixl 6  +, -
@@ -86,17 +87,17 @@ instance  Num Int  where
 --     {-# INLINE fromInteger #-}   -- Just to be sure!
 --     fromInteger i = I# (integerToInt i)
     fromInteger = fromIntegerInt
--- 
--- instance Num Word where
---     (W# x#) + (W# y#)      = W# (x# `plusWord#` y#)
---     (W# x#) - (W# y#)      = W# (x# `minusWord#` y#)
---     (W# x#) * (W# y#)      = W# (x# `timesWord#` y#)
---     negate (W# x#)         = W# (int2Word# (negateInt# (word2Int# x#)))
---     abs x                  = x
---     signum 0               = 0
---     signum _               = 1
---     fromInteger i          = W# (integerToWord i)
--- 
+
+instance Num Word where
+    (W# x#) + (W# y#)      = W# (x# `plusWord#` y#)
+    (W# x#) - (W# y#)      = W# (x# `minusWord#` y#)
+    (W# x#) * (W# y#)      = W# (x# `timesWord#` y#)
+    negate (W# x#)         = W# (int2Word# (negateInt# (word2Int# x#)))
+    abs x                  = x
+    signum x | x == fromInteger (Z# 0#) = fromInteger (Z# 0#)
+    signum _               = fromInteger (Z# 1#)
+    fromInteger i          = W# (integerToWord i)
+
 instance  Num Integer  where
     (+) = plusInteger
     (-) = minusInteger

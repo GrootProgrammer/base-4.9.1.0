@@ -1,6 +1,6 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude #-}
--- 
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 -- -----------------------------------------------------------------------------
 -- -- |
 -- -- Module      :  Control.Monad
@@ -56,7 +56,7 @@ module Control.Monad
 -- 
 --     -- ** Conditional execution of monadic expressions
 -- 
---     , guard
+    , guard
 --     , when
 --     , unless
 -- 
@@ -79,18 +79,18 @@ import Data.Foldable ( Foldable, sequence_, sequenceA_, msum, mapM_, foldlM, for
 import Data.Functor ( void, (<$>) )
 -- import Data.Traversable ( forM, mapM, traverse, sequence, sequenceA )
 -- 
--- import GHC.Base hiding ( mapM, sequence )
+import GHC.Base hiding ( mapM, sequence )
 -- import GHC.List ( zipWith, unzip )
 -- import GHC.Num  ( (-) )
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- Functions mandated by the Prelude
 -- 
--- -- | @'guard' b@ is @'pure' ()@ if @b@ is 'True',
--- -- and 'empty' if @b@ is 'False'.
--- guard           :: (Alternative f) => Bool -> f ()
--- guard True      =  pure ()
--- guard False     =  empty
+-- | @'guard' b@ is @'pure' ()@ if @b@ is 'True',
+-- and 'empty' if @b@ is 'False'.
+guard           :: (Alternative f) => Bool -> f ()
+guard True      =  pure ()
+guard False     =  empty
 -- 
 -- -- | This generalizes the list-based 'filter' function.
 -- 

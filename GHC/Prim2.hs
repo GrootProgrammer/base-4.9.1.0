@@ -262,6 +262,15 @@ ord# = ord#
 
 -- Word#
 
+plusWord# :: Word# -> Word# -> Word#
+plusWord# = plusWord#
+
+minusWord# :: Word# -> Word# -> Word#
+minusWord# = minusWord#
+
+timesWord# :: Word# -> Word# -> Word#
+timesWord# = timesWord#
+
 eqWord# :: Word# -> Word# -> Bool
 eqWord# = eqWord#
 

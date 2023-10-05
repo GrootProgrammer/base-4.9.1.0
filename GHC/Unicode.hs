@@ -1,5 +1,5 @@
 {-# LANGUAGE Trustworthy #-}
-{-# LANGUAGE CPP, NoImplicitPrelude, StandaloneDeriving #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, PackageImports, StandaloneDeriving, MagicHash #-}
 {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
@@ -27,15 +27,18 @@ module GHC.Unicode (
         isOctDigit, isHexDigit, isAlphaNum,
         isPunctuation, isSymbol,
         toUpper, toLower, toTitle,
---         wgencat
+        wgencat
     ) where
 -- 
 import GHC.Base
 import GHC.Char        (chr)
 import GHC.Real
--- import GHC.Enum ( Enum (..), Bounded (..) )
+import GHC.Enum ( Enum (..), Bounded (..) )
 -- import GHC.Arr ( Ix (..) )
 import GHC.Num
+
+import qualified "base" GHC.Enum as GHCE
+import qualified "ghc-prim" GHC.Types as T
 -- 
 -- -- Data.Char.chr already imports this and we need to define a Show instance
 -- -- for GeneralCategory
@@ -129,6 +132,15 @@ data GeneralCategory
         | Surrogate             -- ^ Cs: Other, Surrogate
         | PrivateUse            -- ^ Co: Other, Private Use
         | NotAssigned           -- ^ Cn: Other, Not Assigned
+        -- deriving GHCE.Enum
+
+instance Enum GeneralCategory where
+    toEnum (I# x) = tagToEnum# x
+    fromEnum x = I# (dataToTag# x)
+
+-- instance Enum GeneralCategory where
+--     toEnum (I# x) = GHCE.toEnum (T.I# x)
+--     fromEnum x = case GHCE.fromEnum x of T.I# y -> I# y
 --         deriving (Show, Eq, Ord, Enum, Bounded, Ix)
 -- 
 -- -- | The Unicode general category of the character. This relies on the
@@ -156,8 +168,7 @@ data GeneralCategory
 -- -- Space
 -- --
 generalCategory :: Char -> GeneralCategory
-generalCategory = generalCategory
--- generalCategory c = toEnum $ fromIntegral $ wgencat $ fromIntegral $ ord c
+generalCategory c = toEnum $ fromIntegral $ wgencat $ fromIntegral $ ord c
 -- 
 -- -- | Selects the first 128 characters of the Unicode character set,
 -- -- corresponding to the ASCII character set.
@@ -194,18 +205,17 @@ isPrint                 :: Char -> Bool
 -- -- | Returns 'True' for any Unicode space character, and the control
 -- -- characters @\\t@, @\\n@, @\\r@, @\\f@, @\\v@.
 isSpace                 :: Char -> Bool
-isSpace = isSpace
--- -- isSpace includes non-breaking space
--- -- The magic 0x377 isn't really that magical. As of 2014, all the codepoints
--- -- at or below 0x377 have been assigned, so we shouldn't have to worry about
--- -- any new spaces appearing below there. It would probably be best to
--- -- use branchless ||, but currently the eqLit transformation will undo that,
--- -- so we'll do it like this until there's a way around that.
--- isSpace c
---   | uc <= 0x377 = uc == 32 || uc - 0x9 <= 4 || uc == 0xa0
---   | otherwise = iswspace (ord c) /= 0
---   where
---     uc = fromIntegral (ord c) :: Word
+-- isSpace includes non-breaking space
+-- The magic 0x377 isn't really that magical. As of 2014, all the codepoints
+-- at or below 0x377 have been assigned, so we shouldn't have to worry about
+-- any new spaces appearing below there. It would probably be best to
+-- use branchless ||, but currently the eqLit transformation will undo that,
+-- so we'll do it like this until there's a way around that.
+isSpace c
+  | uc <= fromInteger (Z# 0x377#) = uc == fromInteger (Z# 32#) || uc - (fromInteger (Z# 0x9#)) <= fromInteger (Z# 4#) || uc == fromInteger (Z# 0xa0#)
+  | otherwise = iswspace (ord c) /= (I# 0#)
+  where
+    uc = fromIntegral (ord c) :: Word
 -- 
 -- -- | Selects upper-case or title-case alphabetic Unicode characters (letters).
 -- -- Title case is used by a small number of letter ligatures like the
@@ -363,7 +373,13 @@ toTitle                 :: Char -> Char
 -- -- Regardless of the O/S and Library, use the functions contained in WCsubst.c
 -- 
 -- isAlpha    c = iswalpha (ord c) /= 0
-isAlpha    c = iswalpha (ord c) /= (fromInteger zeroInteger)
+isAlpha    c = case generalCategory c of
+                        UppercaseLetter -> True
+                        LowercaseLetter -> True
+                        TitlecaseLetter -> True
+                        ModifierLetter  -> True
+                        OtherLetter     -> True
+                        _               -> False
 -- isAlphaNum c = iswalnum (ord c) /= 0
 isAlphaNum c = iswalnum (ord c) /= (fromInteger zeroInteger)
 -- isControl  c = iswcntrl (ord c) /= 0
@@ -421,5 +437,9 @@ towtitle = towtitle
 -- 
 -- foreign import ccall unsafe "u_gencat"
 wgencat :: Int -> Int
-wgencat = wgencat
+wgencat (I# x) = I# (wgencat# x)
 -- 
+
+{-# NOINLINE wgencat# #-}
+wgencat# :: Int# -> Int#
+wgencat# = wgencat#

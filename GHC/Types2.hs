@@ -31,7 +31,10 @@ isTrue# :: Int# -> T.Bool
 isTrue# = tagToEnum#
 
 char2char :: T.Char -> Char
-char2char = char2char
+char2char (T.C# c) = C# c
+
+unpackChar :: Char -> Char#
+unpackChar (C# c) = c
 
 newtype IO a = IO (State# RealWorld -> (# State# RealWorld, a #))
 

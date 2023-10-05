@@ -388,21 +388,21 @@ instance  Integral Integer where
 -- --------------------------------------------------------------
 -- -- Instances for @Ratio@
 -- --------------------------------------------------------------
--- 
--- instance  (Integral a)  => Ord (Ratio a)  where
---     {-# SPECIALIZE instance Ord Rational #-}
---     (x:%y) <= (x':%y')  =  x * y' <= x' * y
---     (x:%y) <  (x':%y')  =  x * y' <  x' * y
--- 
--- instance  (Integral a)  => Num (Ratio a)  where
---     {-# SPECIALIZE instance Num Rational #-}
---     (x:%y) + (x':%y')   =  reduce (x*y' + x'*y) (y*y')
---     (x:%y) - (x':%y')   =  reduce (x*y' - x'*y) (y*y')
---     (x:%y) * (x':%y')   =  reduce (x * x') (y * y')
---     negate (x:%y)       =  (-x) :% y
---     abs (x:%y)          =  abs x :% y
---     signum (x:%_)       =  signum x :% 1
---     fromInteger x       =  fromInteger x :% 1
+
+instance  (Integral a)  => Ord (Ratio a)  where
+    {-# SPECIALIZE instance Ord Rational #-}
+    (x:%y) <= (x':%y')  =  x * y' <= x' * y
+    (x:%y) <  (x':%y')  =  x * y' <  x' * y
+
+instance  (Integral a)  => Num (Ratio a)  where
+    {-# SPECIALIZE instance Num Rational #-}
+    (x:%y) + (x':%y')   =  reduce (x*y' + x'*y) (y*y')
+    (x:%y) - (x':%y')   =  reduce (x*y' - x'*y) (y*y')
+    (x:%y) * (x':%y')   =  reduce (x * x') (y * y')
+    negate (x:%y)       =  (fromInteger (Z# 0#) -x) :% y
+    abs (x:%y)          =  abs x :% y
+    signum (x:%_)       =  signum x :% fromInteger (Z# 1#)
+    fromInteger x       =  fromInteger x :% fromInteger (Z# 1#)
 -- 
 -- {-# RULES "fromRational/id" fromRational = id :: Rational -> Rational #-}
 -- instance  (Integral a)  => Fractional (Ratio a)  where

@@ -64,6 +64,11 @@ smallInteger x = Z# x
 --                   then Naught
 --                   else Positive (Some w None)
 -- 
+integerToWord :: Integer -> Word#
+integerToWord (Z# i) = integerToWord# i
+
+integerToWord# :: Int# -> Word#
+integerToWord# = integerToWord#
 -- {-# NOINLINE integerToWord #-}
 -- integerToWord :: Integer -> Word#
 -- integerToWord (Positive (Some w _)) = w
