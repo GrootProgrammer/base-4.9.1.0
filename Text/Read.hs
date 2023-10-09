@@ -1,6 +1,5 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE QualifiedDo #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -72,7 +71,7 @@ readEither s =
     _   -> Left (map char2char "Prelude.read: ambiguous parse")
  where
   read' =
-    GHC.Base.do
+    do
        x <- readPrec
        lift P.skipSpaces
        return x

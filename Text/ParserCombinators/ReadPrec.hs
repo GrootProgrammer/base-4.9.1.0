@@ -1,7 +1,6 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE MagicHash #-}
-{-# LANGUAGE QualifiedDo #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -85,7 +84,7 @@ instance Applicative ReadPrec where
 
 instance Monad ReadPrec where
   -- fail s    = P (\_ -> fail s)
-  P f >>= k = P (\n -> GHC.Base.do a <- f n; let P f' = k a in f' n)
+  P f >>= k = P (\n -> do a <- f n; let P f' = k a in f' n)
 
 -- instance MonadFail.MonadFail ReadPrec where
 --   fail s    = P (\_ -> fail s)

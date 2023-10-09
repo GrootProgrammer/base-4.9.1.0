@@ -1,7 +1,6 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE MagicHash #-}
-{-# LANGUAGE QualifiedDo #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -183,13 +182,13 @@ lex = skipSpaces >> lexToken
 
 -- | @since 4.7.0.0
 expect :: Lexeme -> ReadP ()
-expect lexeme = GHC.Base.do { skipSpaces
+expect lexeme = do { skipSpaces
                    ; thing <- lexToken
                    ; if thing == lexeme then return () else pfail }
 
 hsLex :: ReadP String
 -- ^ Haskell lexer: returns the lexed string, rather than the lexeme
-hsLex = GHC.Base.do
+hsLex = do
            skipSpaces
            (s,_) <- gather lexToken
            return s
@@ -207,7 +206,7 @@ lexToken = lexEOF     +++
 -- ----------------------------------------------------------------------
 -- End of file
 lexEOF :: ReadP Lexeme
-lexEOF = GHC.Base.do
+lexEOF = do
             s <- look
             guard (null s)
             return EOF
@@ -217,7 +216,7 @@ lexEOF = GHC.Base.do
 
 lexPunc :: ReadP Lexeme
 lexPunc =
-  GHC.Base.do
+  do
      c <- satisfy isPuncChar
      return (Punc [c])
 
@@ -230,7 +229,7 @@ isPuncChar c = c `elem` map char2char ",;()[]{}`"
 
 lexSymbol :: ReadP Lexeme
 lexSymbol =
-  GHC.Base.do
+  do
      s <- munch1 isSymbolChar
      if s `elem` reserved_ops then
         return (Punc s)         -- Reserved-ops count as punctuation
@@ -253,7 +252,7 @@ isSymbolChar c = not (isPuncChar c) && case generalCategory c of
 -- identifiers
 
 lexId :: ReadP Lexeme
-lexId = GHC.Base.do
+lexId = do
            c <- satisfy isIdsChar
            s <- munch isIdfChar
            return (Ident (c:s))
@@ -266,7 +265,7 @@ lexId = GHC.Base.do
 -- Lexing character literals
 
 lexLitChar :: ReadP Lexeme
-lexLitChar = GHC.Base.do
+lexLitChar = do
      _ <- char (C# '\''#)
      (c,esc) <- lexCharE
      guard (esc || c /= C# '\''#)   -- Eliminate '' possibility
@@ -274,11 +273,11 @@ lexLitChar = GHC.Base.do
      return (Char c)
 
 lexChar :: ReadP Char
-lexChar = GHC.Base.do { (c,_) <- lexCharE; consumeEmpties; return c }
+lexChar = do { (c,_) <- lexCharE; consumeEmpties; return c }
     where
     -- Consumes the string "\&" repeatedly and greedily (will only produce one match)
     consumeEmpties :: ReadP ()
-    consumeEmpties = GHC.Base.do
+    consumeEmpties = do
         rest <- look
         case rest of
             (C# '\\'#:C# '&'#:_) -> string (map char2char "\\&") >> consumeEmpties
@@ -287,11 +286,11 @@ lexChar = GHC.Base.do { (c,_) <- lexCharE; consumeEmpties; return c }
 
 lexCharE :: ReadP (Char, Bool)  -- "escaped or not"?
 lexCharE =
-  GHC.Base.do
+  do
      c1 <- get
      if c1 == C# '\\'#
-       then GHC.Base.do c2 <- lexEsc; return (c2, True)
-       else GHC.Base.do return (c1, False)
+       then do c2 <- lexEsc; return (c2, True)
+       else do return (c1, False)
  where
   lexEsc =
     lexEscChar
@@ -300,7 +299,7 @@ lexCharE =
           +++ lexAscii
 
   lexEscChar =
-    GHC.Base.do
+    do
        c <- get
        case unpackChar c of
          'a'#  -> return $ char2char '\a'
@@ -316,14 +315,14 @@ lexCharE =
          _    -> pfail
 
   lexNumeric =
-    GHC.Base.do
+    do
        base <- lexBaseChar <++ return (I# 10#)
        n    <- lexInteger base
        guard (n <= toInteger (ord maxBound))
        return (chr (fromInteger n))
 
   lexCntrlChar =
-    GHC.Base.do
+    do
        _ <- char (C# '^'#)
        c <- get
        case unpackChar c of
@@ -362,7 +361,7 @@ lexCharE =
          _    -> pfail
 
   lexAscii =
-    GHC.Base.do
+    do
         choice
          [ (string (map char2char "SOH") >> return (char2char '\SOH')) <++
            (string (map char2char "SO")  >> return (char2char '\SO'))
@@ -409,12 +408,12 @@ lexCharE =
 
 lexString :: ReadP Lexeme
 lexString =
-  GHC.Base.do
+  do
      _ <- char (C# '"'#)
      body id
  where
   body f =
-    GHC.Base.do
+    do
        (c,esc) <- lexStrItem
        if c /= C# '"'# || esc
          then body (f.(c:))
@@ -425,13 +424,13 @@ lexString =
                +++ lexCharE
 
   lexEmpty =
-    GHC.Base.do
+    do
        _ <- char (C# '\\'#)
        c <- get
        case unpackChar c of
-         '&'#          -> GHC.Base.do return ()
-         _ | isSpace c -> GHC.Base.do skipSpaces; _ <- char (C# '\\'#); return ()
-         _             -> GHC.Base.do pfail
+         '&'#          -> do return ()
+         _ | isSpace c -> do skipSpaces; _ <- char (C# '\\'#); return ()
+         _             -> do pfail
 
 -- ---------------------------------------------------------------------------
 --  Lexing numbers
@@ -447,7 +446,7 @@ lexNumber
 
 lexHexOct :: ReadP Lexeme
 lexHexOct
-  = GHC.Base.do
+  = do
         _ <- char (C# '0'#)
         base <- lexBaseChar
         digits <- lexDigits base
@@ -455,7 +454,7 @@ lexHexOct
 
 lexBaseChar :: ReadP Int
 -- Lex a single character indicating the base; fail if not there
-lexBaseChar = GHC.Base.do { c <- get;
+lexBaseChar = do { c <- get;
                    case unpackChar c of
                         'o'# -> return (I# 8#)
                         'O'# -> return (I# 8#)
@@ -465,7 +464,7 @@ lexBaseChar = GHC.Base.do { c <- get;
 
 lexDecNumber :: ReadP Lexeme
 lexDecNumber =
-  GHC.Base.do
+  do
      xs    <- lexDigits (I# 10#)
      mFrac <- lexFrac <++ return Nothing
      mExp  <- lexExp  <++ return Nothing
@@ -474,19 +473,19 @@ lexDecNumber =
 lexFrac :: ReadP (Maybe Digits)
 -- Read the fractional part; fail if it doesn't
 -- start ".d" where d is a digit
-lexFrac = GHC.Base.do
+lexFrac = do
              _ <- char (char2char '.')
              fraction <- lexDigits (I# 10#)
              return (Just fraction)
 
 lexExp :: ReadP (Maybe Integer)
-lexExp =   GHC.Base.do
+lexExp =   do
             _ <- char (char2char 'e') +++ char (char2char 'E')
             exp <- signedExp +++ lexInteger (I# 10#)
             return (Just exp)
  where
    signedExp
-     =  GHC.Base.do
+     =  do
           c <- char (char2char '-') +++ char (char2char  '+')
           n <- lexInteger (I# 10#)
           return (if c == char2char '-' then Z# 0# - n else n)
@@ -494,20 +493,20 @@ lexExp =   GHC.Base.do
 lexDigits :: Int -> ReadP Digits
 -- Lex a non-empty sequence of digits in specified base
 lexDigits base =
-  GHC.Base.do
+  do
      s  <- look
      xs <- scan s id
      guard (not (null xs))
      return xs
  where
   scan (c:cs) f = case valDig base c of
-                    Just n  -> GHC.Base.do _ <- get; scan cs (f.(n:))
-                    Nothing -> GHC.Base.do return (f [])
-  scan []     f = GHC.Base.do return (f [])
+                    Just n  -> do _ <- get; scan cs (f.(n:))
+                    Nothing -> do return (f [])
+  scan []     f = do return (f [])
 
 lexInteger :: Base -> ReadP Integer
 lexInteger base =
-  GHC.Base.do
+  do
      xs <- lexDigits base
      return (val (fromIntegral base) xs)
 
@@ -596,7 +595,7 @@ valDecDig c
 
 readIntP :: Num a => a -> (Char -> Bool) -> (Char -> Int) -> ReadP a
 readIntP base isDigit valDigit =
-  GHC.Base.do
+  do
     s <- munch1 isDigit
     return (val base (map valDigit s))
 {-# SPECIALISE readIntP

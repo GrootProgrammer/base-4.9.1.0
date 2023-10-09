@@ -1,5 +1,5 @@
 {-# LANGUAGE Trustworthy #-}
-{-# LANGUAGE NoImplicitPrelude, StandaloneDeriving, ScopedTypeVariables, MagicHash, QualifiedDo #-}
+{-# LANGUAGE NoImplicitPrelude, StandaloneDeriving, ScopedTypeVariables, MagicHash #-}
 {-# OPTIONS_HADDOCK hide #-}
 
 -----------------------------------------------------------------------------
@@ -228,7 +228,7 @@ lex s  = readP_to_S L.hsLex s
 -- > lexLitChar  "\\nHello"  =  [("\\n", "Hello")]
 --
 lexLitChar :: ReadS String      -- As defined by H2010
-lexLitChar = readP_to_S (GHC.Base.do { (s, _) <- P.gather L.lexChar ;
+lexLitChar = readP_to_S (do { (s, _) <- P.gather L.lexChar ;
                                         let s' = removeNulls s in
                                         return s' })
     where
@@ -263,7 +263,7 @@ expectP :: L.Lexeme -> ReadPrec ()
 expectP lexeme = lift (L.expect lexeme)
 
 expectCharP :: Char -> ReadPrec a -> ReadPrec a
-expectCharP c a = GHC.Base.do
+expectCharP c a = do
   q <- get
   if q == c
     then a
@@ -283,7 +283,7 @@ expectCharP c a = GHC.Base.do
 -- \ () -> ...
 skipSpacesThenP :: ReadPrec a -> ReadPrec a
 skipSpacesThenP m =
-  GHC.Base.do
+  do
      s <- look
      skip s
  where
@@ -321,13 +321,13 @@ list :: ReadPrec a -> ReadPrec [a]
 -- using the usual square-bracket syntax.
 list readx =
   parens
-  ( GHC.Base.do
+  ( do
        expectP (L.Punc (map char2char "["))
        (listRest False +++ listNext)
   )
  where
   listRest started =
-    GHC.Base.do
+    do
        lr <- lexP
        case lr of
         L.Punc c ->
@@ -338,7 +338,7 @@ list readx =
         _ -> error "invalid pattern"
 
   listNext =
-    GHC.Base.do
+    do
        x  <- reset readx
        xs <- listRest True
        return (x:xs)
@@ -480,10 +480,10 @@ readNumber :: Num a => (L.Lexeme -> ReadPrec a) -> ReadPrec a
 -- Read a signed number
 readNumber convert =
   parens
-  ( GHC.Base.do
+  ( do
        x <- lexP
        case x of
-         L.Symbol [C# '-'#] -> GHC.Base.do
+         L.Symbol [C# '-'#] -> do
                                     y <- lexP
                                     n <- convert y
                                     return (negate n)
