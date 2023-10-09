@@ -67,8 +67,12 @@ smallInteger x = Z# x
 integerToWord :: Integer -> Word#
 integerToWord (Z# i) = integerToWord# i
 
+-- The definition of integerToWord will be replaced with a primitive operation in GHC.
+-- Having it (incorrectly) just return 0 here avoids incorrect inlining based on the idea
+-- that integerToWord# is an infinite loop
+{-# NOINLINE integerToWord# #-}
 integerToWord# :: Int# -> Word#
-integerToWord# = integerToWord#
+integerToWord# _ = 0##
 -- {-# NOINLINE integerToWord #-}
 -- integerToWord :: Integer -> Word#
 -- integerToWord (Positive (Some w _)) = w

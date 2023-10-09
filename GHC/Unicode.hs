@@ -441,5 +441,6 @@ wgencat (I# x) = I# (wgencat# x)
 -- 
 
 {-# NOINLINE wgencat# #-}
+-- Incorrect definition will be replaced with primitive in G2
 wgencat# :: Int# -> Int#
-wgencat# = wgencat#
+wgencat# _ = 0#
