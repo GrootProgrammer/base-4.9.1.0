@@ -3,7 +3,6 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE QualifiedDo #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -232,7 +231,7 @@ R f1 +++ R f2 = R (\k -> f1 k <|> f2 k)
 --   locally produces any result at all, then right parser is
 --   not used.
 R f0 <++ q =
-  Control.Monad.do
+  do
     s <- look
     probe (f0 return) s 0#
  where
@@ -266,7 +265,7 @@ gather (R m)
 satisfy :: (Char -> Bool) -> ReadP Char
 -- ^ Consumes and returns the next character, if it satisfies the
 --   specified predicate.
-satisfy p = Control.Monad.do c <- get; if p c then return c else pfail
+satisfy p = do c <- get; if p c then return c else pfail
 -- 
 char :: Char -> ReadP Char
 -- ^ Parses and returns the specified character.
@@ -274,16 +273,16 @@ char c = satisfy (c ==)
 
 eof :: ReadP ()
 -- ^ Succeeds iff we are at the end of input
-eof = Control.Monad.do { s <- look
+eof = do { s <- look
          ; if null s then return ()
                      else pfail }
 
 string :: String -> ReadP String
 -- ^ Parses and returns the specified string.
-string this = Control.Monad.do s <- look; scan this s
+string this = do s <- look; scan this s
  where
   scan []     _               = do return this
-  scan (x:xs) (y:ys) | x == y = Control.Monad.do _ <- get; scan xs ys
+  scan (x:xs) (y:ys) | x == y = do _ <- get; scan xs ys
   scan _      _               = do pfail
 
 munch :: (Char -> Bool) -> ReadP String
@@ -291,21 +290,21 @@ munch :: (Char -> Bool) -> ReadP String
 --   Always succeds, exactly once having consumed all the characters
 --   Hence NOT the same as (many (satisfy p))
 munch p =
-  Control.Monad.do
+  do
     s <- look
     scan s
  where
-  scan (c:cs) | p c = Control.Monad.do _ <- get; s <- scan cs; return (c:s)
-  scan _            = Control.Monad.do return (map char2char "")
+  scan (c:cs) | p c = do _ <- get; s <- scan cs; return (c:s)
+  scan _            = do return (map char2char "")
 
 munch1 :: (Char -> Bool) -> ReadP String
 -- ^ Parses the first one or more characters satisfying the predicate.
 --   Fails if none, else succeeds exactly once having consumed all the characters
 --   Hence NOT the same as (many1 (satisfy p))
 munch1 p =
-  Control.Monad.do
+  do
     c <- get
-    if p c then Control.Monad.do s <- munch p; return (c:s)
+    if p c then do s <- munch p; return (c:s)
            else pfail
 
 choice :: [ReadP a] -> ReadP a
@@ -317,12 +316,12 @@ choice (p:ps) = p +++ choice ps
 skipSpaces :: ReadP ()
 -- ^ Skips all whitespace.
 skipSpaces =
-  Control.Monad.do
+  do
     s <- look
     skip s
  where
-  skip (c:s) | isSpace c = Control.Monad.do _ <- get; skip s
-  skip _                 = Control.Monad.do return ()
+  skip (c:s) | isSpace c = do _ <- get; skip s
+  skip _                 = do return ()
 
 -- count :: Int -> ReadP a -> ReadP [a]
 -- -- ^ @count n p@ parses @n@ occurrences of @p@ in sequence. A list of
