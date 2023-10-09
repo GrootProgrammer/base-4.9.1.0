@@ -266,7 +266,7 @@ class Applicative m => Monad m where
 --     -- to its own class 'MonadFail' (see "Control.Monad.Fail" for more
 --     -- details). The definition here will be removed in a future
 --     -- release.
-#if MIN_VERSION_base(4,6,0)
+#if MIN_VERSION_base(4,13,0)
 #else
     fail        :: String -> m a
     fail s      = errorWithoutStackTrace s
