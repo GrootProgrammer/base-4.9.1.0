@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, NoImplicitPrelude, PackageImports #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, PackageImports, RankNTypes #-}
 
 module GHC.BaseMonad ( String
                      , id
