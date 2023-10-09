@@ -1,5 +1,6 @@
 {-# LANGUAGE BangPatterns, CPP, KindSignatures,
-    NoImplicitPrelude, PackageImports, PolyKinds, RankNTypes #-}
+    NoImplicitPrelude, PackageImports, PolyKinds, RankNTypes,
+    TypeInType #-}
 
 module GHC.BaseMonad ( String
                      , id
