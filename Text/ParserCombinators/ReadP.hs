@@ -128,7 +128,7 @@ instance Monad P where
   (Result x p) >>= k = k x <|> (p >>= k)
   (Final r)    >>= k = final [ys' | (x,s) <- r, ys' <- run (k x) s]
 
-  fail _ = Fail
+  -- fail _ = Fail
 -- 
 -- instance MonadFail P where
 --   fail _ = Fail
@@ -177,7 +177,7 @@ instance Applicative ReadP where
     (<*>) = ap
 
 instance Monad ReadP where
-  fail _    = R (\_ -> Fail)
+  -- fail _    = R (\_ -> Fail)
   R m >>= f = R (\k -> m (\a -> let R m' = f a in m' k))
 -- 
 -- instance MonadFail ReadP where
