@@ -300,10 +300,6 @@ int2Word# = int2Word#
 seq :: a -> b -> b
 seq _ b = b  -- Anton: This is technically wrong.
 
--- Hack to get a SymGen somewhere in base
-symgen :: a
-symgen = symgen
-
 -- Misc add-ons
 
 fromIntToFloat :: Int# -> Float#

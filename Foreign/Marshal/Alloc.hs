@@ -42,7 +42,7 @@ module Foreign.Marshal.Alloc (
 --   -- * Memory allocation
 --   -- ** Local allocation
 --   alloca,
-  allocaBytes,
+  -- allocaBytes,
 --   allocaBytesAligned,
 -- 
 --   -- ** Dynamic allocation
@@ -143,9 +143,6 @@ import GHC.Prim2
 --      case touch# barr# s3 of { s4 ->
 --      (# s4, r #)
 --   }}}}}
-allocaBytes :: Int -> (Ptr a -> IO b) -> IO b
-allocaBytes (I# size) action = IO $ \ s0 -> (# s0, symgen #)
-
 -- 
 -- allocaBytesAligned :: Int -> Int -> (Ptr a -> IO b) -> IO b
 -- allocaBytesAligned (I# size) (I# align) action = IO $ \ s0 ->

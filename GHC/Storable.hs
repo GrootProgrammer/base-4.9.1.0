@@ -19,7 +19,7 @@
 module GHC.Storable
         ( -- readWideCharOffPtr
         -- , 
-        readIntOffPtr
+        -- readIntOffPtr
 --         , readWordOffPtr
 --         , readPtrOffPtr
 --         , readFunPtrOffPtr
@@ -35,7 +35,7 @@ module GHC.Storable
 --         , readWord32OffPtr
 --         , readWord64OffPtr
 --         , writeWideCharOffPtr
-        , writeIntOffPtr
+        -- , writeIntOffPtr
 --         , writeWordOffPtr
 --         , writePtrOffPtr
 --         , writeFunPtrOffPtr
@@ -60,8 +60,7 @@ import GHC.Base
 import GHC.Prim2
 -- 
 -- readWideCharOffPtr  :: Ptr Char          -> Int -> IO Char
-readIntOffPtr       :: Ptr Int           -> Int -> IO Int
-readIntOffPtr _ _ = symgen -- OVERAPPROX
+-- readIntOffPtr       :: Ptr Int           -> Int -> IO Int
 -- readWordOffPtr      :: Ptr Word          -> Int -> IO Word
 -- readPtrOffPtr       :: Ptr (Ptr a)       -> Int -> IO (Ptr a)
 -- readFunPtrOffPtr    :: Ptr (FunPtr a)    -> Int -> IO (FunPtr a)
@@ -111,8 +110,7 @@ readIntOffPtr _ _ = symgen -- OVERAPPROX
 --   = IO $ \s -> case readWord64OffAddr# a i s    of (# s2, x #) -> (# s2, W64# x #)
 -- 
 -- writeWideCharOffPtr  :: Ptr Char          -> Int -> Char        -> IO ()
-writeIntOffPtr       :: Ptr Int           -> Int -> Int         -> IO ()
-writeIntOffPtr _ _ _ = return () -- OVERAPPROX
+-- writeIntOffPtr       :: Ptr Int           -> Int -> Int         -> IO ()
 -- writeWordOffPtr      :: Ptr Word          -> Int -> Word        -> IO ()
 -- writePtrOffPtr       :: Ptr (Ptr a)       -> Int -> Ptr a       -> IO ()
 -- writeFunPtrOffPtr    :: Ptr (FunPtr a)    -> Int -> FunPtr a    -> IO ()
