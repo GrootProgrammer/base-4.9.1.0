@@ -36,6 +36,9 @@ char2char (T.C# c) = C# c
 unpackChar :: Char -> Char#
 unpackChar (C# c) = c
 
+intToString# :: Int# -> [Char]
+intToString# = intToString#
+
 newtype IO a = IO (State# RealWorld -> (# State# RealWorld, a #))
 
 data RealWorld = RealWorld

@@ -1,5 +1,7 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE CPP, NoImplicitPrelude, CApiFFI #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, NoImplicitPrelude, CApiFFI #-}
+{-# LANGUAGE BangPatterns #-}
+
 -- 
 -- -----------------------------------------------------------------------------
 -- -- |
@@ -15,10 +17,10 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module System.IO (
+module System.IO (
 --     -- * The IO monad
 -- 
---     IO,
+    IO,
 --     fixIO,
 -- 
 --     -- * Files and handles
@@ -137,9 +139,9 @@
 -- 
 --     interact,
 --     putChar,
---     putStr,
---     putStrLn,
---     print,
+    putStr,
+    putStrLn,
+    print,
 --     getChar,
 --     getLine,
 --     getContents,
@@ -217,7 +219,7 @@
 --     Newline(..), nativeNewline,
 --     NewlineMode(..),
 --     noNewlineTranslation, universalNewlineMode, nativeNewlineMode,
---   ) where
+  ) where
 -- 
 -- import Control.Exception.Base
 -- 
@@ -231,9 +233,9 @@
 -- import System.Posix.Internals
 -- import System.Posix.Types
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.List
--- import GHC.IO hiding ( bracket, onException )
+import GHC.IO hiding ( bracket, onException )
 -- import GHC.IO.IOMode
 -- import GHC.IO.Handle.FD
 -- import qualified GHC.IO.FD as FD
@@ -241,8 +243,8 @@
 -- import GHC.IO.Handle.Text ( hGetBufSome, hPutStrLn )
 -- import GHC.IO.Exception ( userError )
 -- import GHC.IO.Encoding
--- import Text.Read
--- import GHC.Show
+import Text.Read
+import GHC.Show
 -- import GHC.MVar
 -- 
 -- -- -----------------------------------------------------------------------------
@@ -257,13 +259,15 @@
 -- -- | Write a string to the standard output device
 -- -- (same as 'hPutStr' 'stdout').
 -- 
--- putStr          :: String -> IO ()
+putStr          :: String -> IO ()
 -- putStr s        =  hPutStr stdout s
+putStr !_ = return ()
 -- 
 -- -- | The same as 'putStr', but adds a newline character.
 -- 
--- putStrLn        :: String -> IO ()
+putStrLn        :: String -> IO ()
 -- putStrLn s      =  hPutStrLn stdout s
+putStrLn !_ = return ()
 -- 
 -- -- | The 'print' function outputs a value of any printable type to the
 -- -- standard output device.
@@ -276,8 +280,9 @@
 -- --
 -- -- > main = print ([(n, 2^n) | n <- [0..19]])
 -- 
--- print           :: Show a => a -> IO ()
+print           :: Show a => a -> IO ()
 -- print x         =  putStrLn (show x)
+print !_ = return ()
 -- 
 -- -- | Read a character from the standard input device
 -- -- (same as 'hGetChar' 'stdin').

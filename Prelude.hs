@@ -144,7 +144,7 @@ module Prelude (
 --     -- used portably for binary I/O.
 --     -- *** Output functions
 --     putChar,
---     putStr, putStrLn, print,
+    putStr, putStrLn, print,
 --     -- *** Input functions
 --     getChar,
 --     getLine, getContents, interact,
@@ -159,7 +159,7 @@ module Prelude (
   ) where
 -- 
 -- import Control.Monad
--- import System.IO
+import System.IO
 -- import System.IO.Error
 import Data.List
 import Data.Either

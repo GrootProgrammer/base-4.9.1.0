@@ -1,11 +1,11 @@
--- {-# LANGUAGE Unsafe #-}
--- {-# LANGUAGE NoImplicitPrelude
---            , BangPatterns
---            , RankNTypes
---            , MagicHash
---            , UnboxedTuples
---   #-}
--- {-# OPTIONS_GHC -funbox-strict-fields #-}
+{-# LANGUAGE Unsafe #-}
+{-# LANGUAGE NoImplicitPrelude
+           , BangPatterns
+           , RankNTypes
+           , MagicHash
+           , UnboxedTuples
+  #-}
+{-# OPTIONS_GHC -funbox-strict-fields #-}
 -- {-# OPTIONS_HADDOCK hide #-}
 -- 
 -- -----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ module GHC.IO (
 --         onException, bracket, finally, evaluate
     ) where
 -- 
--- import GHC.Base
+import GHC.Base
 -- import GHC.ST
 -- import GHC.Exception
 -- import GHC.Show
