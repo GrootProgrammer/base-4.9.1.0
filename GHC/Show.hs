@@ -34,13 +34,15 @@
 module GHC.Show
         (
         Show(..),
-           ShowS
+           ShowS,
 -- 
 --         -- Instances for Show: (), [], Bool, Ordering, Int, Char
 -- 
 --         -- Show support code
---         shows, showChar, showString, showMultiLineString,
---         showParen, showList__, showSpace,
+        shows, showChar, showString,
+          --  showMultiLineString,
+        showParen,
+--         showList__, showSpace,
 --         showLitChar, showLitString, protectEsc,
 --         intToDigit, showSignedInt,
 --         appPrec, appPrec1,
@@ -319,10 +321,10 @@ showChar        =  (:)
 showString      :: String -> ShowS
 showString      =  (++)
 -- 
--- -- | utility function that surrounds the inner show function with
--- -- parentheses when the 'Bool' parameter is 'True'.
--- showParen       :: Bool -> ShowS -> ShowS
--- showParen b p   =  if b then showChar '(' . p . showChar ')' else p
+-- | utility function that surrounds the inner show function with
+-- parentheses when the 'Bool' parameter is 'True'.
+showParen       :: Bool -> ShowS -> ShowS
+showParen b p   =  if b then showChar (char2char '(') . p . showChar (char2char ')') else p
 -- 
 -- showSpace :: ShowS
 -- showSpace = {-showChar ' '-} \ xs -> ' ' : xs
