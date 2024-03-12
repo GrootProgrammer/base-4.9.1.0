@@ -222,7 +222,7 @@ lexPunc =
 
 -- | The @special@ character class as defined in the Haskell Report.
 isPuncChar :: Char -> Bool
-isPuncChar c = c `elem` map char2char ",;()[]{}`"
+isPuncChar c = c `elem` ",;()[]{}`"
 
 ----------------------------------------------------------------------
 -- Symbols
@@ -236,7 +236,7 @@ lexSymbol =
       else
         return (Symbol s)
   where
-    reserved_ops   = [map char2char "..", map char2char "::", map char2char "=", map char2char "\\", map char2char "|", map char2char "<-", map char2char "->", map char2char "@", map char2char "~", map char2char "=>"]
+    reserved_ops   = ["..", "::", "=", "\\", "|", "<-", "->", "@", "~", "=>"]
 
 isSymbolChar :: Char -> Bool
 isSymbolChar c = not (isPuncChar c) && case generalCategory c of
@@ -245,7 +245,7 @@ isSymbolChar c = not (isPuncChar c) && case generalCategory c of
     ModifierSymbol          -> True
     OtherSymbol             -> True
     DashPunctuation         -> True
-    OtherPunctuation        -> not (c `elem` map char2char "'\"")
+    OtherPunctuation        -> not (c `elem` "'\"")
     ConnectorPunctuation    -> c /= C# '_'#
     _                       -> False
 -- ----------------------------------------------------------------------
@@ -259,7 +259,7 @@ lexId = do
   where
           -- Identifiers can start with a '_'
     isIdsChar c = isAlpha c || c == C# '_'#
-    isIdfChar c = isAlphaNum c || c `elem` map char2char "_'"
+    isIdfChar c = isAlphaNum c || c `elem` "_'"
 
 -- ---------------------------------------------------------------------------
 -- Lexing character literals
@@ -280,7 +280,7 @@ lexChar = do { (c,_) <- lexCharE; consumeEmpties; return c }
     consumeEmpties = do
         rest <- look
         case rest of
-            (C# '\\'#:C# '&'#:_) -> string (map char2char "\\&") >> consumeEmpties
+            (C# '\\'#:C# '&'#:_) -> string "$2" >> consumeEmpties
             _ -> return ()
 
 
@@ -302,16 +302,16 @@ lexCharE =
     do
        c <- get
        case unpackChar c of
-         'a'#  -> return $ char2char '\a'
-         'b'#  -> return $ char2char '\b'
-         'f'#  -> return $ char2char '\f'
-         'n'#  -> return $ char2char '\n'
-         'r'#  -> return $ char2char '\r'
-         't'#  -> return $ char2char '\t'
-         'v'#  -> return $ char2char '\v'
-         '\\'# -> return $ char2char '\\'
-         '\"'# -> return $ char2char '\"'
-         '\''# -> return $ char2char '\''
+         'a'#  -> return '\a'
+         'b'#  -> return '\b'
+         'f'#  -> return '\f'
+         'n'#  -> return '\n'
+         'r'#  -> return '\r'
+         't'#  -> return '\t'
+         'v'#  -> return '\v'
+         '\\'# -> return '\\'
+         '\"'# -> return '\"'
+         '\''# -> return '\''
          _    -> pfail
 
   lexNumeric =
@@ -326,80 +326,80 @@ lexCharE =
        _ <- char (C# '^'#)
        c <- get
        case unpackChar c of
-         '@'#  -> return $ char2char '\^@'
-         'A'#  -> return $ char2char '\^A'
-         'B'#  -> return $ char2char '\^B'
-         'C'#  -> return $ char2char '\^C'
-         'D'#  -> return $ char2char '\^D'
-         'E'#  -> return $ char2char '\^E'
-         'F'#  -> return $ char2char '\^F'
-         'G'#  -> return $ char2char '\^G'
-         'H'#  -> return $ char2char '\^H'
-         'I'#  -> return $ char2char '\^I'
-         'J'#  -> return $ char2char '\^J'
-         'K'#  -> return $ char2char '\^K'
-         'L'#  -> return $ char2char '\^L'
-         'M'#  -> return $ char2char '\^M'
-         'N'#  -> return $ char2char '\^N'
-         'O'#  -> return $ char2char '\^O'
-         'P'#  -> return $ char2char '\^P'
-         'Q'#  -> return $ char2char '\^Q'
-         'R'#  -> return $ char2char '\^R'
-         'S'#  -> return $ char2char '\^S'
-         'T'#  -> return $ char2char '\^T'
-         'U'#  -> return $ char2char '\^U'
-         'V'#  -> return $ char2char '\^V'
-         'W'#  -> return $ char2char '\^W'
-         'X'#  -> return $ char2char '\^X'
-         'Y'#  -> return $ char2char '\^Y'
-         'Z'#  -> return $ char2char '\^Z'
-         '['#  -> return $ char2char '\^['
-         '\\'# -> return $ char2char '\^\'
-         ']'#  -> return $ char2char '\^]'
-         '^'#  -> return $ char2char '\^^'
-         '_'#  -> return $ char2char '\^_'
+         '@'#  -> return '\^@'
+         'A'#  -> return '\^A'
+         'B'#  -> return '\^B'
+         'C'#  -> return '\^C'
+         'D'#  -> return '\^D'
+         'E'#  -> return '\^E'
+         'F'#  -> return '\^F'
+         'G'#  -> return '\^G'
+         'H'#  -> return '\^H'
+         'I'#  -> return '\^I'
+         'J'#  -> return '\^J'
+         'K'#  -> return '\^K'
+         'L'#  -> return '\^L'
+         'M'#  -> return '\^M'
+         'N'#  -> return '\^N'
+         'O'#  -> return '\^O'
+         'P'#  -> return '\^P'
+         'Q'#  -> return '\^Q'
+         'R'#  -> return '\^R'
+         'S'#  -> return '\^S'
+         'T'#  -> return '\^T'
+         'U'#  -> return '\^U'
+         'V'#  -> return '\^V'
+         'W'#  -> return '\^W'
+         'X'#  -> return '\^X'
+         'Y'#  -> return '\^Y'
+         'Z'#  -> return '\^Z'
+         '['#  -> return '\^['
+         '\\'# -> return '\^\'
+         ']'#  -> return '\^]'
+         '^'#  -> return '\^^'
+         '_'#  -> return '\^_'
          _    -> pfail
 
   lexAscii =
     do
         choice
-         [ (string (map char2char "SOH") >> return (char2char '\SOH')) <++
-           (string (map char2char "SO")  >> return (char2char '\SO'))
+         [ (string "$2" >> return '\SOH') <++
+           (string "$2"  >> return '\SO')
                 -- \SO and \SOH need maximal-munch treatment
                 -- See the Haskell report Sect 2.6
 
-         , string (map char2char "NUL") >> return (char2char '\NUL')
-         , string (map char2char "STX") >> return (char2char '\STX')
-         , string (map char2char "ETX") >> return (char2char '\ETX')
-         , string (map char2char "EOT") >> return (char2char '\EOT')
-         , string (map char2char "ENQ") >> return (char2char '\ENQ')
-         , string (map char2char "ACK") >> return (char2char '\ACK')
-         , string (map char2char "BEL") >> return (char2char '\BEL')
-         , string (map char2char "BS")  >> return (char2char '\BS')
-         , string (map char2char "HT")  >> return (char2char '\HT')
-         , string (map char2char "LF")  >> return (char2char '\LF')
-         , string (map char2char "VT")  >> return (char2char '\VT')
-         , string (map char2char "FF")  >> return (char2char '\FF')
-         , string (map char2char "CR")  >> return (char2char '\CR')
-         , string (map char2char "SI")  >> return (char2char '\SI')
-         , string (map char2char "DLE") >> return (char2char '\DLE')
-         , string (map char2char "DC1") >> return (char2char '\DC1')
-         , string (map char2char "DC2") >> return (char2char '\DC2')
-         , string (map char2char "DC3") >> return (char2char '\DC3')
-         , string (map char2char "DC4") >> return (char2char '\DC4')
-         , string (map char2char "NAK") >> return (char2char '\NAK')
-         , string (map char2char "SYN") >> return (char2char '\SYN')
-         , string (map char2char "ETB") >> return (char2char '\ETB')
-         , string (map char2char "CAN") >> return (char2char '\CAN')
-         , string (map char2char "EM")  >> return (char2char '\EM')
-         , string (map char2char "SUB") >> return (char2char '\SUB')
-         , string (map char2char "ESC") >> return (char2char '\ESC')
-         , string (map char2char "FS")  >> return (char2char '\FS')
-         , string (map char2char "GS")  >> return (char2char '\GS')
-         , string (map char2char "RS")  >> return (char2char '\RS')
-         , string (map char2char "US")  >> return (char2char '\US')
-         , string (map char2char "SP")  >> return (char2char '\SP')
-         , string (map char2char "DEL") >> return (char2char '\DEL')
+         , string "$2" >> return '\NUL'
+         , string "$2" >> return '\STX'
+         , string "$2" >> return '\ETX'
+         , string "$2" >> return '\EOT'
+         , string "$2" >> return '\ENQ'
+         , string "$2" >> return '\ACK'
+         , string "$2" >> return '\BEL'
+         , string "$2"  >> return '\BS'
+         , string "$2"  >> return '\HT'
+         , string "$2"  >> return '\LF'
+         , string "$2"  >> return '\VT'
+         , string "$2"  >> return '\FF'
+         , string "$2"  >> return '\CR'
+         , string "$2"  >> return '\SI'
+         , string "$2" >> return '\DLE'
+         , string "$2" >> return '\DC1'
+         , string "$2" >> return '\DC2'
+         , string "$2" >> return '\DC3'
+         , string "$2" >> return '\DC4'
+         , string "$2" >> return '\NAK'
+         , string "$2" >> return '\SYN'
+         , string "$2" >> return '\ETB'
+         , string "$2" >> return '\CAN'
+         , string "$2"  >> return '\EM'
+         , string "$2" >> return '\SUB'
+         , string "$2" >> return '\ESC'
+         , string "$2"  >> return '\FS'
+         , string "$2"  >> return '\GS'
+         , string "$2"  >> return '\RS'
+         , string "$2"  >> return '\US'
+         , string "$2"  >> return '\SP'
+         , string "$2" >> return '\DEL'
          ]
 
 
@@ -417,7 +417,7 @@ lexString =
        (c,esc) <- lexStrItem
        if c /= C# '"'# || esc
          then body (f.(c:))
-         else let s = f (map char2char "") in
+         else let s = f "$2" in
               return (String s)
 
   lexStrItem = (lexEmpty >> lexStrItem)
@@ -474,21 +474,21 @@ lexFrac :: ReadP (Maybe Digits)
 -- Read the fractional part; fail if it doesn't
 -- start ".d" where d is a digit
 lexFrac = do
-             _ <- char (char2char '.')
+             _ <- char '.'
              fraction <- lexDigits (I# 10#)
              return (Just fraction)
 
 lexExp :: ReadP (Maybe Integer)
 lexExp =   do
-            _ <- char (char2char 'e') +++ char (char2char 'E')
+            _ <- char 'e' +++ char 'E'
             exp <- signedExp +++ lexInteger (I# 10#)
             return (Just exp)
  where
    signedExp
      =  do
-          c <- char (char2char '-') +++ char (char2char  '+')
+          c <- char '-' +++ char '+'
           n <- lexInteger (I# 10#)
-          return (if c == char2char '-' then Z# 0# - n else n)
+          return (if c ==  '-' then Z# 0# - n else n)
 
 lexDigits :: Int -> ReadP Digits
 -- Lex a non-empty sequence of digits in specified base
@@ -572,22 +572,22 @@ fracExp exp mant (d:ds) = exp' `seq` mant' `seq` fracExp exp' mant' ds
 
 valDig :: (Eq a, Num a) => a -> Char -> Maybe Int
 valDig x c
-  | x == fromInteger (Z# 8#), char2char '0' <= c && c <= char2char '7' = Just (ord c - ord (char2char '0'))
+  | x == fromInteger (Z# 8#), '0' <= c && c <= '7' = Just (ord c - ord '0')
   | x == fromInteger (Z# 8#)            = Nothing
 
 valDig x c | x == fromInteger (Z# 10#) = valDecDig c
 
 valDig x c
-  | x == fromInteger (Z# 16#), char2char '0' <= c && c <= char2char '9' = Just (ord c - ord (char2char '0'))
-  | x == fromInteger (Z# 16#), char2char 'a' <= c && c <= char2char 'f' = Just (ord c - ord (char2char 'a') + (fromInteger (Z# 10#)))
-  | x == fromInteger (Z# 16#), char2char 'A' <= c && c <= char2char 'F' = Just (ord c - ord (char2char 'A') + (fromInteger (Z# 10#)))
+  | x == fromInteger (Z# 16#), '0' <= c && c <= '9' = Just (ord c - ord '0')
+  | x == fromInteger (Z# 16#), 'a' <= c && c <= 'f' = Just (ord c - ord 'a' + (fromInteger (Z# 10#)))
+  | x == fromInteger (Z# 16#), 'A' <= c && c <= 'F' = Just (ord c - ord 'A' + (fromInteger (Z# 10#)))
   | x == fromInteger (Z# 16#)            = Nothing
 
 valDig _ _ = errorWithoutStackTrace "valDig: Bad base"
 
 valDecDig :: Char -> Maybe Int
 valDecDig c
-  | char2char '0' <= c && c <= char2char '9' = Just (ord c - ord (char2char '0'))
+  | '0' <= c && c <= '9' = Just (ord c - ord '0')
   | otherwise            = Nothing
 
 -- ----------------------------------------------------------------------

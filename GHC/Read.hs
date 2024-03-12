@@ -304,8 +304,8 @@ paren p = skipSpacesThenP (paren' p)
 -- works particularly well here because neither '(' nor ')' can begin any other
 -- lexeme.
 paren' :: ReadPrec a -> ReadPrec a
-paren' p = expectCharP (char2char '(') $ reset p >>= \x ->
-              skipSpacesThenP (expectCharP (char2char ')') (pure x))
+paren' p = expectCharP '(' $ reset p >>= \x ->
+              skipSpacesThenP (expectCharP ')' (pure x))
 
 parens :: ReadPrec a -> ReadPrec a
 -- ^ @(parens p)@ parses \"P\", \"(P0)\", \"((P0))\", etc,
@@ -322,7 +322,7 @@ list :: ReadPrec a -> ReadPrec [a]
 list readx =
   parens
   ( do
-       expectP (L.Punc (map char2char "["))
+       expectP (L.Punc "[")
        (listRest False +++ listNext)
   )
  where
@@ -332,8 +332,8 @@ list readx =
        case lr of
         L.Punc c ->
             case c of
-                _ | c == map char2char "]"           -> return []
-                _ | c == map char2char ",", started -> listNext
+                _ | c == "]"           -> return []
+                _ | c == ",", started -> listNext
                 _             -> pfail
         _ -> error "invalid pattern"
 

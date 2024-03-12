@@ -427,7 +427,7 @@ instance  (Show a)  => Show (Ratio a)  where
     -- {-# SPECIALIZE instance Show Rational #-}
     showsPrec p (x:%y)  =  showParen (p > ratioPrec) $
                            showsPrec ratioPrec1 x .
-                           showString (map char2char " % ") .
+                           showString " % " .
                            -- H98 report has spaces round the %
                            -- but we removed them [May 04]
                            -- and added them again for consistency with

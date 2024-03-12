@@ -149,15 +149,15 @@ class  Show a  where
     showList  :: [a] -> ShowS
 
     showsPrec _ x s = show x ++ s
-    show x          = shows x (map char2char "")
+    show x          = shows x ""
     showList ls   s = showList__ shows ls s
 
 showList__ :: (a -> ShowS) ->  [a] -> ShowS
-showList__ _     []     s = (map char2char "[]") ++ s
-showList__ showx (x:xs) s = char2char '[' : showx x (showl xs)
+showList__ _     []     s = "[]" ++ s
+showList__ showx (x:xs) s = '[' : showx x (showl xs)
   where
-    showl []     = char2char ']' : s
-    showl (y:ys) = char2char ',' : showx y (showl ys)
+    showl []     = ']' : s
+    showl (y:ys) = ',' : showx y (showl ys)
 
 -- appPrec, appPrec1 :: Int
 --         -- Use unboxed stuff because we don't have overloaded numerics yet
@@ -324,7 +324,7 @@ showString      =  (++)
 -- | utility function that surrounds the inner show function with
 -- parentheses when the 'Bool' parameter is 'True'.
 showParen       :: Bool -> ShowS -> ShowS
-showParen b p   =  if b then showChar (char2char '(') . p . showChar (char2char ')') else p
+showParen b p   =  if b then showChar '(' . p . showChar ')' else p
 -- 
 -- showSpace :: ShowS
 -- showSpace = {-showChar ' '-} \ xs -> ' ' : xs

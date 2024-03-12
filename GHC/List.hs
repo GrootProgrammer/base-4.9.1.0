@@ -61,7 +61,7 @@ head []                 =  badHead
 -- 
 badHead :: a
 -- badHead = errorEmptyList "head"
-badHead = errorEmptyList (map char2char "head")
+badHead = errorEmptyList "head"
 -- 
 -- -- This rule is useful in cases like
 -- --      head [y | (x,y) <- ps, x==t]
@@ -89,7 +89,7 @@ tail                    :: [a] -> [a]
 #endif
 tail (_:xs)             =  xs
 -- tail []                 =  errorEmptyList "tail"
-tail []                 = errorEmptyList (map char2char "tail")
+tail []                 = errorEmptyList "tail"
 -- 
 -- -- | Extract the last element of a list, which must be finite and non-empty.
 #if MIN_VERSION_GLASGOW_HASKELL(9,4,0,0)
@@ -101,7 +101,7 @@ last                    :: [a] -> a
 last [x]                =  x
 last (_:xs)             =  last xs
 -- last []                 =  errorEmptyList "last"
-last []                 =  errorEmptyList (map char2char "last")
+last []                 =  errorEmptyList "last"
 -- #else
 -- -- Use foldl to make last a good consumer.
 -- -- This will compile to good code for the actual GHC.List.last.
@@ -125,7 +125,7 @@ init                    :: [a] -> [a]
 init [x]                =  []
 init (x:xs)             =  x : init xs
 -- init []                 =  errorEmptyList "init"
-init []                 =  errorEmptyList (map char2char "init")
+init []                 =  errorEmptyList "init"
 -- #else
 -- -- eliminate repeated cases
 -- init []                 =  errorEmptyList "init"
@@ -252,13 +252,13 @@ foldl' k z0 xs =
 foldl1                  :: (a -> a -> a) -> [a] -> a
 foldl1 f (x:xs)         =  foldl f x xs
 -- foldl1 _ []             =  errorEmptyList "foldl1"
-foldl1 _ []             =  errorEmptyList (map char2char "foldl1")
+foldl1 _ []             =  errorEmptyList "foldl1"
 -- 
 -- -- | A strict version of 'foldl1'
 foldl1'                  :: (a -> a -> a) -> [a] -> a
 foldl1' f (x:xs)         =  foldl' f x xs
 -- foldl1' _ []             =  errorEmptyList "foldl1'"
-foldl1' _ []             =  errorEmptyList (map char2char "foldl1'")
+foldl1' _ []             =  errorEmptyList "foldl1'"
 -- 
 -- -- -----------------------------------------------------------------------------
 -- -- List sum and product
@@ -389,7 +389,7 @@ foldr1 f = go
   where go [x]            =  x
         go (x:xs)         =  f x (go xs)
         -- go []             =  errorEmptyList "foldr1"
-        go []             =  errorEmptyList (map char2char "foldr1")
+        go []             =  errorEmptyList "foldr1"
 {-# INLINE [0] foldr1 #-}
 -- 
 -- -- | 'scanr' is the right-to-left dual of 'scanl'.
@@ -433,7 +433,7 @@ scanr1 f (x:xs)         =  f x q : qs
 maximum                 :: (Ord a) => [a] -> a
 {-# INLINEABLE maximum #-}
 -- maximum []              =  errorEmptyList "maximum"
-maximum []              =  errorEmptyList (map char2char "maximum")
+maximum []              =  errorEmptyList "maximum"
 maximum xs              =  foldl1 max xs
 -- 
 -- -- We want this to be specialized so that with a strict max function, GHC
@@ -449,7 +449,7 @@ maximum xs              =  foldl1 max xs
 minimum                 :: (Ord a) => [a] -> a
 {-# INLINEABLE minimum #-}
 -- minimum []              =  errorEmptyList "minimum"
-minimum []              =  errorEmptyList (map char2char "minimum")
+minimum []              =  errorEmptyList "minimum"
 minimum xs              =  foldl1 min xs
 -- 
 {-# SPECIALIZE  minimum :: [Int] -> Int #-}
@@ -510,7 +510,7 @@ cycle                   :: HasCallStack => [a] -> [a]
 cycle                   :: [a] -> [a]
 #endif
 -- cycle []                = errorEmptyList "cycle"
-cycle []                = errorEmptyList (map char2char "cycle")
+cycle []                = errorEmptyList "cycle"
 cycle xs                = xs' where xs' = xs ++ xs'
 -- 
 -- -- | 'takeWhile', applied to a predicate @p@ and a list @xs@, returns the
@@ -884,9 +884,9 @@ concat = foldr (++) []
 #endif
 -- #ifdef USE_REPORT_PRELUDE
 -- xs     !! n | n < 0 =  errorWithoutStackTrace "Prelude.!!: negative index"
-xs     !! n | n < (fromInteger zeroInteger) =  errorWithoutStackTrace (map char2char "Prelude.!!: negative index")
+xs     !! n | n < (fromInteger zeroInteger) =  errorWithoutStackTrace "Prelude.!!: negative index"
 -- []     !! _         =  errorWithoutStackTrace "Prelude.!!: index too large"
-[]     !! _         =  errorWithoutStackTrace (map char2char "Prelude.!!: index too large")
+[]     !! _         =  errorWithoutStackTrace "Prelude.!!: index too large"
 -- (x:_)  !! 0         =  x
 -- (_:xs) !! n         =  xs !! (n-1)
 (x:xs) !! n = if n == fromInteger zeroInteger then x else xs !! (n - fromInteger oneInteger)
@@ -1042,8 +1042,8 @@ unzip3   =  foldr (\(a,b,c) ~(as,bs,cs) -> (a:as,b:bs,c:cs))
 errorEmptyList :: String -> a
 errorEmptyList fun =
   -- errorWithoutStackTrace (prel_list_str ++ fun ++ ": empty list")
-  errorWithoutStackTrace (prel_list_str ++ fun ++ (map char2char ": empty list"))
+  errorWithoutStackTrace (prel_list_str ++ fun ++ ": empty list")
 -- 
 prel_list_str :: String
 -- prel_list_str = "Prelude."
-prel_list_str = map char2char "Prelude."
+prel_list_str = "Prelude."

@@ -3,7 +3,19 @@
 {-# LANGUAGE UnboxedTuples #-}
 
 module GHC.Types2
-  ( module GHC.Types2
+  ( T.Char (..)
+  , Int (..)
+  , Word8
+  , Word (..)
+  , Float (..)
+  , Double (..)
+  , Ordering (..)
+  , isTrue#
+  , unpackChar
+  , intToString#
+  , IO (..)
+  , RealWorld (..)
+  , LiftedRep (..)
   , T.Bool(..)
   , T.Coercible(..)
   ) where
@@ -30,13 +42,10 @@ data Ordering = LT | EQ | GT
 isTrue# :: Int# -> T.Bool
 isTrue# = tagToEnum#
 
-char2char :: T.Char -> Char
-char2char (T.C# c) = C# c
+unpackChar :: T.Char -> Char#
+unpackChar (T.C# c) = c
 
-unpackChar :: Char -> Char#
-unpackChar (C# c) = c
-
-intToString# :: Int# -> [Char]
+intToString# :: Int# -> [T.Char]
 intToString# = intToString#
 
 newtype IO a = IO (State# RealWorld -> (# State# RealWorld, a #))

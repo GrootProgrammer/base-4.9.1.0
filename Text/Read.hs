@@ -67,8 +67,8 @@ readEither :: Read a => String -> Either String a
 readEither s =
   case [ x | (x,[]) <- readPrec_to_S read' minPrec s ] of
     [x] -> Right x
-    []  -> Left (map char2char "Prelude.read: no parse")
-    _   -> Left (map char2char "Prelude.read: ambiguous parse")
+    []  -> Left "Prelude.read: no parse"
+    _   -> Left "Prelude.read: ambiguous parse"
  where
   read' =
     do
