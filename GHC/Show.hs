@@ -54,7 +54,7 @@ module GHC.Show
 -- 
 import GHC.Base
 -- import GHC.List ((!!), foldr1, break)
--- import GHC.Num
+import GHC.Num
 -- import GHC.Stack.Types
 
 import GHC.Types2
@@ -171,11 +171,11 @@ showList__ showx (x:xs) s = char2char '[' : showx x (showl xs)
 -- 
 -- deriving instance Show ()
 -- 
--- instance Show a => Show [a]  where
+instance Show a => Show [a]  where
 --   {-# SPECIALISE instance Show [String] #-}
 --   {-# SPECIALISE instance Show [Char] #-}
 --   {-# SPECIALISE instance Show [Int] #-}
---   showsPrec _         = showList
+  showsPrec _         = showList
 -- 
 -- deriving instance Show Bool
 -- deriving instance Show Ordering
@@ -441,7 +441,8 @@ showParen b p   =  if b then showChar (char2char '(') . p . showChar (char2char 
 -- -- The Integer instances for Show
 -- --------------------------------------------------------------
 -- 
--- instance Show Integer where
+instance Show Integer where
+    show (Z# x) = if x $>=# 0# then intToString# x else (C# '-'#):intToString# (negateInt# x)
 --     showsPrec p n r
 --         | p > 6 && n < 0 = '(' : integerToString n (')' : r)
 --         -- Minor point: testing p first gives better code
@@ -449,6 +450,7 @@ showParen b p   =  if b then showChar (char2char '(') . p . showChar (char2char 
 --         -- is a constant
 --         | otherwise = integerToString n r
 --     showList = showList__ (showsPrec 0)
+
 -- 
 -- -- Divide an conquer implementation of string conversion
 -- integerToString :: Integer -> String -> String

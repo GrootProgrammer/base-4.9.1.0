@@ -25,7 +25,7 @@ import GHC.Base
 import GHC.Num
 -- import GHC.List
 import GHC.Enum
--- import GHC.Show
+import GHC.Show
 -- import {-# SOURCE #-} GHC.Exception( divZeroException, overflowException, ratioZeroDenomException )
 -- 
 -- #ifdef OPTIMISE_INTEGER_GCD_LCM
@@ -82,9 +82,9 @@ instance (Eq a) => Eq (Ratio a) where
 -- -- the '%' operator.
 type  Rational          =  Ratio Integer
 -- 
--- ratioPrec, ratioPrec1 :: Int
--- ratioPrec  = 7  -- Precedence of ':%' constructor
--- ratioPrec1 = ratioPrec + 1
+ratioPrec, ratioPrec1 :: Int
+ratioPrec  = (I# 7#)  -- Precedence of ':%' constructor
+ratioPrec1 = ratioPrec + (I# 1#)
 -- 
 -- infinity, notANumber :: Rational
 -- infinity   = 1 :% 0
@@ -423,17 +423,17 @@ instance  (Integral a)  => Num (Ratio a)  where
 --     properFraction (x:%y) = (fromInteger (toInteger q), r:%y)
 --                           where (q,r) = quotRem x y
 -- 
--- instance  (Show a)  => Show (Ratio a)  where
---     {-# SPECIALIZE instance Show Rational #-}
---     showsPrec p (x:%y)  =  showParen (p > ratioPrec) $
---                            showsPrec ratioPrec1 x .
---                            showString " % " .
---                            -- H98 report has spaces round the %
---                            -- but we removed them [May 04]
---                            -- and added them again for consistency with
---                            -- Haskell 98 [Sep 08, #1920]
---                            showsPrec ratioPrec1 y
--- 
+instance  (Show a)  => Show (Ratio a)  where
+    -- {-# SPECIALIZE instance Show Rational #-}
+    showsPrec p (x:%y)  =  showParen (p > ratioPrec) $
+                           showsPrec ratioPrec1 x .
+                           showString (map char2char " % ") .
+                           -- H98 report has spaces round the %
+                           -- but we removed them [May 04]
+                           -- and added them again for consistency with
+                           -- Haskell 98 [Sep 08, #1920]
+                           showsPrec ratioPrec1 y
+
 -- instance  (Integral a)  => Enum (Ratio a)  where
 --     {-# SPECIALIZE instance Enum Rational #-}
 --     succ x              =  x + 1
