@@ -144,6 +144,15 @@ x <=## y = case x $<=## y of
 negateDouble# :: Double# -> Double#
 negateDouble# = negateDouble#
 
+isDoubleNegativeZero# :: Double# -> Bool
+isDoubleNegativeZero# = isDoubleNegativeZero#
+
+isDoubleNaN# :: Double# -> Bool
+isDoubleNaN# = isDoubleNaN#
+
+isDoubleInfinite# :: Double# -> Bool
+isDoubleInfinite# = isDoubleInfinite#
+
 -- Float#
 
 eqFloat# :: Float# -> Float# -> Int#
@@ -193,10 +202,19 @@ divideFloat# = divideFloat#
 
 -- powerFloat# :: Float# -> Float# -> Float#
 -- powerFloat# = powerFloat#
--- 
--- sqrtFloat# :: Float# -> Float#
--- sqrtFloat# = sqrtFloat#
--- 
+
+sqrtFloat# :: Float# -> Float#
+sqrtFloat# = sqrtFloat#
+
+isFloatNegativeZero# :: Float# -> Bool
+isFloatNegativeZero# = isFloatNegativeZero#
+
+isFloatNaN# :: Float# -> Bool
+isFloatNaN# = isFloatNaN#
+
+isFloatInfinite# :: Float# -> Bool
+isFloatInfinite# = isFloatInfinite#
+
 -- expFloat# :: Float# -> Float#
 -- expFloat# = expFloat#
 -- 

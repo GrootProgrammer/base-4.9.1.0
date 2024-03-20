@@ -43,11 +43,12 @@ module GHC.Float
 import GHC.Base
 -- import GHC.List
 import GHC.Enum
--- import GHC.Show
+import GHC.Show
 import GHC.Num
 import GHC.Real
 -- import GHC.Arr
 import GHC.Float.RealFracMethods
+import GHC.Prim2
 -- import GHC.Float.ConversionUtils
 -- import GHC.Integer.Logarithms ( integerLogBase# )
 -- import GHC.Integer.Logarithms.Internals
@@ -130,7 +131,7 @@ class  (Fractional a) => Floating a  where
 -- 
 -- -- | Efficient, machine-independent access to the components of a
 -- -- floating-point number.
--- class  (RealFrac a, Floating a) => RealFloat a  where
+class  (RealFrac a, Floating a) => RealFloat a  where
 --     -- | a constant function, returning the radix of the representation
 --     -- (often @2@)
 --     floatRadix          :: a -> Integer
@@ -175,15 +176,15 @@ class  (Fractional a) => Floating a  where
 --     significand         :: a -> a
 --     -- | multiplies a floating-point number by an integer power of the radix
 --     scaleFloat          :: Int -> a -> a
---     -- | 'True' if the argument is an IEEE \"not-a-number\" (NaN) value
---     isNaN               :: a -> Bool
---     -- | 'True' if the argument is an IEEE infinity or negative infinity
---     isInfinite          :: a -> Bool
+    -- | 'True' if the argument is an IEEE \"not-a-number\" (NaN) value
+    isNaN               :: a -> Bool
+    -- | 'True' if the argument is an IEEE infinity or negative infinity
+    isInfinite          :: a -> Bool
 --     -- | 'True' if the argument is too small to be represented in
 --     -- normalized format
 --     isDenormalized      :: a -> Bool
 --     -- | 'True' if the argument is an IEEE negative zero
---     isNegativeZero      :: a -> Bool
+    isNegativeZero      :: a -> Bool
 --     -- | 'True' if the argument is an IEEE floating point number
 --     isIEEE              :: a -> Bool
 --     -- | a version of arctangent taking two real floating-point arguments.
@@ -312,7 +313,7 @@ rationalToFloat# n d = rationalToFloat# n d
 -- "ceiling/Float->Int"                ceiling = ceilingFloatInt
 -- "round/Float->Int"                  round = roundFloatInt
 --   #-}
--- instance  RealFrac Float  where
+instance  RealFrac Float  where
 -- 
 --         -- ceiling, floor, and truncate are all small
 --     {-# INLINE [1] ceiling #-}
@@ -389,7 +390,7 @@ instance  Floating Float  where
 --       | otherwise = a
 --     {-# INLINE log1pexp #-}
 -- 
--- instance  RealFloat Float  where
+instance  RealFloat Float  where
 --     floatRadix _        =  FLT_RADIX        -- from float.h
 --     floatDigits _       =  FLT_MANT_DIG     -- ditto
 --     floatRange _        =  (FLT_MIN_EXP, FLT_MAX_EXP) -- ditto
@@ -413,10 +414,10 @@ instance  Floating Float  where
 --                         where bf = FLT_MAX_EXP - (FLT_MIN_EXP) + 4*FLT_MANT_DIG
 --                               isFix = x == 0 || isFloatFinite x == 0
 -- 
---     isNaN x          = 0 /= isFloatNaN x
---     isInfinite x     = 0 /= isFloatInfinite x
+    isNaN x          = (I# 0#) /= isFloatNaN x
+    isInfinite x     = I# 0# /= isFloatInfinite x
 --     isDenormalized x = 0 /= isFloatDenormalized x
---     isNegativeZero x = 0 /= isFloatNegativeZero x
+    isNegativeZero x = (I# 0#) /= isFloatNegativeZero x
 --     isIEEE _         = True
 -- 
 -- instance  Show Float  where
@@ -536,7 +537,7 @@ instance  Floating Double  where
 -- "ceiling/Double->Int"               ceiling = ceilingDoubleInt
 -- "round/Double->Int"                 round = roundDoubleInt
 --   #-}
--- instance  RealFrac Double  where
+instance  RealFrac Double  where
 -- 
 --         -- ceiling, floor, and truncate are all small
 --     {-# INLINE [1] ceiling #-}
@@ -572,7 +573,7 @@ instance  Floating Double  where
 --     floor x     = case properFraction x of
 --                     (n,r) -> if r < 0.0 then n - 1 else n
 -- 
--- instance  RealFloat Double  where
+instance  RealFloat Double  where
 --     floatRadix _        =  FLT_RADIX        -- from float.h
 --     floatDigits _       =  DBL_MANT_DIG     -- ditto
 --     floatRange _        =  (DBL_MIN_EXP, DBL_MAX_EXP) -- ditto
@@ -597,10 +598,10 @@ instance  Floating Double  where
 --                         where bd = DBL_MAX_EXP - (DBL_MIN_EXP) + 4*DBL_MANT_DIG
 --                               isFix = x == 0 || isDoubleFinite x == 0
 -- 
---     isNaN x             = 0 /= isDoubleNaN x
---     isInfinite x        = 0 /= isDoubleInfinite x
+    isNaN x             = I# 0# /= isDoubleNaN x
+    isInfinite x        = I# 0# /= isDoubleInfinite x
 --     isDenormalized x    = 0 /= isDoubleDenormalized x
---     isNegativeZero x    = 0 /= isDoubleNegativeZero x
+    isNegativeZero x    = I# 0# /= isDoubleNegativeZero x
 --     isIEEE _            = True
 -- 
 -- instance  Show Double  where
@@ -1096,9 +1097,7 @@ timesFloat  (F# x) (F# y) = F# (timesFloat# x y)
 
 {-# NOINLINE divideFloat #-}
 divideFloat :: Float -> Float -> Float
-divideFloat (F# x) fy@(F# y)
-  | fy == fromInteger zeroInteger = divZeroError
-  | True = F# (divideFloat# x y)
+divideFloat (F# x) fy@(F# y) = F# (divideFloat# x y)
 -- 
 {-# NOINLINE negateFloat #-}
 negateFloat :: Float -> Float
@@ -1149,11 +1148,9 @@ sqrtFloat   (F# x) = F# (sqrtFloat# x)
 -- -- used in the case of partial applications, etc.
 -- 
 
-expFloat#, logFloat#, sqrtFloat# :: Float# -> Float#
+expFloat#, logFloat# :: Float# -> Float#
 expFloat# = expFloat#
 logFloat# = logFloat#
-sqrtFloat# = sqrtFloat#
-
 
 {-# NOINLINE plusDouble #-}
 plusDouble :: Double -> Double -> Double
@@ -1169,9 +1166,7 @@ timesDouble  (D# x) (D# y) = D# (x *## y)
 
 {-# NOINLINE divideDouble #-}
 divideDouble :: Double -> Double -> Double
-divideDouble (D# x) dy@(D# y)
-  | dy == fromInteger zeroInteger = divZeroError
-  | otherwise = D# (x /## y)
+divideDouble (D# x) dy@(D# y) = D# (x /## y)
 -- 
 {-# NOINLINE negateDouble #-}
 negateDouble :: Double -> Double
@@ -1235,15 +1230,27 @@ sqrtDouble# = sqrtDouble#
 -- powerDouble  (D# x) (D# y) = D# (x **## y)
 -- 
 -- foreign import ccall unsafe "isFloatNaN" isFloatNaN :: Float -> Int
+isFloatNaN :: Float -> Int
+isFloatNaN (F# f) = if isFloatNaN# f then I# 1# else I# 0#
 -- foreign import ccall unsafe "isFloatInfinite" isFloatInfinite :: Float -> Int
+isFloatInfinite :: Float -> Int
+isFloatInfinite (F# f) = if isFloatInfinite# f then I# 1# else I# 0#
 -- foreign import ccall unsafe "isFloatDenormalized" isFloatDenormalized :: Float -> Int
 -- foreign import ccall unsafe "isFloatNegativeZero" isFloatNegativeZero :: Float -> Int
+isFloatNegativeZero :: Float -> Int
+isFloatNegativeZero (F# f) = if isFloatNegativeZero# f then I# 1# else I# 0#
 -- foreign import ccall unsafe "isFloatFinite" isFloatFinite :: Float -> Int
 -- 
 -- foreign import ccall unsafe "isDoubleNaN" isDoubleNaN :: Double -> Int
+isDoubleNaN :: Double -> Int
+isDoubleNaN (D# d) = if isDoubleNaN# d then I# 1# else I# 0#
 -- foreign import ccall unsafe "isDoubleInfinite" isDoubleInfinite :: Double -> Int
+isDoubleInfinite :: Double -> Int
+isDoubleInfinite (D# d) = if isDoubleInfinite# d then I# 1# else I# 0#
 -- foreign import ccall unsafe "isDoubleDenormalized" isDoubleDenormalized :: Double -> Int
 -- foreign import ccall unsafe "isDoubleNegativeZero" isDoubleNegativeZero :: Double -> Int
+isDoubleNegativeZero :: Double -> Int
+isDoubleNegativeZero (D# d) = if isDoubleNegativeZero# d then I# 1# else I# 0#
 -- foreign import ccall unsafe "isDoubleFinite" isDoubleFinite :: Double -> Int
 -- 
 -- 
@@ -1318,18 +1325,18 @@ sqrtDouble# = sqrtDouble#
 -- "Add RULES for realToFrac from Int".
 -- -}
 -- 
--- -- Utils
--- 
--- showSignedFloat :: (RealFloat a)
---   => (a -> ShowS)       -- ^ a function that can show unsigned values
---   -> Int                -- ^ the precedence of the enclosing context
---   -> a                  -- ^ the value to show
---   -> ShowS
--- showSignedFloat showPos p x
---    | x < 0 || isNegativeZero x
---        = showParen (p > 6) (showChar '-' . showPos (-x))
---    | otherwise = showPos x
--- 
+-- Utils
+
+showSignedFloat :: (RealFloat a)
+  => (a -> ShowS)       -- ^ a function that can show unsigned values
+  -> Int                -- ^ the precedence of the enclosing context
+  -> a                  -- ^ the value to show
+  -> ShowS
+showSignedFloat showPos p x
+   | x < fromInteger (Z# 0#) || isNegativeZero x
+       = showParen (p > fromInteger (Z# 6#)) (showChar '-' . showPos (negate x))
+   | otherwise = showPos x
+
 -- {-
 -- We need to prevent over/underflow of the exponent in encodeFloat when
 -- called from scaleFloat, hence we clamp the scaling parameter.

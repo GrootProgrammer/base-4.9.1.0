@@ -187,7 +187,7 @@ class  (Num a) => Fractional a  where
     x / y               = x * recip y
 -- 
 -- -- | Extracting components of fractions.
--- class  (Real a, Fractional a) => RealFrac a  where
+class  (Real a, Fractional a) => RealFrac a  where
 --     -- | The function 'properFraction' takes a real fractional number @x@
 --     -- and returns a pair @(n,f)@ such that @x = n+f@, and:
 --     --
