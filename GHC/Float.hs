@@ -290,9 +290,6 @@ rationalToFloat n@(Z# n') d@(Z# d')
     | d == fromInteger zeroInteger     = (fromInteger oneInteger)/(fromInteger zeroInteger)
     | otherwise = F# (rationalToFloat# n' d')
 
-rationalToFloat# :: Int# -> Int#  -> Float#
-rationalToFloat# n d = rationalToFloat# n d
-
 --     | n == 0        = encodeFloat 0 0
 --     | n < 0         = -(fromRat'' minEx mantDigs (-n) d)
 --     | otherwise     = fromRat'' minEx mantDigs n d
@@ -485,9 +482,6 @@ rationalToDouble n@(Z# n') d@(Z# d')
 --       where
 --         minEx       = DBL_MIN_EXP
 --         mantDigs    = DBL_MANT_DIG
-
-rationalToDouble#  :: Int# -> Int# -> Double#
-rationalToDouble# n d = rationalToDouble# n d
 
 instance  Floating Double  where
     pi                  =  D# 3.141592653589793238##

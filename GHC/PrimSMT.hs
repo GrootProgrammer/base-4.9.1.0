@@ -92,3 +92,10 @@ smtEqChar# = smtEqChar#
 {-# NOINLINE smtNeChar# #-}
 smtNeChar# :: Char# -> Char# -> Bool
 smtNeChar# = smtNeChar#
+
+{-# NOINLINE rationalToFloat# #-}
+rationalToFloat# :: Int# -> Int#  -> Float#
+rationalToFloat# n d = rationalToFloat# n d
+
+rationalToDouble#  :: Int# -> Int# -> Double#
+rationalToDouble# n d = rationalToDouble# n d
