@@ -53,7 +53,7 @@ module GHC.Show
         where
 -- 
 import GHC.Base
--- import GHC.List ((!!), foldr1, break)
+import GHC.List ((!!), foldr1, break)
 import GHC.Num
 -- import GHC.Stack.Types
 
@@ -180,11 +180,11 @@ instance Show a => Show [a]  where
 -- deriving instance Show Bool
 -- deriving instance Show Ordering
 -- 
--- instance  Show Char  where
---     showsPrec _ '\'' = showString "'\\''"
---     showsPrec _ c    = showChar '\'' . showLitChar c . showChar '\''
--- 
---     showList cs = showChar '"' . showLitString cs . showChar '"'
+instance  Show Char  where
+    showsPrec _ '\'' = showString "'\\''"
+    showsPrec _ c    = showChar '\'' . showLitChar c . showChar '\''
+
+    showList cs = showChar '"' . showLitString cs . showChar '"'
 -- 
 instance Show Int where
     show (I# x) = if x $>=# 0# then intToString# x else (C# '-'#):intToString# (negateInt# x)
@@ -329,44 +329,44 @@ showParen b p   =  if b then showChar '(' . p . showChar ')' else p
 -- showSpace :: ShowS
 -- showSpace = {-showChar ' '-} \ xs -> ' ' : xs
 -- 
--- -- Code specific for characters
--- 
--- -- | Convert a character to a string using only printable characters,
--- -- using Haskell source-language escape conventions.  For example:
--- --
--- -- > showLitChar '\n' s  =  "\\n" ++ s
--- --
--- showLitChar                :: Char -> ShowS
--- showLitChar c s | c > '\DEL' =  showChar '\\' (protectEsc isDec (shows (ord c)) s)
--- showLitChar '\DEL'         s =  showString "\\DEL" s
--- showLitChar '\\'           s =  showString "\\\\" s
--- showLitChar c s | c >= ' '   =  showChar c s
--- showLitChar '\a'           s =  showString "\\a" s
--- showLitChar '\b'           s =  showString "\\b" s
--- showLitChar '\f'           s =  showString "\\f" s
--- showLitChar '\n'           s =  showString "\\n" s
--- showLitChar '\r'           s =  showString "\\r" s
--- showLitChar '\t'           s =  showString "\\t" s
--- showLitChar '\v'           s =  showString "\\v" s
--- showLitChar '\SO'          s =  protectEsc (== 'H') (showString "\\SO") s
--- showLitChar c              s =  showString ('\\' : asciiTab!!ord c) s
---         -- I've done manual eta-expansion here, because otherwise it's
---         -- impossible to stop (asciiTab!!ord) getting floated out as an MFE
--- 
--- showLitString :: String -> ShowS
--- -- | Same as 'showLitChar', but for strings
--- -- It converts the string to a string using Haskell escape conventions
--- -- for non-printable characters. Does not add double-quotes around the
--- -- whole thing; the caller should do that.
--- -- The main difference from showLitChar (apart from the fact that the
--- -- argument is a string not a list) is that we must escape double-quotes
--- showLitString []         s = s
--- showLitString ('"' : cs) s = showString "\\\"" (showLitString cs s)
--- showLitString (c   : cs) s = showLitChar c (showLitString cs s)
---    -- Making 's' an explicit parameter makes it clear to GHC that
---    -- showLitString has arity 2, which avoids it allocating an extra lambda
---    -- The sticking point is the recursive call to (showLitString cs), which
---    -- it can't figure out would be ok with arity 2.
+-- Code specific for characters
+
+-- | Convert a character to a string using only printable characters,
+-- using Haskell source-language escape conventions.  For example:
+--
+-- > showLitChar '\n' s  =  "\\n" ++ s
+--
+showLitChar                :: Char -> ShowS
+showLitChar c s | c > '\DEL' =  showChar '\\' (protectEsc isDec (shows (ord c)) s)
+showLitChar '\DEL'         s =  showString "\\DEL" s
+showLitChar '\\'           s =  showString "\\\\" s
+showLitChar c s | c >= ' '   =  showChar c s
+showLitChar '\a'           s =  showString "\\a" s
+showLitChar '\b'           s =  showString "\\b" s
+showLitChar '\f'           s =  showString "\\f" s
+showLitChar '\n'           s =  showString "\\n" s
+showLitChar '\r'           s =  showString "\\r" s
+showLitChar '\t'           s =  showString "\\t" s
+showLitChar '\v'           s =  showString "\\v" s
+showLitChar '\SO'          s =  protectEsc (== 'H') (showString "\\SO") s
+showLitChar c              s =  showString ('\\' : asciiTab!!ord c) s
+        -- I've done manual eta-expansion here, because otherwise it's
+        -- impossible to stop (asciiTab!!ord) getting floated out as an MFE
+
+showLitString :: String -> ShowS
+-- | Same as 'showLitChar', but for strings
+-- It converts the string to a string using Haskell escape conventions
+-- for non-printable characters. Does not add double-quotes around the
+-- whole thing; the caller should do that.
+-- The main difference from showLitChar (apart from the fact that the
+-- argument is a string not a list) is that we must escape double-quotes
+showLitString []         s = s
+showLitString ('"' : cs) s = showString "\\\"" (showLitString cs s)
+showLitString (c   : cs) s = showLitChar c (showLitString cs s)
+   -- Making 's' an explicit parameter makes it clear to GHC that
+   -- showLitString has arity 2, which avoids it allocating an extra lambda
+   -- The sticking point is the recursive call to (showLitString cs), which
+   -- it can't figure out would be ok with arity 2.
 -- 
 -- showMultiLineString :: String -> [String]
 -- -- | Like 'showLitString' (expand escape characters using Haskell
@@ -383,22 +383,22 @@ showParen b p   =  if b then showChar '(' . p . showChar ')' else p
 --                 (l, "\n")       -> [ch : showLitString l "\\n\""]
 --                 (l, _)          -> [ch : showLitString l "\""]
 -- 
--- isDec :: Char -> Bool
--- isDec c = c >= '0' && c <= '9'
+isDec :: Char -> Bool
+isDec c = c >= '0' && c <= '9'
 -- 
--- protectEsc :: (Char -> Bool) -> ShowS -> ShowS
--- protectEsc p f             = f . cont
---                              where cont s@(c:_) | p c = "\\&" ++ s
---                                    cont s             = s
+protectEsc :: (Char -> Bool) -> ShowS -> ShowS
+protectEsc p f             = f . cont
+                             where cont s@(c:_) | p c = "\\&" ++ s
+                                   cont s             = s
 -- 
 -- 
--- asciiTab :: [String]
--- asciiTab = -- Using an array drags in the array module.  listArray ('\NUL', ' ')
---            ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
---             "BS",  "HT",  "LF",  "VT",  "FF",  "CR",  "SO",  "SI",
---             "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB",
---             "CAN", "EM",  "SUB", "ESC", "FS",  "GS",  "RS",  "US",
---             "SP"]
+asciiTab :: [String]
+asciiTab = -- Using an array drags in the array module.  listArray ('\NUL', ' ')
+           ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
+            "BS",  "HT",  "LF",  "VT",  "FF",  "CR",  "SO",  "SI",
+            "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB",
+            "CAN", "EM",  "SUB", "ESC", "FS",  "GS",  "RS",  "US",
+            "SP"]
 -- 
 -- -- Code specific for Ints.
 -- 
