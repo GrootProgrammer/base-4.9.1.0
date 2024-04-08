@@ -6,6 +6,8 @@
 {-# LANGUAGE PolyKinds         #-}
 {-# LANGUAGE RankNTypes        #-}
 {-# LANGUAGE Trustworthy       #-}
+
+{-# LANGUAGE PackageImports    #-}
 -- 
 {-# OPTIONS_HADDOCK hide #-}
 -- -- we hide this module from haddock to enforce GHC.Stack as the main
@@ -29,7 +31,7 @@
 -- 
 module GHC.Stack.Types (
 --     -- * Implicit call stacks
-    CallStack(..), HasCallStack,
+    CallStack(..), T.HasCallStack,
 --     emptyCallStack, freezeCallStack, fromCallSiteList,
 --     getCallStack, pushCallStack,
 -- 
@@ -54,6 +56,8 @@ module GHC.Stack.Types (
 import GHC.Classes2 (Eq (..), (&&))
 -- import GHC.Types (Char, Int)
 import GHC.Types2 (Char, Int)
+
+import qualified "base" GHC.Stack.Types as T
 -- 
 -- -- Make implicit dependency known to build system
 -- import GHC.Tuple ()
