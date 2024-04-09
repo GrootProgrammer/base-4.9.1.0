@@ -153,6 +153,11 @@ isDoubleNaN# = isDoubleNaN#
 isDoubleInfinite# :: Double# -> Bool
 isDoubleInfinite# = isDoubleInfinite#
 
+expDouble#, logDouble#, sqrtDouble# :: Double# -> Double#
+expDouble# = expDouble#
+logDouble# = logDouble#
+sqrtDouble# = sqrtDouble#
+
 -- Float#
 
 eqFloat# :: Float# -> Float# -> Int#
