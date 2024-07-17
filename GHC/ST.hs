@@ -18,7 +18,7 @@
 -- 
 module GHC.ST (
         ST(..), STret(..), STRep,
---         fixST, runST,
+        fixST, runST,
 -- 
 --         -- * Unsafe functions
 --         liftST, unsafeInterleaveST
@@ -51,35 +51,35 @@ import GHC.Base
 -- @'runST' (writeSTRef _|_ v >>= f) = _|_@
 newtype ST s a = ST (STRep s a)
 type STRep s a = State# s -> (# State# s, a #)
--- 
--- instance Functor (ST s) where
---     fmap f (ST m) = ST $ \ s ->
---       case (m s) of { (# new_s, r #) ->
---       (# new_s, f r #) }
--- 
--- instance Applicative (ST s) where
---     {-# INLINE pure #-}
---     {-# INLINE (*>)   #-}
---     pure x = ST (\ s -> (# s, x #))
---     m *> k = m >>= \ _ -> k
---     (<*>) = ap
--- 
--- instance Monad (ST s) where
---     {-# INLINE (>>=)  #-}
---     (>>) = (*>)
---     (ST m) >>= k
---       = ST (\ s ->
---         case (m s) of { (# new_s, r #) ->
---         case (k r) of { ST k2 ->
---         (k2 new_s) }})
--- 
+
+instance Functor (ST s) where
+    fmap f (ST m) = ST $ \ s ->
+      case (m s) of { (# new_s, r #) ->
+      (# new_s, f r #) }
+
+instance Applicative (ST s) where
+    {-# INLINE pure #-}
+    {-# INLINE (*>)   #-}
+    pure x = ST (\ s -> (# s, x #))
+    m *> k = m >>= \ _ -> k
+    (<*>) = ap
+
+instance Monad (ST s) where
+    {-# INLINE (>>=)  #-}
+    (>>) = (*>)
+    (ST m) >>= k
+      = ST (\ s ->
+        case (m s) of { (# new_s, r #) ->
+        case (k r) of { ST k2 ->
+        (k2 new_s) }})
+
 data STret s a = STret (State# s) a
--- 
--- -- liftST is useful when we want a lifted result from an ST computation.  See
--- -- fixST below.
--- liftST :: ST s a -> State# s -> STret s a
--- liftST (ST m) = \s -> case m s of (# s', r #) -> STret s' r
--- 
+
+-- liftST is useful when we want a lifted result from an ST computation.  See
+-- fixST below.
+liftST :: ST s a -> State# s -> STret s a
+liftST (ST m) = \s -> case m s of (# s', r #) -> STret s' r
+
 -- {-# NOINLINE unsafeInterleaveST #-}
 -- unsafeInterleaveST :: ST s a -> ST s a
 -- unsafeInterleaveST (ST m) = ST ( \ s ->
@@ -88,25 +88,25 @@ data STret s a = STret (State# s) a
 --     in
 --     (# s, r #)
 --   )
--- 
--- -- | Allow the result of a state transformer computation to be used (lazily)
--- -- inside the computation.
--- -- Note that if @f@ is strict, @'fixST' f = _|_@.
--- fixST :: (a -> ST s a) -> ST s a
--- fixST k = ST $ \ s ->
---     let ans       = liftST (k r) s
---         STret _ r = ans
---     in
---     case ans of STret s' x -> (# s', x #)
--- 
+
+-- | Allow the result of a state transformer computation to be used (lazily)
+-- inside the computation.
+-- Note that if @f@ is strict, @'fixST' f = _|_@.
+fixST :: (a -> ST s a) -> ST s a
+fixST k = ST $ \ s ->
+    let ans       = liftST (k r) s
+        STret _ r = ans
+    in
+    case ans of STret s' x -> (# s', x #)
+
 -- instance  Show (ST s a)  where
 --     showsPrec _ _  = showString "<<ST action>>"
 --     showList       = showList__ (showsPrec 0)
--- 
--- {-# INLINE runST #-}
--- -- | Return the value computed by a state transformer computation.
--- -- The @forall@ ensures that the internal state used by the 'ST'
--- -- computation is inaccessible to the rest of the program.
--- runST :: (forall s. ST s a) -> a
--- runST (ST st_rep) = case runRW# st_rep of (# _, a #) -> a
--- -- See Note [Definition of runRW#] in GHC.Magic
+
+{-# INLINE runST #-}
+-- | Return the value computed by a state transformer computation.
+-- The @forall@ ensures that the internal state used by the 'ST'
+-- computation is inaccessible to the rest of the program.
+runST :: (forall s. ST s a) -> a
+runST (ST st_rep) = case st_rep realWorld# of (# _, a #) -> a
+-- See Note [Definition of runRW#] in GHC.Magic

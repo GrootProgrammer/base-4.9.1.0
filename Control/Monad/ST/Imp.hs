@@ -17,11 +17,11 @@
 -- --
 -- -----------------------------------------------------------------------------
 -- 
--- module Control.Monad.ST.Imp (
---         -- * The 'ST' Monad
---         ST,             -- abstract, instance of Functor, Monad, Typeable.
---         runST,
---         fixST,
+module Control.Monad.ST.Imp (
+        -- * The 'ST' Monad
+        ST,             -- abstract, instance of Functor, Monad, Typeable.
+        runST,
+        fixST,
 -- 
 --         -- * Converting 'ST' to 'IO'
 --         RealWorld,              -- abstract
@@ -31,8 +31,8 @@
 --         unsafeInterleaveST,
 --         unsafeIOToST,
 --         unsafeSTToIO
---     ) where
+    ) where
 -- 
--- import GHC.ST           ( ST, runST, fixST, unsafeInterleaveST )
+import GHC.ST           ( ST, runST, fixST, {- unsafeInterleaveST -} )
 -- import GHC.Base         ( RealWorld )
 -- import GHC.IO           ( stToIO, unsafeIOToST, unsafeSTToIO )

@@ -20,16 +20,16 @@
 -- 
 -- -----------------------------------------------------------------------------
 -- 
--- module Control.Monad.ST (
---         -- * The 'ST' Monad
---         ST,             -- abstract, instance of Functor, Monad, Typeable.
---         runST,
---         fixST,
+module Control.Monad.ST (
+        -- * The 'ST' Monad
+        ST,             -- abstract, instance of Functor, Monad, Typeable.
+        runST,
+        fixST,
 -- 
 --         -- * Converting 'ST' to 'IO'
 --         RealWorld,              -- abstract
 --         stToIO,
---     ) where
--- 
--- import Control.Monad.ST.Imp
--- 
+    ) where
+
+import Control.Monad.ST.Imp
+
