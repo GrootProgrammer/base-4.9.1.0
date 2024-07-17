@@ -19,7 +19,7 @@ import GHC.Prim
   , coerce)
 
 import GHC.Types
-  (Bool (..), Char)
+  (Bool (..), Char, Levity, RuntimeRep (..))
 
 import GHC.PrimSMT
 
@@ -318,10 +318,29 @@ word2Int# = word2Int#
 int2Word# :: Int# -> Word#
 int2Word# = int2Word#
 
+-- MutVar#
+
+newMutVar# :: forall {l :: Levity} a d. a -> State# d -> (# State# d, MutVar# d a #)
+newMutVar# x !s = let y = newMutVar## x s in y `nsmv` (# s, y #)
+
+readMutVar# :: forall {l :: Levity} d a. MutVar# d a -> State# d -> (# State# d, a #)
+readMutVar# m !s = let !y = readMutVar## m s in m `nsmv` (# s, y #)
+
+{-# NOINLINE nsmv #-}
+nsmv :: b -> (# State# d, a #) -> (# State# d, a #)
+nsmv !x y = y
+
+writeMutVar# :: forall {l :: Levity} d a. MutVar# d a -> a -> State# d -> State# d
+writeMutVar# m x s =  s `ns` writeMutVar## m x s
+
+{-# NOINLINE ns #-}
+ns :: a -> State# d -> State# d
+ns !x y = y
+
 -- Others
 
 seq :: a -> b -> b
-seq _ b = b  -- Anton: This is technically wrong.
+seq !_ b = b
 
 -- Misc add-ons
 
@@ -331,7 +350,10 @@ fromIntToFloat = fromIntToFloat
 fromIntToDouble :: Int# -> Double#
 fromIntToDouble = fromIntToDouble
 
-data State# s = State# s
+data RealWorld = RealWorld
+
+realWorld# :: State# RealWorld
+realWorld# = State# RealWorld
 
 data Void# = Void#
 

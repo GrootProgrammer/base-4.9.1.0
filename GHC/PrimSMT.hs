@@ -99,3 +99,19 @@ rationalToFloat# n d = rationalToFloat# n d
 
 rationalToDouble#  :: Int# -> Int# -> Double#
 rationalToDouble# n d = rationalToDouble# n d
+
+data State# s = State# s
+
+data MutVar# a b = MutVar#
+
+{-# NOINLINE newMutVar## #-}
+newMutVar## :: forall a d. a -> State# d -> MutVar# d a
+newMutVar## = newMutVar##
+
+{-# NOINLINE readMutVar## #-}
+readMutVar## :: forall d a. MutVar# d a -> State# d -> a
+readMutVar## = readMutVar##
+
+{-# NOINLINE writeMutVar## #-}
+writeMutVar## :: forall d a. MutVar# d a -> a -> State# d -> State# d
+writeMutVar## _ _ s = s

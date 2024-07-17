@@ -50,5 +50,4 @@ intToString# = intToString#
 
 newtype IO a = IO (State# RealWorld -> (# State# RealWorld, a #))
 
-data RealWorld = RealWorld
 data LiftedRep = LiftedRep
