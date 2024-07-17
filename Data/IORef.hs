@@ -1,28 +1,28 @@
--- {-# LANGUAGE Trustworthy #-}
--- {-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples #-}
+{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE NoImplicitPrelude, MagicHash, UnboxedTuples #-}
+
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.IORef
+-- Copyright   :  (c) The University of Glasgow 2001
+-- License     :  BSD-style (see the file libraries/base/LICENSE)
 -- 
--- -----------------------------------------------------------------------------
--- -- |
--- -- Module      :  Data.IORef
--- -- Copyright   :  (c) The University of Glasgow 2001
--- -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- -- 
--- -- Maintainer  :  libraries@haskell.org
--- -- Stability   :  experimental
--- -- Portability :  portable
--- --
--- -- Mutable references in the IO monad.
--- --
--- -----------------------------------------------------------------------------
--- 
--- module Data.IORef
---   ( 
---         -- * IORefs
---         IORef,                -- abstract, instance of: Eq, Typeable
---         newIORef,
---         readIORef,
---         writeIORef,
---         modifyIORef,
+-- Maintainer  :  libraries@haskell.org
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- Mutable references in the IO monad.
+--
+-----------------------------------------------------------------------------
+
+module Data.IORef
+  ( 
+        -- * IORefs
+        IORef,                -- abstract, instance of: Eq, Typeable
+        newIORef,
+        readIORef,
+        writeIORef,
+        modifyIORef,
 --         modifyIORef',
 --         atomicModifyIORef,
 --         atomicModifyIORef',
@@ -32,12 +32,12 @@
 -- 
 --         -- $memmodel
 -- 
---         ) where
+        ) where
 -- 
--- import GHC.Base
--- import GHC.STRef
--- import GHC.IORef hiding (atomicModifyIORef)
--- import qualified GHC.IORef
+import GHC.Base
+import GHC.STRef
+import GHC.IORef hiding (atomicModifyIORef)
+import qualified GHC.IORef
 -- import GHC.Weak
 -- 
 -- -- |Make a 'Weak' pointer to an 'IORef', using the second argument as a finalizer
@@ -57,11 +57,11 @@
 -- -- >ref <- newIORef 0
 -- -- >replicateM_ 1000000 $ modifyIORef ref (+1)
 -- -- >readIORef ref >>= print
--- --
--- -- To avoid this problem, use 'modifyIORef'' instead.
--- modifyIORef :: IORef a -> (a -> a) -> IO ()
--- modifyIORef ref f = readIORef ref >>= writeIORef ref . f
--- 
+--
+-- To avoid this problem, use 'modifyIORef'' instead.
+modifyIORef :: IORef a -> (a -> a) -> IO ()
+modifyIORef ref f = readIORef ref >>= writeIORef ref . f
+
 -- -- |Strict version of 'modifyIORef'
 -- --
 -- -- @since 4.6.0.0

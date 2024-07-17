@@ -27,8 +27,8 @@ module Control.Monad.ST (
         fixST,
 -- 
 --         -- * Converting 'ST' to 'IO'
---         RealWorld,              -- abstract
---         stToIO,
+        RealWorld,              -- abstract
+        stToIO,
     ) where
 
 import Control.Monad.ST.Imp

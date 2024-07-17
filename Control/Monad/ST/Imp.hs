@@ -24,8 +24,8 @@ module Control.Monad.ST.Imp (
         fixST,
 -- 
 --         -- * Converting 'ST' to 'IO'
---         RealWorld,              -- abstract
---         stToIO,
+        RealWorld,              -- abstract
+        stToIO,
 -- 
 --         -- * Unsafe operations
 --         unsafeInterleaveST,

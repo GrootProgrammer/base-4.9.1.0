@@ -31,7 +31,7 @@ module GHC.IO (
 --         noDuplicate,
 -- 
 --         -- To and from from ST
---         stToIO, ioToST, unsafeIOToST, unsafeSTToIO,
+        stToIO, -- ioToST, unsafeIOToST, unsafeSTToIO,
 -- 
 --         FilePath,
 -- 
@@ -43,7 +43,7 @@ module GHC.IO (
     ) where
 -- 
 import GHC.Base
--- import GHC.ST
+import GHC.ST
 -- import GHC.Exception
 -- import GHC.Show
 import GHC.IO.Unsafe
@@ -82,15 +82,15 @@ import GHC.IO.Unsafe
 -- failIO :: String -> IO a
 -- failIO s = IO (raiseIO# (toException (userError s)))
 -- 
--- -- ---------------------------------------------------------------------------
--- -- Coercions between IO and ST
--- 
--- -- | A monad transformer embedding strict state transformers in the 'IO'
--- -- monad.  The 'RealWorld' parameter indicates that the internal state
--- -- used by the 'ST' computation is a special one supplied by the 'IO'
--- -- monad, and thus distinct from those used by invocations of 'runST'.
--- stToIO        :: ST RealWorld a -> IO a
--- stToIO (ST m) = IO m
+-- ---------------------------------------------------------------------------
+-- Coercions between IO and ST
+
+-- | A monad transformer embedding strict state transformers in the 'IO'
+-- monad.  The 'RealWorld' parameter indicates that the internal state
+-- used by the 'ST' computation is a special one supplied by the 'IO'
+-- monad, and thus distinct from those used by invocations of 'runST'.
+stToIO        :: ST RealWorld a -> IO a
+stToIO (ST m) = IO m
 -- 
 -- ioToST        :: IO a -> ST RealWorld a
 -- ioToST (IO m) = (ST m)
