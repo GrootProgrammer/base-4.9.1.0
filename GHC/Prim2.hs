@@ -20,7 +20,7 @@ import GHC.Prim
   ( Int#, Double#, Char#, Float#, Word#, TYPE -- , Addr#
   , coerce)
 
-#if MIN_VERSION_GLASGOW_HASKELL(9,0,0,0)
+#if MIN_VERSION_GLASGOW_HASKELL(9,2,0,0)
 import GHC.Types
   (Bool (..), Char, Levity, RuntimeRep (..))
 #else
@@ -327,7 +327,7 @@ int2Word# = int2Word#
 
 -- MutVar#
 
-#if MIN_VERSION_GLASGOW_HASKELL(9,0,0,0)
+#if MIN_VERSION_GLASGOW_HASKELL(9,2,0,0)
 newMutVar# :: forall {l :: Levity} a d. a -> State# d -> (# State# d, MutVar# d a #)
 readMutVar# :: forall {l :: Levity} d a. MutVar# d a -> State# d -> (# State# d, a #)
 writeMutVar# :: forall {l :: Levity} d a. MutVar# d a -> a -> State# d -> State# d
