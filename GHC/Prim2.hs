@@ -1,8 +1,10 @@
 {-# LANGUAGE Unsafe #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE UnboxedTuples #-}
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
@@ -18,8 +20,13 @@ import GHC.Prim
   ( Int#, Double#, Char#, Float#, Word#, TYPE -- , Addr#
   , coerce)
 
+#if MIN_VERSION_GLASGOW_HASKELL(9,0,0,0)
 import GHC.Types
   (Bool (..), Char, Levity, RuntimeRep (..))
+#else
+import GHC.Types
+  (Bool (..), Char, RuntimeRep (..))
+#endif
 
 import GHC.PrimSMT
 
@@ -320,17 +327,24 @@ int2Word# = int2Word#
 
 -- MutVar#
 
+#if MIN_VERSION_GLASGOW_HASKELL(9,0,0,0)
 newMutVar# :: forall {l :: Levity} a d. a -> State# d -> (# State# d, MutVar# d a #)
+readMutVar# :: forall {l :: Levity} d a. MutVar# d a -> State# d -> (# State# d, a #)
+writeMutVar# :: forall {l :: Levity} d a. MutVar# d a -> a -> State# d -> State# d
+#else
+newMutVar# :: forall l a d. a -> State# d -> (# State# d, MutVar# d a #)
+readMutVar# :: forall l d a. MutVar# d a -> State# d -> (# State# d, a #)
+writeMutVar# :: forall l d a. MutVar# d a -> a -> State# d -> State# d
+
+#endif
 newMutVar# x !s = let y = newMutVar## x s in y `nsmv` (# s, y #)
 
-readMutVar# :: forall {l :: Levity} d a. MutVar# d a -> State# d -> (# State# d, a #)
 readMutVar# m !s = let !y = readMutVar## m s in m `nsmv` (# s, y #)
 
 {-# NOINLINE nsmv #-}
 nsmv :: b -> (# State# d, a #) -> (# State# d, a #)
 nsmv !x y = y
 
-writeMutVar# :: forall {l :: Levity} d a. MutVar# d a -> a -> State# d -> State# d
 writeMutVar# m x s =  s `ns` writeMutVar## m x s
 
 {-# NOINLINE ns #-}

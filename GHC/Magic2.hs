@@ -2,6 +2,7 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE MagicHash #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE UnboxedTuples #-}
 
 module GHC.Magic2
