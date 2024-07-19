@@ -327,16 +327,16 @@ int2Word# = int2Word#
 
 -- MutVar#
 
-#if MIN_VERSION_GLASGOW_HASKELL(9,2,0,0)
+#if MIN_VERSION_GLASGOW_HASKELL(9,4,0,0)
 newMutVar# :: forall {l :: Levity} a d. a -> State# d -> (# State# d, MutVar# d a #)
 readMutVar# :: forall {l :: Levity} d a. MutVar# d a -> State# d -> (# State# d, a #)
 writeMutVar# :: forall {l :: Levity} d a. MutVar# d a -> a -> State# d -> State# d
 #else
-newMutVar# :: forall l a d. a -> State# d -> (# State# d, MutVar# d a #)
-readMutVar# :: forall l d a. MutVar# d a -> State# d -> (# State# d, a #)
-writeMutVar# :: forall l d a. MutVar# d a -> a -> State# d -> State# d
-
+newMutVar# :: forall a d. a -> State# d -> (# State# d, MutVar# d a #)
+readMutVar# :: forall d a. MutVar# d a -> State# d -> (# State# d, a #)
+writeMutVar# :: forall d a. MutVar# d a -> a -> State# d -> State# d
 #endif
+
 newMutVar# x !s = let y = newMutVar## x s in y `nsmv` (# s, y #)
 
 readMutVar# m !s = let !y = readMutVar## m s in m `nsmv` (# s, y #)
