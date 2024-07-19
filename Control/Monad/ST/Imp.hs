@@ -34,5 +34,5 @@ module Control.Monad.ST.Imp (
     ) where
 -- 
 import GHC.ST           ( ST, runST, fixST, {- unsafeInterleaveST -} )
--- import GHC.Base         ( RealWorld )
--- import GHC.IO           ( stToIO, unsafeIOToST, unsafeSTToIO )
+import GHC.Base         ( RealWorld )
+import GHC.IO           ( stToIO {-, unsafeIOToST, unsafeSTToIO -} )
