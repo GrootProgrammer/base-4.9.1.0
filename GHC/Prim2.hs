@@ -345,7 +345,7 @@ readMutVar# m !s = let !y = readMutVar## m s in m `nsmv` (# s, y #)
 nsmv :: b -> (# State# d, a #) -> (# State# d, a #)
 nsmv !x y = y
 
-writeMutVar# m x s =  s `ns` writeMutVar## m x s
+writeMutVar# m x s = s `ns` (m `ns` writeMutVar## m x s)
 
 {-# NOINLINE ns #-}
 ns :: a -> State# d -> State# d
