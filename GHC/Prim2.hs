@@ -395,3 +395,5 @@ dataToTag## _ = 0#
 {-# NOINLINE tagToEnum# #-}
 tagToEnum# :: Int# -> a
 tagToEnum# _ = let x = x in x
+
+data (~#) a b (x :: a) (y :: b) = Co 
