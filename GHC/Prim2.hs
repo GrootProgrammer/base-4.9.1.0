@@ -396,4 +396,4 @@ dataToTag## _ = 0#
 tagToEnum# :: Int# -> a
 tagToEnum# _ = let x = x in x
 
-data (~#) a b (x :: a) (y :: b) = Co 
+data (~#) a b (x :: a) (y :: b) = Co
