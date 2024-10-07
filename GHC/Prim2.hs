@@ -400,7 +400,4 @@ dataToTag## _ = 0#
 tagToEnum# :: Int# -> a
 tagToEnum# _ = let x = x in x
 
-
--- #if MIN_VERSION_GLASGOW_HASKELL(9,2,0,0)
--- data (~#) a b (x :: a) (y :: b) = Co
--- #endif
+data (~#) a b (x :: a) (y :: b) = Co
