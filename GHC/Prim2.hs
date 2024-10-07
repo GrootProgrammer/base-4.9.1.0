@@ -67,6 +67,30 @@ import GHC.PrimSMT
 negateInt# :: Int# -> Int#
 negateInt# = negateInt#
 
+-- bitwise operators
+
+andI# :: Int# -> Int# -> Int#
+andI# = andI#
+
+orI# :: Int# -> Int# -> Int#
+orI# = orI#
+
+-- looks like G2.Language.Syntax.hs does not have xor and the SMT solver should figure this out anyways
+xorI# :: Int# -> Int# -> Int#
+xorI# x# y# = ((x# `orI#` y#) `andI#` (notI# (x# `andI#` y#)))
+
+notI# :: Int# -> Int#
+notI# = notI#
+
+iShiftL# :: Int# -> Int# -> Int#
+iShiftL# = iShiftL#
+
+iShiftRA# :: Int# -> Int# -> Int#
+iShiftRA# = iShiftRA#
+
+iShiftRL# :: Int# -> Int# -> Int#
+iShiftRL# = iShiftRL#
+
 -- Int#
 
 (==#) :: Int# -> Int# -> Int#
